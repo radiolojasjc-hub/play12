@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PLAY 12 • Todos os Gêneros</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        
+        .container { max-width: 800px; width: 100%; }
+        
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { font-size: 2.8rem; font-weight: 900; background: linear-gradient(135deg, #00f3ff, #ff2d7f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px; }
+        .logo p { color: #888; font-size: 1rem; margin-top: 5px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        .card { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 25px 15px; text-align: center; text-decoration: none; color: white; border: 2px solid rgba(255,255,255,0.06); transition: all 0.3s ease; cursor: pointer; }
+        .card:active { transform: scale(0.95); }
+        .card .emoji { font-size: 2.8rem; display: block; margin-bottom: 8px; }
+        .card .nome { font-weight: 700; font-size: 1rem; }
+        .card .desc { font-size: 0.65rem; color: #666; margin-top: 3px; }
+        .card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); }
+        
+        .card.forro { border-color: #ff00aa; }
+        .card.brega { border-color: #ff66aa; }
+        .card.mpb { border-color: #00ff88; }
+        .card.sertanejo { border-color: #ff8800; }
+        .card.pop { border-color: #ff3366; }
+        .card.religiosa { border-color: #aa55ff; }
+        .card.samba { border-color: #ffdd00; }
+        .card.global { border-color: #00ccff; }
+        .card.moda { border-color: #ff4400; }
+        .card.reggae { border-color: #00ffaa; }
+        
+        .footer { text-align: center; margin-top: 30px; color: #444; font-size: 0.7rem; }
+        .footer a { color: #888; text-decoration: none; }
+        
+        @media (max-width: 600px) {
+            .logo h1 { font-size: 2rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card { padding: 18px 10px; }
+            .card .emoji { font-size: 2rem; }
+            .card .nome { font-size: 0.85rem; }
+        }
+        @media (max-width: 400px) {
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .card { padding: 12px 8px; }
+            .card .emoji { font-size: 1.6rem; }
+            .card .nome { font-size: 0.75rem; }
+            .card .desc { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🎵 PLAY 12</h1>
+            <p>Escolha seu estilo e curta!</p>
+        </div>
+        
+        <div class="grid">
+            <a href="https://radiolojasjc-hub.github.io/forro/" class="card forro">
+                <span class="emoji">🪗</span>
+                <span class="nome">FORRÓ</span>
+                <span class="desc">O melhor do forró</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/brega/" class="card brega">
+                <span class="emoji">💔</span>
+                <span class="nome">BREGA</span>
+                <span class="desc">Romântico e emocionante</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/mpb/" class="card mpb">
+                <span class="emoji">🎸</span>
+                <span class="nome">MPB</span>
+                <span class="desc">Música Popular Brasileira</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/sertanejo/" class="card sertanejo">
+                <span class="emoji">🤠</span>
+                <span class="nome">SERTANEJO</span>
+                <span class="desc">Modão e sofrência</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/pop/" class="card pop">
+                <span class="emoji">🎤</span>
+                <span class="nome">POP</span>
+                <span class="desc">Sucessos internacionais</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/religiosa/" class="card religiosa">
+                <span class="emoji">🙏</span>
+                <span class="nome">RELIGIOSA</span>
+                <span class="desc">Músicas que edificam</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/samba/" class="card samba">
+                <span class="emoji">🥁</span>
+                <span class="nome">SAMBA</span>
+                <span class="desc">Samba e pagode</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/global/" class="card global">
+                <span class="emoji">🌍</span>
+                <span class="nome">GLOBAL HITS</span>
+                <span class="desc">Sucessos mundiais</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/moda/" class="card moda">
+                <span class="emoji">🎸</span>
+                <span class="nome">MODA TOP</span>
+                <span class="desc">O que está em alta</span>
+            </a>
+            
+            <a href="https://radiolojasjc-hub.github.io/reggae/" class="card reggae">
+                <span class="emoji">🌿</span>
+                <span class="nome">REGGAE</span>
+                <span class="desc">Paz e amor</span>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>PLAY 12 • Todos os direitos reservados</p>
+        </div>
+    </div>
+</body>
+</html>
