@@ -6,397 +6,69 @@
     <title>PLAY 12 • Todos os Gêneros</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: #0a0a0a;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
-        }
-
-        .header .logo {
-            font-size: 3.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00f3ff, #ff2d7f, #ff8800);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-            display: inline-block;
-            position: relative;
-        }
-
-        .header .logo::after {
-            content: '♪';
-            font-size: 1.8rem;
-            position: absolute;
-            right: -35px;
-            top: -5px;
-            -webkit-text-fill-color: #ff2d7f;
-            animation: pulseNote 2s infinite;
-        }
-
-        @keyframes pulseNote {
-            0%, 100% { transform: scale(1); opacity: 0.7; }
-            50% { transform: scale(1.3); opacity: 1; }
-        }
-
-        .header .subtitle {
-            color: #888;
-            font-size: 1rem;
-            margin-top: 8px;
-            letter-spacing: 2px;
-        }
-
-        .header .subtitle span {
-            color: #00f3ff;
-            font-weight: 700;
-        }
-
-        /* ===== STATS ===== */
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .stats .stat-item {
-            text-align: center;
-        }
-
-        .stats .stat-item .number {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: #fff;
-        }
-
-        .stats .stat-item .label {
-            font-size: 0.65rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stats .stat-item .number.generos { color: #00f3ff; }
-        .stats .stat-item .number.musicas { color: #ff2d7f; }
-        .stats .stat-item .number.artistas { color: #ff8800; }
-
-        /* ===== GRID ===== */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 22px 12px;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.35s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            transition: opacity 0.35s ease;
-            border-radius: 20px;
-        }
-
-        .card:active {
-            transform: scale(0.95);
-        }
-
-        .card .emoji {
-            font-size: 2.8rem;
-            display: block;
-            margin-bottom: 6px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card .nome {
-            font-weight: 700;
-            font-size: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card .desc {
-            font-size: 0.6rem;
-            color: #666;
-            margin-top: 2px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.45rem;
-            color: #888;
-            z-index: 1;
-        }
-
-        /* ===== CORES DOS GÊNEROS ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { max-width: 800px; width: 100%; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { font-size: 2.8rem; font-weight: 900; background: linear-gradient(135deg, #00f3ff, #ff2d7f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px; }
+        .logo p { color: #888; font-size: 1rem; margin-top: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .card { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 25px 15px; text-align: center; text-decoration: none; color: white; border: 2px solid rgba(255,255,255,0.06); transition: all 0.3s ease; cursor: pointer; }
+        .card:active { transform: scale(0.95); }
+        .card .emoji { font-size: 2.8rem; display: block; margin-bottom: 8px; }
+        .card .nome { font-weight: 700; font-size: 1rem; }
+        .card .desc { font-size: 0.65rem; color: #666; margin-top: 3px; }
+        .card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); }
         .card.forro { border-color: #ff00aa; }
-        .card.forro::before { background: rgba(255, 0, 170, 0.08); }
-        .card.forro:hover { border-color: #ff00aa; background: rgba(255, 0, 170, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 0, 170, 0.15); }
-
         .card.brega { border-color: #ff66aa; }
-        .card.brega::before { background: rgba(255, 102, 170, 0.08); }
-        .card.brega:hover { border-color: #ff66aa; background: rgba(255, 102, 170, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 102, 170, 0.15); }
-
         .card.mpb { border-color: #00ff88; }
-        .card.mpb::before { background: rgba(0, 255, 136, 0.08); }
-        .card.mpb:hover { border-color: #00ff88; background: rgba(0, 255, 136, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 255, 136, 0.15); }
-
         .card.sertanejo { border-color: #ff8800; }
-        .card.sertanejo::before { background: rgba(255, 136, 0, 0.08); }
-        .card.sertanejo:hover { border-color: #ff8800; background: rgba(255, 136, 0, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 136, 0, 0.15); }
-
         .card.pop { border-color: #ff3366; }
-        .card.pop::before { background: rgba(255, 51, 102, 0.08); }
-        .card.pop:hover { border-color: #ff3366; background: rgba(255, 51, 102, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 51, 102, 0.15); }
-
         .card.religiosa { border-color: #aa55ff; }
-        .card.religiosa::before { background: rgba(170, 85, 255, 0.08); }
-        .card.religiosa:hover { border-color: #aa55ff; background: rgba(170, 85, 255, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(170, 85, 255, 0.15); }
-
-        .card.samba { border-color: #ffdd00; }
-        .card.samba::before { background: rgba(255, 221, 0, 0.08); }
-        .card.samba:hover { border-color: #ffdd00; background: rgba(255, 221, 0, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 221, 0, 0.15); }
-
-        .card.global { border-color: #00ccff; }
-        .card.global::before { background: rgba(0, 204, 255, 0.08); }
-        .card.global:hover { border-color: #00ccff; background: rgba(0, 204, 255, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 204, 255, 0.15); }
-
-        .card.moda { border-color: #ff4400; }
-        .card.moda::before { background: rgba(255, 68, 0, 0.08); }
-        .card.moda:hover { border-color: #ff4400; background: rgba(255, 68, 0, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255, 68, 0, 0.15); }
-
-        .card.reggae { border-color: #00ffaa; }
-        .card.reggae::before { background: rgba(0, 255, 170, 0.08); }
-        .card.reggae:hover { border-color: #00ffaa; background: rgba(0, 255, 170, 0.06); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 255, 170, 0.15); }
-
-        /* ===== FOOTER ===== */
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px 0 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .footer p {
-            color: #444;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-        }
-
-        .footer .social {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .footer .social a {
-            color: #555;
-            font-size: 1rem;
-            transition: color 0.3s;
-        }
-
-        .footer .social a:hover {
-            color: #fff;
-        }
-
-        /* ===== RESPONSIVO ===== */
-        @media (max-width: 700px) {
-            .header .logo { font-size: 2.5rem; }
-            .grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-            .card { padding: 16px 8px; }
-            .card .emoji { font-size: 2rem; }
-            .card .nome { font-size: 0.8rem; }
-            .card .desc { font-size: 0.5rem; }
-            .stats { gap: 15px; }
-            .stats .stat-item .number { font-size: 1.2rem; }
-            .header .logo::after { display: none; }
-        }
-
-        @media (max-width: 500px) {
-            .header .logo { font-size: 2rem; }
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .card { padding: 14px 6px; }
-            .card .emoji { font-size: 1.6rem; }
-            .card .nome { font-size: 0.7rem; }
-            .card .desc { display: none; }
-            .card .badge { display: none; }
-            .stats .stat-item .number { font-size: 1rem; }
-            .stats .stat-item .label { font-size: 0.5rem; }
-        }
-
-        @media (max-width: 380px) {
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-            .card { padding: 10px 4px; border-radius: 12px; }
-            .card .emoji { font-size: 1.3rem; }
-            .card .nome { font-size: 0.6rem; }
-        }
+        .footer { text-align: center; margin-top: 30px; color: #444; font-size: 0.7rem; }
+        @media (max-width: 600px) { .logo h1 { font-size: 2rem; } .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .card { padding: 18px 10px; } .card .emoji { font-size: 2rem; } .card .nome { font-size: 0.85rem; } }
+        @media (max-width: 400px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } .card { padding: 12px 8px; } .card .emoji { font-size: 1.6rem; } .card .nome { font-size: 0.75rem; } .card .desc { display: none; } }
     </style>
 </head>
 <body>
-
     <div class="container">
-
-        <!-- ===== HEADER ===== -->
-        <div class="header">
-            <div class="logo">PLAY 12</div>
-            <div class="subtitle">
-                <span>🎵</span> O melhor da música em um só lugar <span>🎵</span>
-            </div>
+        <div class="logo">
+            <h1>🎵 PLAY 12</h1>
+            <p>Escolha seu estilo e curta!</p>
         </div>
-
-        <!-- ===== STATS ===== -->
-        <div class="stats">
-            <div class="stat-item">
-                <div class="number generos">10</div>
-                <div class="label">Gêneros</div>
-            </div>
-            <div class="stat-item">
-                <div class="number musicas">+500</div>
-                <div class="label">Músicas</div>
-            </div>
-            <div class="stat-item">
-                <div class="number artistas">+200</div>
-                <div class="label">Artistas</div>
-            </div>
-        </div>
-
-        <!-- ===== GRID DE GÊNEROS ===== -->
         <div class="grid">
-
-            <!-- FORRÓ -->
             <a href="https://radiolojasjc-hub.github.io/forrotop/" class="card forro">
-                <span class="badge">🆕</span>
                 <span class="emoji">🪗</span>
                 <span class="nome">FORRÓ</span>
                 <span class="desc">O melhor do forró</span>
             </a>
-
-            <!-- BREGA -->
-            <a href="https://radiolojasjc-hub.github.io/brega/" class="card brega">
+            <a href="#" class="card brega">
                 <span class="emoji">💔</span>
                 <span class="nome">BREGA</span>
                 <span class="desc">Romântico e emocionante</span>
             </a>
-
-            <!-- MPB -->
-            <a href="https://radiolojasjc-hub.github.io/mpb/" class="card mpb">
+            <a href="#" class="card mpb">
                 <span class="emoji">🎸</span>
                 <span class="nome">MPB</span>
                 <span class="desc">Música Popular Brasileira</span>
             </a>
-
-            <!-- SERTANEJO -->
-            <a href="https://radiolojasjc-hub.github.io/sertanejo/" class="card sertanejo">
+            <a href="#" class="card sertanejo">
                 <span class="emoji">🤠</span>
                 <span class="nome">SERTANEJO</span>
                 <span class="desc">Modão e sofrência</span>
             </a>
-
-            <!-- POP -->
-            <a href="https://radiolojasjc-hub.github.io/pop/" class="card pop">
+            <a href="#" class="card pop">
                 <span class="emoji">🎤</span>
                 <span class="nome">POP</span>
                 <span class="desc">Sucessos internacionais</span>
             </a>
-
-            <!-- RELIGIOSA -->
-            <a href="https://radiolojasjc-hub.github.io/religiosa/" class="card religiosa">
+            <a href="#" class="card religiosa">
                 <span class="emoji">🙏</span>
                 <span class="nome">RELIGIOSA</span>
                 <span class="desc">Músicas que edificam</span>
             </a>
-
-            <!-- SAMBA -->
-            <a href="https://radiolojasjc-hub.github.io/samba/" class="card samba">
-                <span class="emoji">🥁</span>
-                <span class="nome">SAMBA</span>
-                <span class="desc">Samba e pagode</span>
-            </a>
-
-            <!-- GLOBAL HITS -->
-            <a href="https://radiolojasjc-hub.github.io/global/" class="card global">
-                <span class="emoji">🌍</span>
-                <span class="nome">GLOBAL HITS</span>
-                <span class="desc">Sucessos mundiais</span>
-            </a>
-
-            <!-- MODA TOP -->
-            <a href="https://radiolojasjc-hub.github.io/moda/" class="card moda">
-                <span class="emoji">🔥</span>
-                <span class="nome">MODA TOP</span>
-                <span class="desc">O que está em alta</span>
-            </a>
-
-            <!-- REGGAE -->
-            <a href="https://radiolojasjc-hub.github.io/reggae/" class="card reggae">
-                <span class="emoji">🌿</span>
-                <span class="nome">REGGAE</span>
-                <span class="desc">Paz e amor</span>
-            </a>
-
         </div>
-
-        <!-- ===== FOOTER ===== -->
-        <div class="footer">
-            <p>PLAY 12 • Todos os direitos reservados</p>
-            <div class="social">
-                <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
-            </div>
-        </div>
-
+        <div class="footer"><p>PLAY 12 • Todos os direitos reservados</p></div>
     </div>
-
 </body>
 </html>
