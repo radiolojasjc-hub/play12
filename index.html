@@ -24,186 +24,156 @@
             width: 100%;
         }
 
-        /* BOTÕES FLUTUANTES - APENAS CORES */
-        .float-buttons {
+        /* BOTÕES FLUTUANTES - SÓ AS BOLINHAS COLORIDAS */
+        .botoes {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 18px;
             padding: 30px 0;
         }
-        .float-btn {
+        .btn {
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.15);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            position: relative;
+            border: 2px solid rgba(255,255,255,0.1);
         }
-        .float-btn:active {
+        .btn:active {
             transform: scale(0.85);
         }
         
         /* CORES DOS BOTÕES */
-        .btn-1 { background: #ff0066; border-color: #ff0066; }
-        .btn-2 { background: #ff3366; border-color: #ff3366; }
-        .btn-3 { background: #ff8800; border-color: #ff8800; }
-        .btn-4 { background: #00ff88; border-color: #00ff88; }
-        .btn-5 { background: #ffdd00; border-color: #ffdd00; }
-        .btn-6 { background: #ff66aa; border-color: #ff66aa; }
-        .btn-7 { background: #aa55ff; border-color: #aa55ff; }
-        .btn-8 { background: #00ccff; border-color: #00ccff; }
-        .btn-9 { background: #ff4400; border-color: #ff4400; }
-        .btn-10 { background: #00ffaa; border-color: #00ffaa; }
-        .btn-11 { background: #ff00aa; border-color: #ff00aa; }
-        .btn-12 { background: #ff3377; border-color: #ff3377; }
-
-        /* EFEITO DE BRILHO */
-        .float-btn::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            background: inherit;
-            opacity: 0.3;
-            filter: blur(15px);
-            z-index: -1;
-        }
+        .cor1 { background: #ff0066; }
+        .cor2 { background: #ff3366; }
+        .cor3 { background: #ff8800; }
+        .cor4 { background: #00ff88; }
+        .cor5 { background: #ffdd00; }
+        .cor6 { background: #ff66aa; }
+        .cor7 { background: #aa55ff; }
+        .cor8 { background: #00ccff; }
+        .cor9 { background: #ff4400; }
+        .cor10 { background: #00ffaa; }
+        .cor11 { background: #ff00aa; }
+        .cor12 { background: #ff3377; }
 
         /* PLAYER COM VÍDEO play12.mp4 */
-        #player-container {
+        #player {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: rgba(0,0,0,0.95);
             padding: 10px 15px;
-            z-index: 1000;
+            z-index: 999;
             display: none;
             border-top: 2px solid rgba(255,255,255,0.1);
         }
-        #player-container.active {
+        #player.ativo {
             display: block;
         }
-        #player-container video {
+        #player video {
             width: 100%;
-            max-height: 250px;
+            max-height: 200px;
             background: #000;
-            border-radius: 10px;
+            border-radius: 8px;
         }
-        #player-container .controles {
+        #player .controles {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 25px;
-            padding: 10px 0 5px 0;
+            padding: 10px 0;
         }
-        #player-container .controles button {
+        #player .controles button {
             background: transparent;
             border: none;
             color: white;
             font-size: 28px;
             cursor: pointer;
-            padding: 5px 10px;
         }
-        #player-container .controles button:active {
+        #player .controles button:active {
             transform: scale(0.8);
         }
-        #player-container .info-musica {
+        #player .nome-musica {
             color: white;
             text-align: center;
             padding: 5px;
-            font-size: 15px;
-            font-family: Arial, sans-serif;
+            font-size: 14px;
         }
-        #fechar-player {
+        #fechar {
             position: absolute;
-            top: 10px;
+            top: 8px;
             right: 15px;
             color: white;
-            font-size: 26px;
+            font-size: 24px;
             cursor: pointer;
             background: none;
             border: none;
         }
 
         @media (max-width: 600px) {
-            .float-btn {
-                width: 55px;
-                height: 55px;
-            }
-            .float-buttons {
-                gap: 15px;
-            }
+            .btn { width: 55px; height: 55px; }
+            .botoes { gap: 14px; }
         }
         @media (max-width: 400px) {
-            .float-btn {
-                width: 45px;
-                height: 45px;
-            }
-            .float-buttons {
-                gap: 12px;
-            }
+            .btn { width: 45px; height: 45px; }
+            .botoes { gap: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="float-buttons" id="botoes">
+        <div class="botoes" id="botoesContainer">
             <!-- BOTÕES GERADOS PELO JS -->
         </div>
     </div>
 
     <!-- PLAYER COM VÍDEO play12.mp4 -->
-    <div id="player-container">
-        <button id="fechar-player">✕</button>
-        <video id="videoPlayer" controls autoplay playsinline>
+    <div id="player">
+        <button id="fechar">✕</button>
+        <video id="video" controls autoplay playsinline>
             <source src="play12.mp4" type="video/mp4">
         </video>
-        <div class="info-musica" id="infoMusica">Carregando...</div>
+        <div class="nome-musica" id="nomeMusica">Carregando...</div>
         <div class="controles">
-            <button id="btn-anterior">⏮</button>
-            <button id="btn-playpause">⏸</button>
-            <button id="btn-proximo">⏭</button>
+            <button id="anterior">⏮</button>
+            <button id="playPause">⏸</button>
+            <button id="proximo">⏭</button>
         </div>
     </div>
 
     <script>
-        // LISTA DE MÚSICAS DO JSON
-        const URL_JSON = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
+        // LISTA DE MÚSICAS
+        const URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
         
-        let listaMusicas = [];
-        let indiceAtual = 0;
-        let estaTocando = false;
+        let musicas = [];
+        let atual = 0;
+        let tocando = false;
         
-        const video = document.getElementById('videoPlayer');
-        const player = document.getElementById('player-container');
-        const infoMusica = document.getElementById('infoMusica');
-        const btnPlayPause = document.getElementById('btn-playpause');
-        const btnAnterior = document.getElementById('btn-anterior');
-        const btnProximo = document.getElementById('btn-proximo');
-        const btnFechar = document.getElementById('fechar-player');
-        const containerBotoes = document.getElementById('botoes');
+        const video = document.getElementById('video');
+        const player = document.getElementById('player');
+        const nomeMusica = document.getElementById('nomeMusica');
+        const btnPlay = document.getElementById('playPause');
+        const btnAnt = document.getElementById('anterior');
+        const btnProx = document.getElementById('proximo');
+        const btnFechar = document.getElementById('fechar');
+        const container = document.getElementById('botoesContainer');
 
-        // CARREGA A LISTA DO JSON
-        fetch(URL_JSON)
+        // BUSCA AS MÚSICAS
+        fetch(URL)
             .then(res => res.json())
             .then(dados => {
                 if (Array.isArray(dados) && dados.length > 0) {
-                    listaMusicas = dados.filter(m => m.url && m.url.trim() !== '');
-                    if (listaMusicas.length > 0) {
-                        criarBotoes();
-                    }
+                    musicas = dados.filter(m => m.url);
+                    if (musicas.length > 0) criarBotoes();
                 }
             })
             .catch(() => {
-                // SE DER ERRO, USA MÚSICA DE EXEMPLO
-                listaMusicas = [{
+                // SE DER ERRO, USA EXEMPLO
+                musicas = [{
                     title: 'Música Exemplo',
                     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
                     genre: 'pop'
@@ -211,113 +181,101 @@
                 criarBotoes();
             });
 
-        // CRIA OS BOTÕES FLUTUANTES (SÓ CORES, SEM TEXTOS)
+        // CRIA OS BOTÕES FLUTUANTES
         function criarBotoes() {
-            // PEGA OS GÊNEROS ÚNICOS
-            const generos = [...new Set(listaMusicas.map(m => m.genre || 'pop'))];
-            
-            // LIMITA A 12 BOTÕES
+            const generos = [...new Set(musicas.map(m => m.genre || 'pop'))];
             const generosLimitados = generos.slice(0, 12);
             
-            containerBotoes.innerHTML = '';
+            container.innerHTML = '';
             
             generosLimitados.forEach((genero, i) => {
                 const btn = document.createElement('div');
-                btn.className = `float-btn btn-${(i % 12) + 1}`;
-                btn.dataset.genero = genero;
+                btn.className = `btn cor${(i % 12) + 1}`;
                 
                 btn.addEventListener('click', function() {
-                    // ENCONTRA A PRIMEIRA MÚSICA DO GÊNERO
-                    const musicasGenero = listaMusicas.filter(m => (m.genre || 'pop') === genero);
+                    const musicasGenero = musicas.filter(m => (m.genre || 'pop') === genero);
                     if (musicasGenero.length > 0) {
-                        const primeiroIndex = listaMusicas.indexOf(musicasGenero[0]);
+                        const primeiroIndex = musicas.indexOf(musicasGenero[0]);
                         if (primeiroIndex !== -1) {
-                            indiceAtual = primeiroIndex;
-                            tocarMusica();
+                            atual = primeiroIndex;
+                            tocar();
                         }
                     }
                 });
                 
-                containerBotoes.appendChild(btn);
+                container.appendChild(btn);
             });
         }
 
-        // TOCA A MÚSICA ATUAL
-        function tocarMusica() {
-            if (listaMusicas.length === 0 || indiceAtual >= listaMusicas.length) return;
+        // TOCA A MÚSICA
+        function tocar() {
+            if (musicas.length === 0 || atual >= musicas.length) return;
             
-            const musica = listaMusicas[indiceAtual];
+            const musica = musicas[atual];
             if (!musica || !musica.url) return;
             
-            // MOSTRA O PLAYER
-            player.classList.add('active');
+            player.classList.add('ativo');
+            nomeMusica.textContent = musica.title || 'Música';
             
-            // ATUALIZA INFORMAÇÃO
-            infoMusica.textContent = musica.title || 'Música';
-            
-            // TOCA O VÍDEO (play12.mp4) COM A MÚSICA
             video.src = musica.url;
             video.load();
             video.play().then(() => {
-                estaTocando = true;
-                btnPlayPause.textContent = '⏸';
+                tocando = true;
+                btnPlay.textContent = '⏸';
             }).catch(() => {
-                estaTocando = false;
-                btnPlayPause.textContent = '▶';
+                tocando = false;
+                btnPlay.textContent = '▶';
             });
         }
 
-        // PRÓXIMA MÚSICA
-        function proximaMusica() {
-            if (listaMusicas.length === 0) return;
-            indiceAtual = (indiceAtual + 1) % listaMusicas.length;
-            tocarMusica();
+        // PRÓXIMA
+        function proxima() {
+            if (musicas.length === 0) return;
+            atual = (atual + 1) % musicas.length;
+            tocar();
         }
 
-        // MÚSICA ANTERIOR
-        function anteriorMusica() {
-            if (listaMusicas.length === 0) return;
-            indiceAtual = (indiceAtual - 1 + listaMusicas.length) % listaMusicas.length;
-            tocarMusica();
+        // ANTERIOR
+        function anterior() {
+            if (musicas.length === 0) return;
+            atual = (atual - 1 + musicas.length) % musicas.length;
+            tocar();
         }
 
         // PLAY/PAUSE
         function playPause() {
-            if (estaTocando) {
+            if (tocando) {
                 video.pause();
-                estaTocando = false;
-                btnPlayPause.textContent = '▶';
+                tocando = false;
+                btnPlay.textContent = '▶';
             } else {
                 video.play().then(() => {
-                    estaTocando = true;
-                    btnPlayPause.textContent = '⏸';
+                    tocando = true;
+                    btnPlay.textContent = '⏸';
                 }).catch(() => {});
             }
         }
 
-        // EVENTOS DOS CONTROLES
-        btnPlayPause.addEventListener('click', playPause);
-        btnProximo.addEventListener('click', proximaMusica);
-        btnAnterior.addEventListener('click', anteriorMusica);
+        // EVENTOS
+        btnPlay.addEventListener('click', playPause);
+        btnProx.addEventListener('click', proxima);
+        btnAnt.addEventListener('click', anterior);
         
         btnFechar.addEventListener('click', function() {
-            player.classList.remove('active');
+            player.classList.remove('ativo');
             video.pause();
-            estaTocando = false;
-            btnPlayPause.textContent = '▶';
+            tocando = false;
+            btnPlay.textContent = '▶';
         });
 
-        // QUANDO O VÍDEO TERMINA, VAI PARA O PRÓXIMO
-        video.addEventListener('ended', proximaMusica);
-
-        // QUANDO O USUÁRIO CLICA NO PLAYER NATIVO
+        video.addEventListener('ended', proxima);
         video.addEventListener('play', () => {
-            estaTocando = true;
-            btnPlayPause.textContent = '⏸';
+            tocando = true;
+            btnPlay.textContent = '⏸';
         });
         video.addEventListener('pause', () => {
-            estaTocando = false;
-            btnPlayPause.textContent = '▶';
+            tocando = false;
+            btnPlay.textContent = '▶';
         });
     </script>
 </body>
