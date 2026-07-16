@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -20,6 +21,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
         }
         .container {
             max-width: 800px;
@@ -40,81 +42,108 @@
         }
         .logo p {
             color: #888;
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-top: 5px;
         }
-        /* Grid de botões flutuantes (sem textos) */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-        .card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 30px;
-            padding: 22px 0;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            border: 2px solid rgba(255,255,255,0.08);
-            transition: all 0.2s ease;
-            cursor: pointer;
+
+        /* Botões flutuantes - estilo circular */
+        .float-buttons {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px;
+            padding: 20px 0;
+        }
+        .float-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1/1;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
-        .card:active {
-            transform: scale(0.92);
+        .float-btn:active {
+            transform: scale(0.85);
         }
-        .card .emoji {
-            font-size: 2.8rem;
-            line-height: 1;
-            margin-bottom: 4px;
+        .float-btn .inner-glow {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.3;
+            filter: blur(8px);
+            transition: 0.3s;
         }
-        .card .nome {
-            display: none; /* esconde nomes, só ícones */
+        .float-btn:hover .inner-glow {
+            opacity: 0.6;
         }
-        .card .desc {
-            display: none; /* esconde descrições */
-        }
-        /* Cores de borda para cada gênero (mantido para referência) */
-        .card.forro { border-color: #ff00aa; }
-        .card.pop { border-color: #ff3366; }
-        .card.sertanejo { border-color: #ff8800; }
-        .card.mpb { border-color: #00ff88; }
-        .card.samba { border-color: #ffdd00; }
-        .card.brega { border-color: #ff66aa; }
-        .card.religiosa { border-color: #aa55ff; }
-        .card.global { border-color: #00ccff; }
-        .card.moda { border-color: #ff4400; }
-        .card.reggae { border-color: #00ffaa; }
-        .card.funk { border-color: #ff0066; }
-        .card.rock { border-color: #ff3377; }
+        /* Cores dos botões */
+        .float-btn.forro { border-color: #ff00aa; }
+        .float-btn.forro .inner-glow { background: #ff00aa; }
 
-        /* vídeo player oculto */
+        .float-btn.pop { border-color: #ff3366; }
+        .float-btn.pop .inner-glow { background: #ff3366; }
+
+        .float-btn.sertanejo { border-color: #ff8800; }
+        .float-btn.sertanejo .inner-glow { background: #ff8800; }
+
+        .float-btn.mpb { border-color: #00ff88; }
+        .float-btn.mpb .inner-glow { background: #00ff88; }
+
+        .float-btn.samba { border-color: #ffdd00; }
+        .float-btn.samba .inner-glow { background: #ffdd00; }
+
+        .float-btn.brega { border-color: #ff66aa; }
+        .float-btn.brega .inner-glow { background: #ff66aa; }
+
+        .float-btn.religiosa { border-color: #aa55ff; }
+        .float-btn.religiosa .inner-glow { background: #aa55ff; }
+
+        .float-btn.global { border-color: #00ccff; }
+        .float-btn.global .inner-glow { background: #00ccff; }
+
+        .float-btn.moda { border-color: #ff4400; }
+        .float-btn.moda .inner-glow { background: #ff4400; }
+
+        .float-btn.reggae { border-color: #00ffaa; }
+        .float-btn.reggae .inner-glow { background: #00ffaa; }
+
+        .float-btn.funk { border-color: #ff0066; }
+        .float-btn.funk .inner-glow { background: #ff0066; }
+
+        .float-btn.rock { border-color: #ff3377; }
+        .float-btn.rock .inner-glow { background: #ff3377; }
+
+        /* Player flutuante */
         #player-container {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(20,20,20,0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
             padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.08);
             z-index: 999;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.8);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.9);
+            transition: all 0.4s ease;
         }
         #player-container.hidden {
-            transform: translateY(80px);
+            transform: translateX(-50%) translateY(100px);
             opacity: 0;
             pointer-events: none;
         }
@@ -126,9 +155,9 @@
             min-width: 0;
         }
         #player-container .info .thumb {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             background: #222;
             background-size: cover;
             background-position: center;
@@ -136,8 +165,8 @@
         }
         #player-container .info .track-name {
             color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 500;
+            font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -145,54 +174,53 @@
         #player-container .controls {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
         #player-container .controls button {
             background: transparent;
             border: none;
             color: white;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 30px;
             transition: 0.2s;
         }
         #player-container .controls button:active {
-            transform: scale(0.85);
+            transform: scale(0.8);
         }
         #player-container .controls .play-btn {
-            background: rgba(255,255,255,0.15);
-            width: 44px;
-            height: 44px;
-            border-radius: 30px;
+            background: rgba(255,255,255,0.12);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        #player-container .controls .play-btn i {
-            font-size: 1.2rem;
-        }
 
-        /* Footer */
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             color: #444;
             font-size: 0.7rem;
         }
-        /* responsivo */
+
         @media (max-width: 600px) {
             .logo h1 { font-size: 2rem; }
-            .grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-            .card { padding: 16px 0; }
-            .card .emoji { font-size: 2.2rem; }
+            .float-btn {
+                width: 60px;
+                height: 60px;
+            }
+            #player-container { padding: 10px 16px; }
+            #player-container .info .track-name { font-size: 0.75rem; }
         }
         @media (max-width: 400px) {
-            .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .card { padding: 12px 0; border-radius: 20px; }
-            .card .emoji { font-size: 1.8rem; }
-            #player-container { padding: 10px 14px; }
-            #player-container .info .track-name { font-size: 0.75rem; }
+            .float-btn {
+                width: 50px;
+                height: 50px;
+            }
+            .float-buttons { gap: 12px; }
         }
     </style>
 </head>
@@ -200,18 +228,20 @@
     <div class="container">
         <div class="logo">
             <h1>🎵 PLAY 12</h1>
-            <p>Toque e curta • sem textos, só som</p>
+            <p>Toque no botão e ouça agora</p>
         </div>
-        <div class="grid" id="genreGrid">
-            <!-- Os botões serão gerados via JavaScript -->
+
+        <div class="float-buttons" id="buttonContainer">
+            <!-- Gerado via JS -->
         </div>
-        <div class="footer"><p>PLAY 12 • direto da lista</p></div>
+
+        <div class="footer"><p>PLAY 12 • Todos os direitos reservados</p></div>
     </div>
 
-    <!-- Player flutuante (inicialmente oculto) -->
+    <!-- Player flutuante -->
     <div id="player-container" class="hidden">
         <div class="info">
-            <div class="thumb" id="thumb" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyMjIiLz48L3N2Zz4=');"></div>
+            <div class="thumb" id="thumb"></div>
             <span class="track-name" id="trackName">Nenhuma música</span>
         </div>
         <div class="controls">
@@ -221,59 +251,42 @@
         </div>
     </div>
 
-    <!-- Áudio (HTML5) -->
     <audio id="audioPlayer" style="display:none;"></audio>
 
     <script>
         (function() {
-            // ------- CONFIG -------
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
-            // Mapeamento de gênero -> ícone (sem nomes)
-            const GENRE_ICONS = {
-                'forro': '🪗',
-                'pop': '🎤',
-                'sertanejo': '🤠',
-                'mpb': '🎸',
-                'samba': '🥁',
-                'brega': '💔',
-                'religiosa': '🙏',
-                'global': '🌍',
-                'moda': '🔥',
-                'reggae': '🌿',
-                'funk': '🕺',
-                'rock': '🎸'
-            };
-            // Cores para cada gênero (borda)
-            const GENRE_COLORS = {
-                'forro': '#ff00aa',
-                'pop': '#ff3366',
-                'sertanejo': '#ff8800',
-                'mpb': '#00ff88',
-                'samba': '#ffdd00',
-                'brega': '#ff66aa',
-                'religiosa': '#aa55ff',
-                'global': '#00ccff',
-                'moda': '#ff4400',
-                'reggae': '#00ffaa',
-                'funk': '#ff0066',
-                'rock': '#ff3377'
-            };
 
-            // Estado
-            let allSongs = [];               // array de músicas { genre, title, url, cover? }
-            let currentGenre = 'forro';       // gênero ativo
+            // Lista de gêneros e cores
+            const GENRES = [
+                { id: 'forro', color: '#ff00aa' },
+                { id: 'pop', color: '#ff3366' },
+                { id: 'sertanejo', color: '#ff8800' },
+                { id: 'mpb', color: '#00ff88' },
+                { id: 'samba', color: '#ffdd00' },
+                { id: 'brega', color: '#ff66aa' },
+                { id: 'religiosa', color: '#aa55ff' },
+                { id: 'global', color: '#00ccff' },
+                { id: 'moda', color: '#ff4400' },
+                { id: 'reggae', color: '#00ffaa' },
+                { id: 'funk', color: '#ff0066' },
+                { id: 'rock', color: '#ff3377' }
+            ];
+
+            let allSongs = [];
+            let currentGenre = 'pop';
             let currentIndex = 0;
             let isPlaying = false;
-            let audio = document.getElementById('audioPlayer');
+            const audio = document.getElementById('audioPlayer');
             const playerContainer = document.getElementById('player-container');
             const trackNameEl = document.getElementById('trackName');
             const thumbEl = document.getElementById('thumb');
             const playBtn = document.getElementById('playBtn');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            const grid = document.getElementById('genreGrid');
+            const buttonContainer = document.getElementById('buttonContainer');
 
-            // ------- FUNÇÕES -------
+            // Carrega playlist
             function loadPlaylist() {
                 fetch(PLAYLIST_URL)
                     .then(res => {
@@ -282,83 +295,66 @@
                     })
                     .then(data => {
                         if (Array.isArray(data) && data.length > 0) {
-                            allSongs = data.map(item => ({
-                                genre: item.genre || 'pop',
-                                title: item.title || 'Música sem título',
-                                url: item.url || '',
-                                cover: item.cover || ''
-                            }));
-                            // Filtra apenas músicas com URL
-                            allSongs = allSongs.filter(s => s.url && s.url.trim() !== '');
-                            if (allSongs.length === 0) {
-                                // fallback
-                                allSongs = [{
-                                    genre: 'pop',
-                                    title: 'Exemplo',
-                                    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-                                    cover: ''
-                                }];
-                            }
-                            // Define gênero padrão = primeiro da lista
-                            if (allSongs.length) {
-                                currentGenre = allSongs[0].genre || 'pop';
-                                currentIndex = 0;
-                                updatePlayerInfo();
-                            }
-                            renderGenreButtons();
+                            allSongs = data
+                                .filter(s => s.url && s.url.trim() !== '')
+                                .map(s => ({
+                                    genre: s.genre || 'pop',
+                                    title: s.title || 'Música',
+                                    url: s.url,
+                                    cover: s.cover || ''
+                                }));
+                            if (allSongs.length === 0) throw new Error('Lista vazia');
+                            currentGenre = allSongs[0].genre || 'pop';
+                            currentIndex = 0;
+                            updatePlayerInfo();
+                            createButtons();
                         } else {
                             throw new Error('Lista vazia');
                         }
                     })
-                    .catch(err => {
-                        console.warn('Erro ao carregar playlist, usando fallback:', err);
-                        // Fallback com 1 música de exemplo
+                    .catch(() => {
+                        // Fallback
                         allSongs = [{
                             genre: 'pop',
-                            title: 'Música de exemplo',
+                            title: 'Exemplo',
                             url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
                             cover: ''
                         }];
                         currentGenre = 'pop';
                         currentIndex = 0;
                         updatePlayerInfo();
-                        renderGenreButtons();
+                        createButtons();
                     });
             }
 
-            // Gera botões de gênero (ícones flutuantes)
-            function renderGenreButtons() {
-                // Pega lista de gêneros únicos a partir das músicas carregadas
-                const genres = [...new Set(allSongs.map(s => s.genre))];
-                if (genres.length === 0) {
-                    // fallback com todos os gêneros
-                    const allGenres = Object.keys(GENRE_ICONS);
-                    genres.push(...allGenres);
-                }
-                grid.innerHTML = '';
-                genres.forEach(genre => {
-                    const card = document.createElement('div');
-                    card.className = `card ${genre}`;
-                    // cor da borda
-                    const color = GENRE_COLORS[genre] || '#ffffff';
-                    card.style.borderColor = color;
-                    // ícone
-                    const icon = GENRE_ICONS[genre] || '🎵';
-                    card.innerHTML = `<span class="emoji">${icon}</span>`;
-                    // evento de clique: toca o primeiro do gênero
-                    card.addEventListener('click', function(e) {
+            // Cria botões flutuantes (apenas cores, sem textos)
+            function createButtons() {
+                buttonContainer.innerHTML = '';
+                // Pega gêneros únicos das músicas
+                const genresInSongs = [...new Set(allSongs.map(s => s.genre))];
+                // Se não tiver gêneros, usa todos
+                const genresToShow = genresInSongs.length > 0 ? genresInSongs : GENRES.map(g => g.id);
+
+                genresToShow.forEach(genreId => {
+                    const btn = document.createElement('div');
+                    btn.className = `float-btn ${genreId}`;
+                    // Glow interno
+                    const glow = document.createElement('div');
+                    glow.className = 'inner-glow';
+                    btn.appendChild(glow);
+                    // Evento de clique
+                    btn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        playGenre(genre);
+                        playGenre(genreId);
                     });
-                    grid.appendChild(card);
+                    buttonContainer.appendChild(btn);
                 });
             }
 
-            // Toca uma música de um gênero específico (primeira da lista)
+            // Toca o primeiro do gênero
             function playGenre(genre) {
                 const songs = allSongs.filter(s => s.genre === genre);
                 if (songs.length === 0) {
-                    // se não tiver música desse gênero, tenta tocar qualquer uma
                     if (allSongs.length) {
                         currentGenre = allSongs[0].genre;
                         currentIndex = 0;
@@ -366,10 +362,8 @@
                     }
                     return;
                 }
-                // Encontra o índice da primeira música desse gênero no array allSongs
                 const firstIndex = allSongs.findIndex(s => s.genre === genre);
                 if (firstIndex === -1) {
-                    // fallback
                     if (allSongs.length) {
                         currentGenre = allSongs[0].genre;
                         currentIndex = 0;
@@ -388,32 +382,28 @@
                 }
                 const song = allSongs[currentIndex];
                 if (!song || !song.url) {
-                    // tenta próximo
                     nextTrack();
                     return;
                 }
-                // Atualiza info
+
                 trackNameEl.textContent = song.title || 'Sem título';
                 if (song.cover && song.cover.startsWith('http')) {
                     thumbEl.style.backgroundImage = `url('${song.cover}')`;
                 } else {
-                    thumbEl.style.backgroundImage = `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyMjIiLz48L3N2Zz4=')`;
+                    thumbEl.style.backgroundImage = 'none';
+                    thumbEl.style.backgroundColor = '#222';
                 }
-                // Mostra player
                 playerContainer.classList.remove('hidden');
 
-                // Carrega e toca
                 audio.src = song.url;
                 audio.load();
                 audio.play().then(() => {
                     isPlaying = true;
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                }).catch(e => {
-                    console.warn('Erro ao reproduzir:', e);
+                }).catch(() => {
                     isPlaying = false;
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                 });
-                // Atualiza genero atual
                 currentGenre = song.genre || currentGenre;
             }
 
@@ -424,32 +414,22 @@
                     if (song.cover && song.cover.startsWith('http')) {
                         thumbEl.style.backgroundImage = `url('${song.cover}')`;
                     } else {
-                        thumbEl.style.backgroundImage = `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyMjIiLz48L3N2Zz4=')`;
+                        thumbEl.style.backgroundImage = 'none';
+                        thumbEl.style.backgroundColor = '#222';
                     }
                 }
             }
 
             function nextTrack() {
                 if (!allSongs.length) return;
-                // Procura próximo do mesmo gênero, se não tiver, volta ao primeiro do gênero
                 let nextIndex = currentIndex + 1;
                 if (nextIndex >= allSongs.length) {
-                    // volta ao início do gênero atual
                     const firstOfGenre = allSongs.findIndex(s => s.genre === currentGenre);
-                    if (firstOfGenre !== -1) {
-                        currentIndex = firstOfGenre;
-                    } else {
-                        currentIndex = 0;
-                    }
+                    currentIndex = firstOfGenre !== -1 ? firstOfGenre : 0;
                 } else {
-                    // verifica se o próximo é do mesmo gênero, senão pula para o primeiro do gênero
                     if (allSongs[nextIndex].genre !== currentGenre) {
                         const firstOfGenre = allSongs.findIndex(s => s.genre === currentGenre);
-                        if (firstOfGenre !== -1) {
-                            currentIndex = firstOfGenre;
-                        } else {
-                            currentIndex = 0;
-                        }
+                        currentIndex = firstOfGenre !== -1 ? firstOfGenre : 0;
                     } else {
                         currentIndex = nextIndex;
                     }
@@ -461,21 +441,12 @@
                 if (!allSongs.length) return;
                 let prevIndex = currentIndex - 1;
                 if (prevIndex < 0) {
-                    // último do gênero atual
-                    const lastOfGenre = allSongs.lastIndexOf(allSongs.find(s => s.genre === currentGenre));
-                    if (lastOfGenre !== -1) {
-                        currentIndex = lastOfGenre;
-                    } else {
-                        currentIndex = 0;
-                    }
+                    const lastOfGenre = allSongs.map((s, i) => s.genre === currentGenre ? i : -1).filter(i => i !== -1);
+                    currentIndex = lastOfGenre.length > 0 ? lastOfGenre[lastOfGenre.length - 1] : 0;
                 } else {
                     if (allSongs[prevIndex].genre !== currentGenre) {
-                        const lastOfGenre = allSongs.lastIndexOf(allSongs.find(s => s.genre === currentGenre));
-                        if (lastOfGenre !== -1) {
-                            currentIndex = lastOfGenre;
-                        } else {
-                            currentIndex = 0;
-                        }
+                        const lastOfGenre = allSongs.map((s, i) => s.genre === currentGenre ? i : -1).filter(i => i !== -1);
+                        currentIndex = lastOfGenre.length > 0 ? lastOfGenre[lastOfGenre.length - 1] : 0;
                     } else {
                         currentIndex = prevIndex;
                     }
@@ -490,40 +461,27 @@
                     isPlaying = false;
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
                 } else {
-                    audio.play().catch(e => {});
+                    audio.play().catch(() => {});
                     isPlaying = true;
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 }
             });
 
-            nextBtn.addEventListener('click', function() {
-                nextTrack();
-            });
+            nextBtn.addEventListener('click', nextTrack);
+            prevBtn.addEventListener('click', prevTrack);
 
-            prevBtn.addEventListener('click', function() {
-                prevTrack();
-            });
-
-            audio.addEventListener('ended', function() {
-                nextTrack();
-            });
-
-            audio.addEventListener('play', function() {
+            audio.addEventListener('ended', nextTrack);
+            audio.addEventListener('play', () => {
                 isPlaying = true;
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
             });
-
-            audio.addEventListener('pause', function() {
+            audio.addEventListener('pause', () => {
                 isPlaying = false;
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
             });
+            audio.addEventListener('error', nextTrack);
 
-            audio.addEventListener('error', function(e) {
-                console.warn('Erro no áudio, pulando para próximo');
-                nextTrack();
-            });
-
-            // Inicializa
+            // Inicia
             loadPlaylist();
         })();
     </script>
