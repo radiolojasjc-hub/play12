@@ -22,56 +22,56 @@
         .container {
             max-width: 800px;
             width: 100%;
-            position: relative;
         }
 
-        /* BOTÕES FLUTUANTES - sem textos, só cores */
+        /* BOTÕES FLUTUANTES - APENAS CORES */
         .float-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            padding: 20px 0;
+            gap: 20px;
+            padding: 30px 0;
         }
         .float-btn {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.15);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             position: relative;
         }
         .float-btn:active {
             transform: scale(0.85);
         }
-        /* Cores dos botões */
-        .float-btn.c1 { background: #ff00aa; border-color: #ff00aa; }
-        .float-btn.c2 { background: #ff3366; border-color: #ff3366; }
-        .float-btn.c3 { background: #ff8800; border-color: #ff8800; }
-        .float-btn.c4 { background: #00ff88; border-color: #00ff88; }
-        .float-btn.c5 { background: #ffdd00; border-color: #ffdd00; }
-        .float-btn.c6 { background: #ff66aa; border-color: #ff66aa; }
-        .float-btn.c7 { background: #aa55ff; border-color: #aa55ff; }
-        .float-btn.c8 { background: #00ccff; border-color: #00ccff; }
-        .float-btn.c9 { background: #ff4400; border-color: #ff4400; }
-        .float-btn.c10 { background: #00ffaa; border-color: #00ffaa; }
-        .float-btn.c11 { background: #ff0066; border-color: #ff0066; }
-        .float-btn.c12 { background: #ff3377; border-color: #ff3377; }
+        
+        /* CORES DOS BOTÕES */
+        .btn-1 { background: #ff0066; border-color: #ff0066; }
+        .btn-2 { background: #ff3366; border-color: #ff3366; }
+        .btn-3 { background: #ff8800; border-color: #ff8800; }
+        .btn-4 { background: #00ff88; border-color: #00ff88; }
+        .btn-5 { background: #ffdd00; border-color: #ffdd00; }
+        .btn-6 { background: #ff66aa; border-color: #ff66aa; }
+        .btn-7 { background: #aa55ff; border-color: #aa55ff; }
+        .btn-8 { background: #00ccff; border-color: #00ccff; }
+        .btn-9 { background: #ff4400; border-color: #ff4400; }
+        .btn-10 { background: #00ffaa; border-color: #00ffaa; }
+        .btn-11 { background: #ff00aa; border-color: #ff00aa; }
+        .btn-12 { background: #ff3377; border-color: #ff3377; }
 
-        /* Efeito de brilho */
+        /* EFEITO DE BRILHO */
         .float-btn::after {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
             border-radius: 50%;
             background: inherit;
             opacity: 0.3;
-            filter: blur(10px);
+            filter: blur(15px);
             z-index: -1;
         }
 
@@ -82,7 +82,7 @@
             left: 0;
             right: 0;
             background: rgba(0,0,0,0.95);
-            padding: 10px;
+            padding: 10px 15px;
             z-index: 1000;
             display: none;
             border-top: 2px solid rgba(255,255,255,0.1);
@@ -92,51 +92,44 @@
         }
         #player-container video {
             width: 100%;
-            max-height: 200px;
+            max-height: 250px;
             background: #000;
-            border-radius: 8px;
+            border-radius: 10px;
         }
-        #player-container .controls {
+        #player-container .controles {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            padding: 10px 0;
+            gap: 25px;
+            padding: 10px 0 5px 0;
         }
-        #player-container .controls button {
+        #player-container .controles button {
             background: transparent;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             padding: 5px 10px;
-            border-radius: 50%;
-            transition: 0.2s;
         }
-        #player-container .controls button:active {
+        #player-container .controles button:active {
             transform: scale(0.8);
-            background: rgba(255,255,255,0.1);
         }
-        #player-container .track-info {
+        #player-container .info-musica {
             color: white;
             text-align: center;
             padding: 5px;
-            font-size: 14px;
+            font-size: 15px;
             font-family: Arial, sans-serif;
         }
-        #close-player {
+        #fechar-player {
             position: absolute;
             top: 10px;
             right: 15px;
             color: white;
-            font-size: 24px;
+            font-size: 26px;
             cursor: pointer;
             background: none;
             border: none;
-            padding: 5px 10px;
-        }
-        #close-player:active {
-            transform: scale(0.8);
         }
 
         @media (max-width: 600px) {
@@ -145,7 +138,7 @@
                 height: 55px;
             }
             .float-buttons {
-                gap: 12px;
+                gap: 15px;
             }
         }
         @media (max-width: 400px) {
@@ -154,73 +147,63 @@
                 height: 45px;
             }
             .float-buttons {
-                gap: 10px;
-            }
-            #player-container video {
-                max-height: 150px;
+                gap: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="float-buttons" id="buttonContainer">
-            <!-- Botões gerados pelo JavaScript -->
+        <div class="float-buttons" id="botoes">
+            <!-- BOTÕES GERADOS PELO JS -->
         </div>
     </div>
 
     <!-- PLAYER COM VÍDEO play12.mp4 -->
     <div id="player-container">
-        <button id="close-player">✕</button>
+        <button id="fechar-player">✕</button>
         <video id="videoPlayer" controls autoplay playsinline>
             <source src="play12.mp4" type="video/mp4">
         </video>
-        <div class="track-info" id="trackInfo">Carregando...</div>
-        <div class="controls">
-            <button id="prevBtn">⏮</button>
-            <button id="playPauseBtn">⏸</button>
-            <button id="nextBtn">⏭</button>
+        <div class="info-musica" id="infoMusica">Carregando...</div>
+        <div class="controles">
+            <button id="btn-anterior">⏮</button>
+            <button id="btn-playpause">⏸</button>
+            <button id="btn-proximo">⏭</button>
         </div>
     </div>
 
     <script>
-        // Lista de cores para os botões (12 gêneros)
-        const cores = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'];
+        // LISTA DE MÚSICAS DO JSON
+        const URL_JSON = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
         
-        // Carrega a lista de músicas do JSON
-        const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
+        let listaMusicas = [];
+        let indiceAtual = 0;
+        let estaTocando = false;
         
-        let musicas = [];
-        let indexAtual = 0;
-        let tocando = false;
-        
-        const videoPlayer = document.getElementById('videoPlayer');
-        const playerContainer = document.getElementById('player-container');
-        const trackInfo = document.getElementById('trackInfo');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const closeBtn = document.getElementById('close-player');
-        const buttonContainer = document.getElementById('buttonContainer');
+        const video = document.getElementById('videoPlayer');
+        const player = document.getElementById('player-container');
+        const infoMusica = document.getElementById('infoMusica');
+        const btnPlayPause = document.getElementById('btn-playpause');
+        const btnAnterior = document.getElementById('btn-anterior');
+        const btnProximo = document.getElementById('btn-proximo');
+        const btnFechar = document.getElementById('fechar-player');
+        const containerBotoes = document.getElementById('botoes');
 
-        // Busca a lista de músicas
-        fetch(PLAYLIST_URL)
-            .then(res => {
-                if (!res.ok) throw new Error('Erro ao buscar playlist');
-                return res.json();
-            })
-            .then(data => {
-                if (Array.isArray(data) && data.length > 0) {
-                    musicas = data.filter(m => m.url && m.url.trim() !== '');
-                    if (musicas.length === 0) throw new Error('Lista vazia');
-                    criarBotoes();
-                } else {
-                    throw new Error('Dados inválidos');
+        // CARREGA A LISTA DO JSON
+        fetch(URL_JSON)
+            .then(res => res.json())
+            .then(dados => {
+                if (Array.isArray(dados) && dados.length > 0) {
+                    listaMusicas = dados.filter(m => m.url && m.url.trim() !== '');
+                    if (listaMusicas.length > 0) {
+                        criarBotoes();
+                    }
                 }
             })
             .catch(() => {
-                // Fallback com música exemplo
-                musicas = [{
+                // SE DER ERRO, USA MÚSICA DE EXEMPLO
+                listaMusicas = [{
                     title: 'Música Exemplo',
                     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
                     genre: 'pop'
@@ -228,118 +211,114 @@
                 criarBotoes();
             });
 
-        // Cria os botões flutuantes (sem textos, só cores)
+        // CRIA OS BOTÕES FLUTUANTES (SÓ CORES, SEM TEXTOS)
         function criarBotoes() {
-            // Pega os gêneros únicos
-            const generos = [...new Set(musicas.map(m => m.genre || 'pop'))];
+            // PEGA OS GÊNEROS ÚNICOS
+            const generos = [...new Set(listaMusicas.map(m => m.genre || 'pop'))];
             
-            // Limita a 12 botões
+            // LIMITA A 12 BOTÕES
             const generosLimitados = generos.slice(0, 12);
             
-            buttonContainer.innerHTML = '';
+            containerBotoes.innerHTML = '';
             
             generosLimitados.forEach((genero, i) => {
                 const btn = document.createElement('div');
-                btn.className = `float-btn ${cores[i % cores.length]}`;
+                btn.className = `float-btn btn-${(i % 12) + 1}`;
                 btn.dataset.genero = genero;
-                btn.dataset.index = i;
                 
                 btn.addEventListener('click', function() {
-                    // Toca a primeira música deste gênero
-                    const musicasGenero = musicas.filter(m => (m.genre || 'pop') === genero);
+                    // ENCONTRA A PRIMEIRA MÚSICA DO GÊNERO
+                    const musicasGenero = listaMusicas.filter(m => (m.genre || 'pop') === genero);
                     if (musicasGenero.length > 0) {
-                        const primeiroIndex = musicas.indexOf(musicasGenero[0]);
+                        const primeiroIndex = listaMusicas.indexOf(musicasGenero[0]);
                         if (primeiroIndex !== -1) {
-                            indexAtual = primeiroIndex;
+                            indiceAtual = primeiroIndex;
                             tocarMusica();
                         }
                     }
                 });
                 
-                buttonContainer.appendChild(btn);
+                containerBotoes.appendChild(btn);
             });
         }
 
-        // Toca a música atual
+        // TOCA A MÚSICA ATUAL
         function tocarMusica() {
-            if (musicas.length === 0 || indexAtual >= musicas.length) return;
+            if (listaMusicas.length === 0 || indiceAtual >= listaMusicas.length) return;
             
-            const musica = musicas[indexAtual];
+            const musica = listaMusicas[indiceAtual];
             if (!musica || !musica.url) return;
             
-            // Mostra o player
-            playerContainer.classList.add('active');
+            // MOSTRA O PLAYER
+            player.classList.add('active');
             
-            // Atualiza info
-            trackInfo.textContent = musica.title || 'Música';
+            // ATUALIZA INFORMAÇÃO
+            infoMusica.textContent = musica.title || 'Música';
             
-            // Toca o vídeo/áudio
-            videoPlayer.src = musica.url;
-            videoPlayer.load();
-            videoPlayer.play().then(() => {
-                tocando = true;
-                playPauseBtn.textContent = '⏸';
+            // TOCA O VÍDEO (play12.mp4) COM A MÚSICA
+            video.src = musica.url;
+            video.load();
+            video.play().then(() => {
+                estaTocando = true;
+                btnPlayPause.textContent = '⏸';
             }).catch(() => {
-                tocando = false;
-                playPauseBtn.textContent = '▶';
+                estaTocando = false;
+                btnPlayPause.textContent = '▶';
             });
         }
 
-        // Próxima música
+        // PRÓXIMA MÚSICA
         function proximaMusica() {
-            if (musicas.length === 0) return;
-            indexAtual = (indexAtual + 1) % musicas.length;
+            if (listaMusicas.length === 0) return;
+            indiceAtual = (indiceAtual + 1) % listaMusicas.length;
             tocarMusica();
         }
 
-        // Música anterior
-        function musicaAnterior() {
-            if (musicas.length === 0) return;
-            indexAtual = (indexAtual - 1 + musicas.length) % musicas.length;
+        // MÚSICA ANTERIOR
+        function anteriorMusica() {
+            if (listaMusicas.length === 0) return;
+            indiceAtual = (indiceAtual - 1 + listaMusicas.length) % listaMusicas.length;
             tocarMusica();
         }
 
-        // Play/Pause
-        function togglePlay() {
-            if (tocando) {
-                videoPlayer.pause();
-                tocando = false;
-                playPauseBtn.textContent = '▶';
+        // PLAY/PAUSE
+        function playPause() {
+            if (estaTocando) {
+                video.pause();
+                estaTocando = false;
+                btnPlayPause.textContent = '▶';
             } else {
-                videoPlayer.play().then(() => {
-                    tocando = true;
-                    playPauseBtn.textContent = '⏸';
+                video.play().then(() => {
+                    estaTocando = true;
+                    btnPlayPause.textContent = '⏸';
                 }).catch(() => {});
             }
         }
 
-        // Eventos dos controles
-        playPauseBtn.addEventListener('click', togglePlay);
-        nextBtn.addEventListener('click', proximaMusica);
-        prevBtn.addEventListener('click', musicaAnterior);
+        // EVENTOS DOS CONTROLES
+        btnPlayPause.addEventListener('click', playPause);
+        btnProximo.addEventListener('click', proximaMusica);
+        btnAnterior.addEventListener('click', anteriorMusica);
         
-        closeBtn.addEventListener('click', function() {
-            playerContainer.classList.remove('active');
-            videoPlayer.pause();
-            tocando = false;
-            playPauseBtn.textContent = '▶';
+        btnFechar.addEventListener('click', function() {
+            player.classList.remove('active');
+            video.pause();
+            estaTocando = false;
+            btnPlayPause.textContent = '▶';
         });
 
-        // Quando o vídeo termina, vai para o próximo
-        videoPlayer.addEventListener('ended', proximaMusica);
+        // QUANDO O VÍDEO TERMINA, VAI PARA O PRÓXIMO
+        video.addEventListener('ended', proximaMusica);
 
-        // Quando o usuário clica no player nativo
-        videoPlayer.addEventListener('play', () => {
-            tocando = true;
-            playPauseBtn.textContent = '⏸';
+        // QUANDO O USUÁRIO CLICA NO PLAYER NATIVO
+        video.addEventListener('play', () => {
+            estaTocando = true;
+            btnPlayPause.textContent = '⏸';
         });
-        videoPlayer.addEventListener('pause', () => {
-            tocando = false;
-            playPauseBtn.textContent = '▶';
+        video.addEventListener('pause', () => {
+            estaTocando = false;
+            btnPlayPause.textContent = '▶';
         });
-
-        // Carrega o vídeo play12.mp4 automaticamente
-        // O vídeo já está no source do elemento video
     </script>
 </body>
 </html>
