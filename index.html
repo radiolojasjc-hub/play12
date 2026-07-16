@@ -1,17 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PLAY 12 • Música Direto</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>PLAY 12</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         body {
@@ -21,469 +18,306 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-x: hidden;
         }
         .container {
             max-width: 800px;
             width: 100%;
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .logo h1 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00f3ff, #ff2d7f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-        }
-        .logo p {
-            color: #888;
-            font-size: 0.9rem;
-            margin-top: 5px;
+            position: relative;
         }
 
-        /* Botões flutuantes - estilo circular */
+        /* BOTÕES FLUTUANTES - sem textos, só cores */
         .float-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 18px;
+            gap: 15px;
             padding: 20px 0;
         }
         .float-btn {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
             border: 2px solid rgba(255,255,255,0.1);
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative;
         }
         .float-btn:active {
             transform: scale(0.85);
         }
-        .float-btn .inner-glow {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.3;
-            filter: blur(8px);
-            transition: 0.3s;
-        }
-        .float-btn:hover .inner-glow {
-            opacity: 0.6;
-        }
         /* Cores dos botões */
-        .float-btn.forro { border-color: #ff00aa; }
-        .float-btn.forro .inner-glow { background: #ff00aa; }
+        .float-btn.c1 { background: #ff00aa; border-color: #ff00aa; }
+        .float-btn.c2 { background: #ff3366; border-color: #ff3366; }
+        .float-btn.c3 { background: #ff8800; border-color: #ff8800; }
+        .float-btn.c4 { background: #00ff88; border-color: #00ff88; }
+        .float-btn.c5 { background: #ffdd00; border-color: #ffdd00; }
+        .float-btn.c6 { background: #ff66aa; border-color: #ff66aa; }
+        .float-btn.c7 { background: #aa55ff; border-color: #aa55ff; }
+        .float-btn.c8 { background: #00ccff; border-color: #00ccff; }
+        .float-btn.c9 { background: #ff4400; border-color: #ff4400; }
+        .float-btn.c10 { background: #00ffaa; border-color: #00ffaa; }
+        .float-btn.c11 { background: #ff0066; border-color: #ff0066; }
+        .float-btn.c12 { background: #ff3377; border-color: #ff3377; }
 
-        .float-btn.pop { border-color: #ff3366; }
-        .float-btn.pop .inner-glow { background: #ff3366; }
+        /* Efeito de brilho */
+        .float-btn::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.3;
+            filter: blur(10px);
+            z-index: -1;
+        }
 
-        .float-btn.sertanejo { border-color: #ff8800; }
-        .float-btn.sertanejo .inner-glow { background: #ff8800; }
-
-        .float-btn.mpb { border-color: #00ff88; }
-        .float-btn.mpb .inner-glow { background: #00ff88; }
-
-        .float-btn.samba { border-color: #ffdd00; }
-        .float-btn.samba .inner-glow { background: #ffdd00; }
-
-        .float-btn.brega { border-color: #ff66aa; }
-        .float-btn.brega .inner-glow { background: #ff66aa; }
-
-        .float-btn.religiosa { border-color: #aa55ff; }
-        .float-btn.religiosa .inner-glow { background: #aa55ff; }
-
-        .float-btn.global { border-color: #00ccff; }
-        .float-btn.global .inner-glow { background: #00ccff; }
-
-        .float-btn.moda { border-color: #ff4400; }
-        .float-btn.moda .inner-glow { background: #ff4400; }
-
-        .float-btn.reggae { border-color: #00ffaa; }
-        .float-btn.reggae .inner-glow { background: #00ffaa; }
-
-        .float-btn.funk { border-color: #ff0066; }
-        .float-btn.funk .inner-glow { background: #ff0066; }
-
-        .float-btn.rock { border-color: #ff3377; }
-        .float-btn.rock .inner-glow { background: #ff3377; }
-
-        /* Player flutuante */
+        /* PLAYER COM VÍDEO */
         #player-container {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            background: rgba(20,20,20,0.95);
-            backdrop-filter: blur(12px);
-            border-radius: 50px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid rgba(255,255,255,0.08);
-            z-index: 999;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.9);
-            transition: all 0.4s ease;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            padding: 10px;
+            z-index: 1000;
+            display: none;
         }
-        #player-container.hidden {
-            transform: translateX(-50%) translateY(100px);
-            opacity: 0;
-            pointer-events: none;
+        #player-container.active {
+            display: block;
         }
-        #player-container .info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            min-width: 0;
-        }
-        #player-container .info .thumb {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: #222;
-            background-size: cover;
-            background-position: center;
-            flex-shrink: 0;
-        }
-        #player-container .info .track-name {
-            color: white;
-            font-weight: 500;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        #player-container video {
+            width: 100%;
+            max-height: 200px;
+            background: #000;
+            border-radius: 8px;
         }
         #player-container .controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px 0;
         }
         #player-container .controls button {
             background: transparent;
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 24px;
             cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 30px;
-            transition: 0.2s;
         }
         #player-container .controls button:active {
             transform: scale(0.8);
         }
-        #player-container .controls .play-btn {
-            background: rgba(255,255,255,0.12);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .footer {
+        #player-container .track-info {
+            color: white;
             text-align: center;
-            margin-top: 30px;
-            color: #444;
-            font-size: 0.7rem;
+            padding: 5px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+        #close-player {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
         @media (max-width: 600px) {
-            .logo h1 { font-size: 2rem; }
             .float-btn {
-                width: 60px;
-                height: 60px;
+                width: 55px;
+                height: 55px;
             }
-            #player-container { padding: 10px 16px; }
-            #player-container .info .track-name { font-size: 0.75rem; }
+            .float-buttons {
+                gap: 12px;
+            }
         }
         @media (max-width: 400px) {
             .float-btn {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
-            .float-buttons { gap: 12px; }
+            .float-buttons {
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">
-            <h1>🎵 PLAY 12</h1>
-            <p>Toque no botão e ouça agora</p>
-        </div>
-
         <div class="float-buttons" id="buttonContainer">
-            <!-- Gerado via JS -->
+            <!-- Botões gerados pelo JavaScript -->
         </div>
-
-        <div class="footer"><p>PLAY 12 • Todos os direitos reservados</p></div>
     </div>
 
-    <!-- Player flutuante -->
-    <div id="player-container" class="hidden">
-        <div class="info">
-            <div class="thumb" id="thumb"></div>
-            <span class="track-name" id="trackName">Nenhuma música</span>
-        </div>
+    <!-- PLAYER COM VÍDEO -->
+    <div id="player-container">
+        <button id="close-player">✕</button>
+        <video id="videoPlayer" controls autoplay>
+            <source src="" type="video/mp4">
+        </video>
+        <div class="track-info" id="trackInfo">Carregando...</div>
         <div class="controls">
-            <button id="prevBtn"><i class="fas fa-step-backward"></i></button>
-            <button class="play-btn" id="playBtn"><i class="fas fa-play"></i></button>
-            <button id="nextBtn"><i class="fas fa-step-forward"></i></button>
+            <button id="prevBtn">⏮</button>
+            <button id="playPauseBtn">⏸</button>
+            <button id="nextBtn">⏭</button>
         </div>
     </div>
-
-    <audio id="audioPlayer" style="display:none;"></audio>
 
     <script>
-        (function() {
-            const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
+        // Lista de cores para os botões (12 gêneros)
+        const cores = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'];
+        
+        // Carrega a lista de músicas do JSON
+        const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
+        
+        let musicas = [];
+        let indexAtual = 0;
+        let tocando = false;
+        
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playerContainer = document.getElementById('player-container');
+        const trackInfo = document.getElementById('trackInfo');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const closeBtn = document.getElementById('close-player');
+        const buttonContainer = document.getElementById('buttonContainer');
 
-            // Lista de gêneros e cores
-            const GENRES = [
-                { id: 'forro', color: '#ff00aa' },
-                { id: 'pop', color: '#ff3366' },
-                { id: 'sertanejo', color: '#ff8800' },
-                { id: 'mpb', color: '#00ff88' },
-                { id: 'samba', color: '#ffdd00' },
-                { id: 'brega', color: '#ff66aa' },
-                { id: 'religiosa', color: '#aa55ff' },
-                { id: 'global', color: '#00ccff' },
-                { id: 'moda', color: '#ff4400' },
-                { id: 'reggae', color: '#00ffaa' },
-                { id: 'funk', color: '#ff0066' },
-                { id: 'rock', color: '#ff3377' }
-            ];
+        // Busca a lista de músicas
+        fetch(PLAYLIST_URL)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    musicas = data.filter(m => m.url && m.url.trim() !== '');
+                    criarBotoes();
+                }
+            })
+            .catch(() => {
+                // Fallback com música exemplo
+                musicas = [{
+                    title: 'Música Exemplo',
+                    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+                    genre: 'pop'
+                }];
+                criarBotoes();
+            });
 
-            let allSongs = [];
-            let currentGenre = 'pop';
-            let currentIndex = 0;
-            let isPlaying = false;
-            const audio = document.getElementById('audioPlayer');
-            const playerContainer = document.getElementById('player-container');
-            const trackNameEl = document.getElementById('trackName');
-            const thumbEl = document.getElementById('thumb');
-            const playBtn = document.getElementById('playBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const buttonContainer = document.getElementById('buttonContainer');
-
-            // Carrega playlist
-            function loadPlaylist() {
-                fetch(PLAYLIST_URL)
-                    .then(res => {
-                        if (!res.ok) throw new Error('Erro ao buscar playlist');
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (Array.isArray(data) && data.length > 0) {
-                            allSongs = data
-                                .filter(s => s.url && s.url.trim() !== '')
-                                .map(s => ({
-                                    genre: s.genre || 'pop',
-                                    title: s.title || 'Música',
-                                    url: s.url,
-                                    cover: s.cover || ''
-                                }));
-                            if (allSongs.length === 0) throw new Error('Lista vazia');
-                            currentGenre = allSongs[0].genre || 'pop';
-                            currentIndex = 0;
-                            updatePlayerInfo();
-                            createButtons();
-                        } else {
-                            throw new Error('Lista vazia');
+        // Cria os botões flutuantes (sem textos, só cores)
+        function criarBotoes() {
+            // Pega os gêneros únicos
+            const generos = [...new Set(musicas.map(m => m.genre || 'pop'))];
+            
+            // Limita a 12 botões
+            const generosLimitados = generos.slice(0, 12);
+            
+            buttonContainer.innerHTML = '';
+            
+            generosLimitados.forEach((genero, i) => {
+                const btn = document.createElement('div');
+                btn.className = `float-btn ${cores[i % cores.length]}`;
+                btn.dataset.genero = genero;
+                btn.dataset.index = i;
+                
+                btn.addEventListener('click', function() {
+                    // Toca a primeira música deste gênero
+                    const musicasGenero = musicas.filter(m => (m.genre || 'pop') === genero);
+                    if (musicasGenero.length > 0) {
+                        const primeiroIndex = musicas.indexOf(musicasGenero[0]);
+                        if (primeiroIndex !== -1) {
+                            indexAtual = primeiroIndex;
+                            tocarMusica();
                         }
-                    })
-                    .catch(() => {
-                        // Fallback
-                        allSongs = [{
-                            genre: 'pop',
-                            title: 'Exemplo',
-                            url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-                            cover: ''
-                        }];
-                        currentGenre = 'pop';
-                        currentIndex = 0;
-                        updatePlayerInfo();
-                        createButtons();
-                    });
-            }
-
-            // Cria botões flutuantes (apenas cores, sem textos)
-            function createButtons() {
-                buttonContainer.innerHTML = '';
-                // Pega gêneros únicos das músicas
-                const genresInSongs = [...new Set(allSongs.map(s => s.genre))];
-                // Se não tiver gêneros, usa todos
-                const genresToShow = genresInSongs.length > 0 ? genresInSongs : GENRES.map(g => g.id);
-
-                genresToShow.forEach(genreId => {
-                    const btn = document.createElement('div');
-                    btn.className = `float-btn ${genreId}`;
-                    // Glow interno
-                    const glow = document.createElement('div');
-                    glow.className = 'inner-glow';
-                    btn.appendChild(glow);
-                    // Evento de clique
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        playGenre(genreId);
-                    });
-                    buttonContainer.appendChild(btn);
+                    }
                 });
-            }
-
-            // Toca o primeiro do gênero
-            function playGenre(genre) {
-                const songs = allSongs.filter(s => s.genre === genre);
-                if (songs.length === 0) {
-                    if (allSongs.length) {
-                        currentGenre = allSongs[0].genre;
-                        currentIndex = 0;
-                        playCurrent();
-                    }
-                    return;
-                }
-                const firstIndex = allSongs.findIndex(s => s.genre === genre);
-                if (firstIndex === -1) {
-                    if (allSongs.length) {
-                        currentGenre = allSongs[0].genre;
-                        currentIndex = 0;
-                        playCurrent();
-                    }
-                    return;
-                }
-                currentGenre = genre;
-                currentIndex = firstIndex;
-                playCurrent();
-            }
-
-            function playCurrent() {
-                if (!allSongs.length || currentIndex >= allSongs.length) {
-                    return;
-                }
-                const song = allSongs[currentIndex];
-                if (!song || !song.url) {
-                    nextTrack();
-                    return;
-                }
-
-                trackNameEl.textContent = song.title || 'Sem título';
-                if (song.cover && song.cover.startsWith('http')) {
-                    thumbEl.style.backgroundImage = `url('${song.cover}')`;
-                } else {
-                    thumbEl.style.backgroundImage = 'none';
-                    thumbEl.style.backgroundColor = '#222';
-                }
-                playerContainer.classList.remove('hidden');
-
-                audio.src = song.url;
-                audio.load();
-                audio.play().then(() => {
-                    isPlaying = true;
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                }).catch(() => {
-                    isPlaying = false;
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                });
-                currentGenre = song.genre || currentGenre;
-            }
-
-            function updatePlayerInfo() {
-                if (allSongs.length && currentIndex < allSongs.length) {
-                    const song = allSongs[currentIndex];
-                    trackNameEl.textContent = song.title || 'Sem título';
-                    if (song.cover && song.cover.startsWith('http')) {
-                        thumbEl.style.backgroundImage = `url('${song.cover}')`;
-                    } else {
-                        thumbEl.style.backgroundImage = 'none';
-                        thumbEl.style.backgroundColor = '#222';
-                    }
-                }
-            }
-
-            function nextTrack() {
-                if (!allSongs.length) return;
-                let nextIndex = currentIndex + 1;
-                if (nextIndex >= allSongs.length) {
-                    const firstOfGenre = allSongs.findIndex(s => s.genre === currentGenre);
-                    currentIndex = firstOfGenre !== -1 ? firstOfGenre : 0;
-                } else {
-                    if (allSongs[nextIndex].genre !== currentGenre) {
-                        const firstOfGenre = allSongs.findIndex(s => s.genre === currentGenre);
-                        currentIndex = firstOfGenre !== -1 ? firstOfGenre : 0;
-                    } else {
-                        currentIndex = nextIndex;
-                    }
-                }
-                playCurrent();
-            }
-
-            function prevTrack() {
-                if (!allSongs.length) return;
-                let prevIndex = currentIndex - 1;
-                if (prevIndex < 0) {
-                    const lastOfGenre = allSongs.map((s, i) => s.genre === currentGenre ? i : -1).filter(i => i !== -1);
-                    currentIndex = lastOfGenre.length > 0 ? lastOfGenre[lastOfGenre.length - 1] : 0;
-                } else {
-                    if (allSongs[prevIndex].genre !== currentGenre) {
-                        const lastOfGenre = allSongs.map((s, i) => s.genre === currentGenre ? i : -1).filter(i => i !== -1);
-                        currentIndex = lastOfGenre.length > 0 ? lastOfGenre[lastOfGenre.length - 1] : 0;
-                    } else {
-                        currentIndex = prevIndex;
-                    }
-                }
-                playCurrent();
-            }
-
-            // Eventos do player
-            playBtn.addEventListener('click', function() {
-                if (isPlaying) {
-                    audio.pause();
-                    isPlaying = false;
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                } else {
-                    audio.play().catch(() => {});
-                    isPlaying = true;
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                }
+                
+                buttonContainer.appendChild(btn);
             });
+        }
 
-            nextBtn.addEventListener('click', nextTrack);
-            prevBtn.addEventListener('click', prevTrack);
-
-            audio.addEventListener('ended', nextTrack);
-            audio.addEventListener('play', () => {
-                isPlaying = true;
-                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        // Toca a música atual
+        function tocarMusica() {
+            if (musicas.length === 0 || indexAtual >= musicas.length) return;
+            
+            const musica = musicas[indexAtual];
+            if (!musica || !musica.url) return;
+            
+            // Mostra o player
+            playerContainer.classList.add('active');
+            
+            // Atualiza info
+            trackInfo.textContent = musica.title || 'Música';
+            
+            // Toca o vídeo/áudio
+            videoPlayer.src = musica.url;
+            videoPlayer.load();
+            videoPlayer.play().then(() => {
+                tocando = true;
+                playPauseBtn.textContent = '⏸';
+            }).catch(() => {
+                tocando = false;
+                playPauseBtn.textContent = '▶';
             });
-            audio.addEventListener('pause', () => {
-                isPlaying = false;
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            });
-            audio.addEventListener('error', nextTrack);
+        }
 
-            // Inicia
-            loadPlaylist();
-        })();
+        // Próxima música
+        function proximaMusica() {
+            if (musicas.length === 0) return;
+            indexAtual = (indexAtual + 1) % musicas.length;
+            tocarMusica();
+        }
+
+        // Música anterior
+        function musicaAnterior() {
+            if (musicas.length === 0) return;
+            indexAtual = (indexAtual - 1 + musicas.length) % musicas.length;
+            tocarMusica();
+        }
+
+        // Play/Pause
+        function togglePlay() {
+            if (tocando) {
+                videoPlayer.pause();
+                tocando = false;
+                playPauseBtn.textContent = '▶';
+            } else {
+                videoPlayer.play().then(() => {
+                    tocando = true;
+                    playPauseBtn.textContent = '⏸';
+                }).catch(() => {});
+            }
+        }
+
+        // Eventos dos controles
+        playPauseBtn.addEventListener('click', togglePlay);
+        nextBtn.addEventListener('click', proximaMusica);
+        prevBtn.addEventListener('click', musicaAnterior);
+        
+        closeBtn.addEventListener('click', function() {
+            playerContainer.classList.remove('active');
+            videoPlayer.pause();
+            tocando = false;
+        });
+
+        // Quando o vídeo termina, vai para o próximo
+        videoPlayer.addEventListener('ended', proximaMusica);
+
+        // Quando o usuário clica no player nativo
+        videoPlayer.addEventListener('play', () => {
+            tocando = true;
+            playPauseBtn.textContent = '⏸';
+        });
+        videoPlayer.addEventListener('pause', () => {
+            tocando = false;
+            playPauseBtn.textContent = '▶';
+        });
     </script>
 </body>
 </html>
