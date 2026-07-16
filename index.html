@@ -19,22 +19,7 @@
         .genre-badge.favoritos { border-left-color: #ff2d7f; color: #ff2d7f; background: rgba(255,45,127,0.15); }
         .top-buttons { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
         
-        /* TODOS OS BOTÕES DO TOPO COM MESMO TAMANHO */
-        .top-btn { 
-            background: rgba(255,255,255,0.08); 
-            border: 1px solid rgba(255,255,255,0.15); 
-            color: #fff; 
-            padding: 3px 10px; 
-            border-radius: 30px; 
-            font-size: 0.55rem; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 4px; 
-            flex-shrink: 0; 
-            height: 24px;
-            white-space: nowrap;
-        }
+        .top-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 3px 10px; border-radius: 30px; font-size: 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 4px; flex-shrink: 0; height: 24px; white-space: nowrap; }
         .top-btn:active { transform: scale(0.92); background: var(--neon-cyan); color: #000; }
         .top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.45rem; font-weight: bold; min-width: 14px; text-align: center; }
         .top-btn.ativo { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
@@ -56,43 +41,17 @@
         .menu-popup button:active { background: var(--neon-cyan); color: #000; }
         .menu-popup .close-menu-btn { background: rgba(255,45,127,0.2); border: 1px solid #ff2d7f; color: #ff2d7f; }
         
-        /* LETREIRO - SÓ NOME DA MÚSICA */
         .info-scroll { position: fixed; top: 42px; left: 0; right: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); padding: 8px 12px; z-index: 30; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; white-space: nowrap; }
         .info-scroll p { color: white; font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; animation: scrollText 20s linear infinite; display: inline-block; padding-right: 50px; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
         .now-playing { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 15; width: 90%; max-width: 400px; user-select: none; -webkit-user-select: none; }
-        .now-playing .music-title { display: none; }
-        .now-playing .music-artist { display: none; }
-        
-        /* CORAÇÃO GRANDE EM CIMA DO + */
-        .fav-heart-center { display: flex; justify-content: center; margin-bottom: 20px; }
+        .now-playing .fav-heart-center { display: flex; justify-content: center; margin-bottom: 20px; }
         .now-playing .fav-heart { font-size: 4.5rem; color: #555; cursor: pointer; transition: all 0.3s; text-shadow: 0 0 30px rgba(0,0,0,0.9); display: inline-block; }
         .now-playing .fav-heart.active { color: #ff2d7f; text-shadow: 0 0 40px rgba(255,45,127,0.5); }
         .now-playing .fav-heart:active { transform: scale(1.2); }
         
-        /* MENSAGEM "TOQUE NA TELA" */
-        .teaching-bar { 
-            position: fixed; 
-            bottom: 115px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(12px); 
-            padding: 6px 22px; 
-            border-radius: 40px; 
-            font-size: 0.6rem; 
-            font-weight: 800; 
-            color: #ddd; 
-            z-index: 26; 
-            pointer-events: none; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            white-space: nowrap; 
-            text-align: center; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+        .teaching-bar { position: fixed; bottom: 115px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); padding: 6px 22px; border-radius: 40px; font-size: 0.6rem; font-weight: 800; color: #ddd; z-index: 26; pointer-events: none; border: 1px solid rgba(255,255,255,0.05); white-space: nowrap; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.5s ease; }
         .teaching-bar.show { opacity: 1; }
         .teaching-bar .cyan { color: var(--neon-cyan); font-weight: 900; }
         
@@ -374,13 +333,11 @@
             </div>
         </div>
         
-        <!-- LETREIRO - SÓ NOME DA MÚSICA -->
         <div class="info-scroll" id="infoScroll">
             <p id="scrollText">🎵 RÁDIO PLAY 12 - TOCANDO AGORA! 🎵</p>
         </div>
 
         <div class="now-playing" id="nowPlaying">
-            <!-- CORAÇÃO GRANDE EM CIMA -->
             <div class="fav-heart-center">
                 <div class="fav-heart" id="heartBtn"><i class="far fa-heart"></i></div>
             </div>
@@ -466,21 +423,23 @@
             'use strict';
 
             // ============================================================
-            // URL PRINCIPAL - SEMPRE INICIA COM ESSA LISTA
+            // PLAY.JSON - PLAYLIST PRINCIPAL (SEMPRE INICIA AQUI)
             // ============================================================
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
 
+            // ============================================================
+            // LINKS DOS GÊNEROS (USANDO OS LINKS DOS REPOSITÓRIOS)
+            // ============================================================
             const GENRE_URLS = {
-                'MPB': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/mpb.json',
-                'POP': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/pop.json',
-                'SERTANEJO': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/sertanejo.json',
-                'FORRÓ': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/forro.json',
-                'SAMBA': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/samba.json',
-                'GLOBAL HITS': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/global.json',
-                'RELIGIOSA': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/religiosa.json',
-                'BREGA': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/brega.json',
-                'MODA TOP': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/moda.json',
-                'REGGAE': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/reggae.json'
+                'MPB': 'https://raw.githubusercontent.com/radiolojasjc-hub/mpbtop/refs/heads/main/mpb.json',
+                'POP': 'https://raw.githubusercontent.com/radiolojasjc-hub/poptop/refs/heads/main/pop.json',
+                'SERTANEJO': 'https://raw.githubusercontent.com/radiolojasjc-hub/sertanejo/refs/heads/main/sertanejo.json',
+                'FORRÓ': 'https://raw.githubusercontent.com/radiolojasjc-hub/forrotop/refs/heads/main/forro.json',
+                'SAMBA': 'https://raw.githubusercontent.com/radiolojasjc-hub/sambatop/refs/heads/main/samba.json',
+                'BREGA': 'https://raw.githubusercontent.com/radiolojasjc-hub/bregatop/refs/heads/main/brega.json',
+                'REGGAE': 'https://raw.githubusercontent.com/radiolojasjc-hub/reggaetop/refs/heads/main/reggae.json',
+                'MODA TOP': 'https://raw.githubusercontent.com/radiolojasjc-hub/modatop/refs/heads/main/moda.json',
+                'RELIGIOSA': 'https://raw.githubusercontent.com/radiolojasjc-hub/religiosa/refs/heads/main/religiosa.json'
             };
 
             const CORES_POR_GENERO = {
@@ -489,11 +448,10 @@
                 'SERTANEJO': '#ff8800',
                 'FORRÓ': '#ff00aa',
                 'SAMBA': '#ffdd00',
-                'GLOBAL HITS': '#00ccff',
-                'RELIGIOSA': '#aa55ff',
                 'BREGA': '#ff66aa',
+                'REGGAE': '#00ffaa',
                 'MODA TOP': '#ff4400',
-                'REGGAE': '#00ffaa'
+                'RELIGIOSA': '#aa55ff'
             };
 
             // ============================================================
@@ -593,7 +551,6 @@
                 } catch(e) {}
             }
 
-            // MOSTRA "TOQUE NA TELA" A CADA 5 MINUTOS
             function iniciarTeachingBar() {
                 if (teachingTimeout) clearInterval(teachingTimeout);
                 teachingTimeout = setInterval(() => {
@@ -601,7 +558,7 @@
                     setTimeout(() => {
                         teachingBar.classList.remove('show');
                     }, 3000);
-                }, 300000); // 5 minutos
+                }, 300000);
             }
 
             // ============================================================
@@ -615,7 +572,21 @@
                 let nome = nomeArquivo.replace(/^\.\//, '').replace(/^\/+/, '');
                 nome = nome.replace(/[^a-zA-Z0-9\-_.]/g, '');
                 if (!nome) return '';
-                return 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/' + nome;
+                // Usa o repositório correto baseado no gênero
+                const genero = modoAtual || 'MPB';
+                const repoMap = {
+                    'MPB': 'mpbtop',
+                    'POP': 'poptop',
+                    'SERTANEJO': 'sertanejo',
+                    'FORRÓ': 'forrotop',
+                    'SAMBA': 'sambatop',
+                    'BREGA': 'bregatop',
+                    'REGGAE': 'reggaetop',
+                    'MODA TOP': 'modatop',
+                    'RELIGIOSA': 'religiosa'
+                };
+                const repo = repoMap[genero] || 'mpbtop';
+                return `https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nome}`;
             }
 
             // ============================================================
@@ -766,12 +737,12 @@
             }
 
             // ============================================================
-            // CARREGAMENTO DE PLAYLIST - SEMPRE COMEÇA COM O JSON PRINCIPAL
+            // CARREGAMENTO DE PLAYLIST - SEMPRE COMEÇA COM O play.json
             // ============================================================
             async function carregarPlaylistPrincipal() {
                 try {
                     showLoading(true);
-                    console.log('🔄 Carregando playlist principal:', PLAYLIST_URL);
+                    console.log('🔄 Carregando playlist principal (play.json):', PLAYLIST_URL);
                     const response = await fetch(PLAYLIST_URL);
                     if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
                     let data = await response.json();
@@ -804,29 +775,6 @@
             }
 
             async function carregarPlaylistPorGenero(genero) {
-                if (genero === 'RELIGIOSA') {
-                    if (playlistCache['RELIGIOSA']) return playlistCache['RELIGIOSA'];
-                    try {
-                        const url = GENRE_URLS['RELIGIOSA'];
-                        const response = await fetch(url);
-                        if (response.ok) {
-                            let data = await response.json();
-                            if (Array.isArray(data) && data.length > 0) {
-                                const lista = data.filter(m => m.src && m.src.trim() && m.title && m.title.trim());
-                                lista.forEach(m => {
-                                    m.id = m.id || `religiosa_${Math.random().toString(36).substr(2, 6)}`;
-                                    m.genero = 'RELIGIOSA';
-                                });
-                                playlistCache['RELIGIOSA'] = lista;
-                                return lista;
-                            }
-                        }
-                    } catch (e) {
-                        console.warn('⚠️ Falha ao carregar RELIGIOSA', e);
-                    }
-                    return [];
-                }
-
                 const url = GENRE_URLS[genero];
                 if (!url) {
                     showNotification(`⚠️ Gênero "${genero}" não possui URL`, 1500);
@@ -836,6 +784,7 @@
                 
                 try {
                     showLoading(true);
+                    console.log(`🔄 Carregando ${genero} de: ${url}`);
                     const response = await fetch(url);
                     if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
                     let data = await response.json();
@@ -855,10 +804,12 @@
                     });
                     playlistCache[genero] = lista;
                     showLoading(false);
+                    console.log(`✅ ${genero} carregou ${lista.length} músicas`);
                     return lista;
                 } catch (error) {
                     showLoading(false);
                     showNotification(`❌ Erro ao carregar ${genero}`, 2000);
+                    console.error(`❌ Erro ao carregar ${genero}:`, error);
                     return null;
                 }
             }
@@ -1375,7 +1326,7 @@
             }
 
             // ============================================================
-            // INICIALIZAÇÃO - SEMPRE COM O JSON PRINCIPAL
+            // INICIALIZAÇÃO - SEMPRE COM O play.json
             // ============================================================
             async function iniciar() {
                 // TENTA CARREGAR DO LOCALSTORAGE PRIMEIRO
@@ -1394,7 +1345,7 @@
                 }
 
                 try {
-                    // CARREGA A PLAYLIST PRINCIPAL DO JSON
+                    // CARREGA A PLAYLIST PRINCIPAL DO play.json
                     const listaPrincipal = await carregarPlaylistPrincipal();
                     
                     if (listaPrincipal && listaPrincipal.length > 0) {
@@ -1409,7 +1360,7 @@
                             adicionarAoHistorico(primeira);
                         }
                         genreBadge.innerHTML = 'MPB';
-                        console.log(`✅ Iniciou com ${musicas.length} músicas da playlist principal`);
+                        console.log(`✅ Iniciou com ${musicas.length} músicas do play.json`);
                     } else {
                         // FALLBACK: TENTA MPB
                         const listaMPB = await carregarPlaylistPorGenero('MPB');
@@ -1663,7 +1614,6 @@
                 }
                 lastTap = now;
                 showControls();
-                // Mostra a mensagem "Toque na tela" ao clicar
                 teachingBar.classList.add('show');
                 setTimeout(() => {
                     teachingBar.classList.remove('show');
