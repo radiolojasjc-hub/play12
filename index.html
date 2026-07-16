@@ -75,16 +75,17 @@
             z-index: -1;
         }
 
-        /* PLAYER COM VÍDEO */
+        /* PLAYER COM VÍDEO play12.mp4 */
         #player-container {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             padding: 10px;
             z-index: 1000;
             display: none;
+            border-top: 2px solid rgba(255,255,255,0.1);
         }
         #player-container.active {
             display: block;
@@ -108,9 +109,13 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: 0.2s;
         }
         #player-container .controls button:active {
             transform: scale(0.8);
+            background: rgba(255,255,255,0.1);
         }
         #player-container .track-info {
             color: white;
@@ -128,6 +133,10 @@
             cursor: pointer;
             background: none;
             border: none;
+            padding: 5px 10px;
+        }
+        #close-player:active {
+            transform: scale(0.8);
         }
 
         @media (max-width: 600px) {
@@ -147,6 +156,9 @@
             .float-buttons {
                 gap: 10px;
             }
+            #player-container video {
+                max-height: 150px;
+            }
         }
     </style>
 </head>
@@ -157,11 +169,11 @@
         </div>
     </div>
 
-    <!-- PLAYER COM VÍDEO -->
+    <!-- PLAYER COM VÍDEO play12.mp4 -->
     <div id="player-container">
         <button id="close-player">✕</button>
-        <video id="videoPlayer" controls autoplay>
-            <source src="" type="video/mp4">
+        <video id="videoPlayer" controls autoplay playsinline>
+            <source src="play12.mp4" type="video/mp4">
         </video>
         <div class="track-info" id="trackInfo">Carregando...</div>
         <div class="controls">
@@ -193,11 +205,17 @@
 
         // Busca a lista de músicas
         fetch(PLAYLIST_URL)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao buscar playlist');
+                return res.json();
+            })
             .then(data => {
                 if (Array.isArray(data) && data.length > 0) {
                     musicas = data.filter(m => m.url && m.url.trim() !== '');
+                    if (musicas.length === 0) throw new Error('Lista vazia');
                     criarBotoes();
+                } else {
+                    throw new Error('Dados inválidos');
                 }
             })
             .catch(() => {
@@ -304,6 +322,7 @@
             playerContainer.classList.remove('active');
             videoPlayer.pause();
             tocando = false;
+            playPauseBtn.textContent = '▶';
         });
 
         // Quando o vídeo termina, vai para o próximo
@@ -318,6 +337,9 @@
             tocando = false;
             playPauseBtn.textContent = '▶';
         });
+
+        // Carrega o vídeo play12.mp4 automaticamente
+        // O vídeo já está no source do elemento video
     </script>
 </body>
 </html>
