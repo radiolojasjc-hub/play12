@@ -17,26 +17,38 @@
         .genre-badge { background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 30px; font-size: 0.55rem; font-weight: bold; color: #fff; border-left: 2px solid #00f3ff; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%; cursor: pointer; flex-shrink: 1; min-width: 40px; }
         .genre-badge:active { transform: scale(0.95); }
         .genre-badge.favoritos { border-left-color: #ff2d7f; color: #ff2d7f; background: rgba(255,45,127,0.15); }
-        .top-buttons { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
+        .top-buttons { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
         
-        .fav-top-btn { background: rgba(255,45,127,0.15); border: 1px solid #ff2d7f; color: #ff2d7f; padding: 2px 8px; border-radius: 30px; font-size: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-        .fav-top-btn:active { transform: scale(0.92); background: #ff2d7f; color: #000; }
-        .fav-top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.45rem; font-weight: bold; min-width: 14px; text-align: center; }
-        
-        .search-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
-        .search-input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 2px 8px; color: white; font-size: 0.5rem; width: 70px; transition: width 0.3s; -webkit-appearance: none; appearance: none; padding-right: 20px; }
-        .search-input:focus { width: 110px; outline: none; border-color: var(--neon-cyan); }
-        .search-input::placeholder { color: #888; }
-        .clear-search { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.5rem; display: none; padding: 0 2px; }
-        .clear-search:active { color: #fff; }
-        
-        .audio-status { font-size: 0.45rem; color: #aaa; display: flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-        .audio-status.active { color: #4ade80; border-color: #4ade80; }
-        .audio-status .dot { width: 4px; height: 4px; border-radius: 50%; background: #666; display: inline-block; }
-        .audio-status.active .dot { background: #4ade80; animation: pulse-dot 1s infinite; }
+        /* TODOS OS BOTÕES DO TOPO COM MESMO TAMANHO */
+        .top-btn { 
+            background: rgba(255,255,255,0.08); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            color: #fff; 
+            padding: 3px 10px; 
+            border-radius: 30px; 
+            font-size: 0.55rem; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            flex-shrink: 0; 
+            height: 24px;
+            white-space: nowrap;
+        }
+        .top-btn:active { transform: scale(0.92); background: var(--neon-cyan); color: #000; }
+        .top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.45rem; font-weight: bold; min-width: 14px; text-align: center; }
+        .top-btn.ativo { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
+        .top-btn.ativo .dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        .menu-button { background: rgba(255,255,255,0.05); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+        .search-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
+        .search-input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 2px 10px; color: white; font-size: 0.5rem; width: 70px; transition: width 0.3s; -webkit-appearance: none; appearance: none; padding-right: 22px; height: 24px; }
+        .search-input:focus { width: 110px; outline: none; border-color: var(--neon-cyan); }
+        .search-input::placeholder { color: #888; font-size: 0.45rem; }
+        .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.5rem; display: none; padding: 0 2px; }
+        .clear-search:active { color: #fff; }
+        
+        .menu-button { background: rgba(255,255,255,0.05); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
         .menu-button:active { background: var(--neon-cyan); color: #000; }
         .menu-popup { position: absolute; top: 42px; right: 8px; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; z-index: 32; display: none; flex-direction: column; gap: 4px; border: 1px solid var(--neon-cyan); min-width: 130px; }
         .menu-popup.open { display: flex; }
@@ -44,33 +56,44 @@
         .menu-popup button:active { background: var(--neon-cyan); color: #000; }
         .menu-popup .close-menu-btn { background: rgba(255,45,127,0.2); border: 1px solid #ff2d7f; color: #ff2d7f; }
         
-        .info-scroll { position: fixed; top: 42px; left: 0; right: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); padding: 6px 12px; z-index: 30; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; white-space: nowrap; }
-        .info-scroll p { color: white; font-size: 0.85rem; font-weight: 900; letter-spacing: 2px; animation: scrollText 20s linear infinite; display: inline-block; padding-right: 50px; text-shadow: 0 0 30px rgba(0,0,0,0.8); text-transform: uppercase; }
+        /* LETREIRO - SÓ NOME DA MÚSICA */
+        .info-scroll { position: fixed; top: 42px; left: 0; right: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); padding: 8px 12px; z-index: 30; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; white-space: nowrap; }
+        .info-scroll p { color: white; font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; animation: scrollText 20s linear infinite; display: inline-block; padding-right: 50px; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
         .now-playing { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 15; width: 90%; max-width: 400px; user-select: none; -webkit-user-select: none; }
-        .now-playing .music-title { color: white; font-size: 1.4rem; font-weight: 700; text-shadow: 0 0 30px rgba(0,0,0,0.9); margin-bottom: 4px; }
-        .now-playing .music-artist { color: #eee; font-size: 1.0rem; font-weight: 300; text-shadow: 0 0 30px rgba(0,0,0,0.9); margin-bottom: 8px; }
-        .fav-heart-center { display: flex; justify-content: center; margin: 10px 0; }
-        .now-playing .fav-heart { font-size: 3.5rem; color: #555; cursor: pointer; transition: all 0.3s; text-shadow: 0 0 30px rgba(0,0,0,0.9); display: inline-block; }
+        .now-playing .music-title { display: none; }
+        .now-playing .music-artist { display: none; }
+        
+        /* CORAÇÃO GRANDE EM CIMA DO + */
+        .fav-heart-center { display: flex; justify-content: center; margin-bottom: 20px; }
+        .now-playing .fav-heart { font-size: 4.5rem; color: #555; cursor: pointer; transition: all 0.3s; text-shadow: 0 0 30px rgba(0,0,0,0.9); display: inline-block; }
         .now-playing .fav-heart.active { color: #ff2d7f; text-shadow: 0 0 40px rgba(255,45,127,0.5); }
         .now-playing .fav-heart:active { transform: scale(1.2); }
-        .equalizer { display: flex; gap: 3px; justify-content: center; height: 30px; margin-top: 8px; align-items: flex-end; }
-        .equalizer span { width: 4px; background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink)); border-radius: 3px; animation: equalize 0.6s infinite alternate ease-in-out; }
-        .equalizer span:nth-child(1) { animation-delay: 0.0s; height: 10px; }
-        .equalizer span:nth-child(2) { animation-delay: 0.1s; height: 22px; }
-        .equalizer span:nth-child(3) { animation-delay: 0.2s; height: 14px; }
-        .equalizer span:nth-child(4) { animation-delay: 0.3s; height: 28px; }
-        .equalizer span:nth-child(5) { animation-delay: 0.4s; height: 18px; }
-        .equalizer span:nth-child(6) { animation-delay: 0.5s; height: 26px; }
-        .equalizer span:nth-child(7) { animation-delay: 0.6s; height: 12px; }
-        .equalizer span:nth-child(8) { animation-delay: 0.7s; height: 24px; }
-        .equalizer span:nth-child(9) { animation-delay: 0.8s; height: 16px; }
-        .equalizer span:nth-child(10) { animation-delay: 0.9s; height: 20px; }
-        @keyframes equalize { 0% { height: 4px; opacity: 0.5; } 100% { height: 30px; opacity: 1; } }
-        .equalizer.paused span { animation-play-state: paused; height: 4px !important; opacity: 0.3 !important; }
         
-        .teaching-bar { position: fixed; bottom: 115px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); padding: 6px 22px; border-radius: 40px; font-size: 0.6rem; font-weight: 800; color: #ddd; z-index: 26; pointer-events: none; border: 1px solid rgba(255,255,255,0.05); white-space: nowrap; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        /* MENSAGEM "TOQUE NA TELA" */
+        .teaching-bar { 
+            position: fixed; 
+            bottom: 115px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(12px); 
+            padding: 6px 22px; 
+            border-radius: 40px; 
+            font-size: 0.6rem; 
+            font-weight: 800; 
+            color: #ddd; 
+            z-index: 26; 
+            pointer-events: none; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            white-space: nowrap; 
+            text-align: center; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .teaching-bar.show { opacity: 1; }
         .teaching-bar .cyan { color: var(--neon-cyan); font-weight: 900; }
         
         .bottom-controls { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); padding: 6px 12px 10px; z-index: 20; transform: translateY(100%); transition: transform 0.3s ease; }
@@ -293,18 +316,16 @@
         }
         
         @media (max-width: 480px) {
-            .now-playing .music-title { font-size: 1.2rem; }
-            .now-playing .music-artist { font-size: 0.9rem; }
-            .now-playing .fav-heart { font-size: 2.5rem; }
+            .now-playing .fav-heart { font-size: 3.5rem; }
             .genre-badge { font-size: 0.45rem; max-width: 22%; padding: 2px 6px; }
-            .fav-top-btn { font-size: 0.45rem; padding: 2px 6px; }
+            .top-btn { font-size: 0.45rem; padding: 2px 8px; height: 20px; }
             .fab-main { width: 42px; height: 42px; font-size: 1rem; }
             .fab-sub-btn { padding: 5px 10px; font-size: 0.55rem; min-width: 85px; }
-            .search-input { width: 50px; font-size: 0.45rem; padding-right: 18px; }
+            .search-input { width: 50px; font-size: 0.4rem; padding-right: 18px; height: 20px; }
             .search-input:focus { width: 85px; }
             .top-bar { padding: 4px 6px; }
-            .info-scroll { top: 40px; padding: 4px 10px; }
-            .info-scroll p { font-size: 0.7rem; letter-spacing: 1px; }
+            .info-scroll { top: 40px; padding: 6px 10px; }
+            .info-scroll p { font-size: 0.75rem; letter-spacing: 0px; }
             .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; }
             .play-big { width: 36px; height: 36px; font-size: 0.9rem; }
             .buttons-row { gap: 8px; }
@@ -312,12 +333,12 @@
             .bottom-controls { padding: 4px 8px 8px; }
             .genres-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .genre-card { font-size: 0.6rem; aspect-ratio: 4/2.2; }
-            .audio-status { font-size: 0.4rem; padding: 1px 4px; }
             .fab-container { bottom: 80px; right: 8px; }
-            .menu-button { width: 24px; height: 24px; font-size: 0.6rem; }
+            .menu-button { width: 20px; height: 20px; font-size: 0.6rem; }
             #tap-to-start { padding: 10px 18px; font-size: 0.9rem; bottom: 25%; }
             .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
-            .clear-search { font-size: 0.45rem; right: 3px; }
+            .clear-search { font-size: 0.4rem; right: 4px; }
+            .top-buttons { gap: 4px; }
         }
     </style>
 </head>
@@ -339,37 +360,33 @@
         <div class="top-bar" id="topBar">
             <div class="genre-badge" id="genreBadge" onclick="openGenres()">MPB</div>
             <div class="top-buttons">
-                <span class="audio-status" id="audioStatus"><span class="dot"></span> Aguardando</span>
+                <button class="top-btn ativo" id="audioStatusBtn">
+                    <span class="dot"></span> Ativado
+                </button>
                 <div class="search-wrapper">
                     <input type="text" class="search-input" id="searchInput" placeholder="Buscar" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text">
                     <button class="clear-search" id="clearSearchBtn"><i class="fas fa-times"></i></button>
                 </div>
-                <button class="fav-top-btn" id="favTopBtn">
+                <button class="top-btn" id="favTopBtn">
                     <i class="fas fa-heart"></i> <span class="badge" id="favCount">0</span>
                 </button>
                 <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
             </div>
         </div>
         
+        <!-- LETREIRO - SÓ NOME DA MÚSICA -->
         <div class="info-scroll" id="infoScroll">
             <p id="scrollText">🎵 RÁDIO PLAY 12 - TOCANDO AGORA! 🎵</p>
         </div>
 
         <div class="now-playing" id="nowPlaying">
-            <div class="music-title" id="nowTitle">Carregando...</div>
-            <div class="music-artist" id="nowArtist">Aguarde</div>
+            <!-- CORAÇÃO GRANDE EM CIMA -->
             <div class="fav-heart-center">
                 <div class="fav-heart" id="heartBtn"><i class="far fa-heart"></i></div>
             </div>
-            <div class="equalizer" id="equalizer">
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-                <span></span><span></span><span></span>
-                <span></span>
-            </div>
         </div>
 
-        <div class="teaching-bar">👆 Toque na tela para <span class="cyan">controles</span></div>
+        <div class="teaching-bar" id="teachingBar">👆 Toque na tela para <span class="cyan">controles</span></div>
     </div>
 
     <!-- Modais -->
@@ -449,8 +466,10 @@
             'use strict';
 
             // ============================================================
-            // CONFIGURAÇÕES - SEUS LINKS DOS GÊNEROS
+            // URL PRINCIPAL - SEMPRE INICIA COM ESSA LISTA
             // ============================================================
+            const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
+
             const GENRE_URLS = {
                 'MPB': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/mpb.json',
                 'POP': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/pop.json',
@@ -478,18 +497,6 @@
             };
 
             // ============================================================
-            // PLAYLIST RELIGIOSA (FALLBACK OFFLINE)
-            // ============================================================
-            const PLAYLIST_RELIGIOSA_FALLBACK = [
-                {"id":682,"artist":"Churrasco Cerveja e Viola","title":"Nada Mudou","genero":"RELIGIOSA","src":"Valeria-varros.mp3"},
-                {"id":683,"artist":"Cleber Cauan","title":"I Love You Baby","genero":"RELIGIOSA","src":"Cleber-Cauan-Resenha-na-Fazenda.mp3"},
-                {"id":684,"artist":"Gian e Giovani","title":"Favo de Mel","genero":"RELIGIOSA","src":"Giane-Giovani.mp3"},
-                {"id":685,"artist":"Humberto e Ronaldo","title":"Só não embaça meus forró","genero":"RELIGIOSA","src":"Humberto-e-Ronaldo.mp3"},
-                {"id":686,"artist":"João Neto e Frederico","title":"Toca Aquela Desce Mais Uma","genero":"RELIGIOSA","src":"João-Neto-e-Frederico.mp3"},
-                {"id":687,"artist":"Panda Cantor","title":"Onde ela tá","genero":"RELIGIOSA","src":"Panda.mp3"}
-            ];
-
-            // ============================================================
             // VARIÁVEIS
             // ============================================================
             let musicas = [];
@@ -509,6 +516,7 @@
             const playlistCache = {};
             let ultimoId = null;
             let carregandoMusica = false;
+            let teachingTimeout = null;
 
             const audio = document.getElementById('musicPlayer');
             const playBtn = document.getElementById('playBtn');
@@ -522,21 +530,19 @@
             const appContainer = document.getElementById('appContainer');
             const menuButton = document.getElementById('menuButton');
             const notification = document.getElementById('notification');
-            const audioStatus = document.getElementById('audioStatus');
             const bottomControls = document.getElementById('bottomControls');
             const shuffleBtn = document.getElementById('shuffleBtn');
             const bgVideo = document.getElementById('bgVideo');
             const heartBtn = document.getElementById('heartBtn');
-            const nowTitle = document.getElementById('nowTitle');
-            const nowArtist = document.getElementById('nowArtist');
             const favTopBtn = document.getElementById('favTopBtn');
             const favCount = document.getElementById('favCount');
             const searchInput = document.getElementById('searchInput');
             const clearSearchBtn = document.getElementById('clearSearchBtn');
-            const equalizer = document.getElementById('equalizer');
             const loadingOverlay = document.getElementById('loadingOverlay');
             const backgroundAudio = document.getElementById('backgroundAudio');
             const menuPopup = document.getElementById('menuPopup');
+            const teachingBar = document.getElementById('teachingBar');
+            const audioStatusBtn = document.getElementById('audioStatusBtn');
 
             // ============================================================
             // FUNÇÕES AUXILIARES
@@ -585,6 +591,17 @@
                         document.documentElement.msRequestFullscreen();
                     }
                 } catch(e) {}
+            }
+
+            // MOSTRA "TOQUE NA TELA" A CADA 5 MINUTOS
+            function iniciarTeachingBar() {
+                if (teachingTimeout) clearInterval(teachingTimeout);
+                teachingTimeout = setInterval(() => {
+                    teachingBar.classList.add('show');
+                    setTimeout(() => {
+                        teachingBar.classList.remove('show');
+                    }, 3000);
+                }, 300000); // 5 minutos
             }
 
             // ============================================================
@@ -749,15 +766,46 @@
             }
 
             // ============================================================
-            // CARREGAMENTO DE PLAYLIST
+            // CARREGAMENTO DE PLAYLIST - SEMPRE COMEÇA COM O JSON PRINCIPAL
             // ============================================================
-            async function carregarPlaylistPorGenero(genero) {
-                if (genero === 'RELIGIOSA') {
-                    console.log('🔄 Carregando RELIGIOSA...');
-                    if (playlistCache['RELIGIOSA']) {
-                        return playlistCache['RELIGIOSA'];
+            async function carregarPlaylistPrincipal() {
+                try {
+                    showLoading(true);
+                    console.log('🔄 Carregando playlist principal:', PLAYLIST_URL);
+                    const response = await fetch(PLAYLIST_URL);
+                    if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+                    let data = await response.json();
+                    
+                    if (!Array.isArray(data)) {
+                        if (data.musicas && Array.isArray(data.musicas)) data = data.musicas;
+                        else if (data.data && Array.isArray(data.data)) data = data.data;
+                        else {
+                            const vals = Object.values(data);
+                            if (vals.length && Array.isArray(vals[0])) data = vals[0];
+                            else throw new Error('Formato inválido');
+                        }
                     }
                     
+                    const lista = data.filter(m => m.src && m.src.trim() && m.title && m.title.trim());
+                    lista.forEach(m => {
+                        m.id = m.id || `play12_${Math.random().toString(36).substr(2, 6)}`;
+                        m.genero = m.genero || 'MPB';
+                    });
+                    
+                    showLoading(false);
+                    console.log(`✅ Playlist principal carregou ${lista.length} músicas`);
+                    return lista;
+                } catch (error) {
+                    showLoading(false);
+                    console.error('❌ Erro ao carregar playlist principal:', error);
+                    showNotification('❌ Erro ao carregar playlist', 2000);
+                    return [];
+                }
+            }
+
+            async function carregarPlaylistPorGenero(genero) {
+                if (genero === 'RELIGIOSA') {
+                    if (playlistCache['RELIGIOSA']) return playlistCache['RELIGIOSA'];
                     try {
                         const url = GENRE_URLS['RELIGIOSA'];
                         const response = await fetch(url);
@@ -770,18 +818,13 @@
                                     m.genero = 'RELIGIOSA';
                                 });
                                 playlistCache['RELIGIOSA'] = lista;
-                                console.log(`✅ RELIGIOSA carregou ${lista.length} músicas do JSON`);
                                 return lista;
                             }
                         }
                     } catch (e) {
-                        console.warn('⚠️ Falha ao carregar JSON RELIGIOSA, usando fallback', e);
+                        console.warn('⚠️ Falha ao carregar RELIGIOSA', e);
                     }
-                    
-                    const lista = PLAYLIST_RELIGIOSA_FALLBACK;
-                    playlistCache['RELIGIOSA'] = lista;
-                    showNotification(`🎵 RELIGIOSA (${lista.length} músicas - modo offline)`, 1500);
-                    return lista;
+                    return [];
                 }
 
                 const url = GENRE_URLS[genero];
@@ -789,12 +832,10 @@
                     showNotification(`⚠️ Gênero "${genero}" não possui URL`, 1500);
                     return null;
                 }
-                if (playlistCache[genero]) {
-                    return playlistCache[genero];
-                }
+                if (playlistCache[genero]) return playlistCache[genero];
+                
                 try {
                     showLoading(true);
-                    console.log(`🔄 Carregando ${genero} de: ${url}`);
                     const response = await fetch(url);
                     if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
                     let data = await response.json();
@@ -813,13 +854,11 @@
                         m.genero = genero;
                     });
                     playlistCache[genero] = lista;
-                    console.log(`✅ ${genero} carregou ${lista.length} músicas`);
                     showLoading(false);
                     return lista;
                 } catch (error) {
                     showLoading(false);
-                    showNotification(`❌ Erro ao carregar ${genero}: ${error.message}`, 2000);
-                    console.error(`❌ Erro ao carregar ${genero}:`, error);
+                    showNotification(`❌ Erro ao carregar ${genero}`, 2000);
                     return null;
                 }
             }
@@ -891,7 +930,6 @@
                     audio.load();
                     isPlaying = false;
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    equalizer.classList.add('paused');
                     stopTimer();
                 }
                 buildGenresGrid();
@@ -941,14 +979,9 @@
 
             function updateNowPlaying(track) {
                 if (track) {
-                    nowTitle.textContent = track.title;
-                    nowArtist.textContent = track.artist;
-                    scrollText.innerHTML = `🎵 ${track.title} - ${track.artist} [${track.genero || 'POP'}] 🎵`;
+                    // SÓ O NOME NO LETREIRO
+                    scrollText.innerHTML = `🎵 ${track.title} - ${track.artist}`;
                     updateHeartIcon(track.id);
-                    const cor = CORES_POR_GENERO[track.genero] || '#00ff88';
-                    equalizer.querySelectorAll('span').forEach(el => {
-                        el.style.background = `linear-gradient(180deg, ${cor}, ${cor}88)`;
-                    });
                 }
             }
 
@@ -1044,7 +1077,6 @@
                                 sucesso = true;
                                 isPlaying = true;
                                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                                equalizer.classList.remove('paused');
                                 startTimer();
                                 carregandoMusica = false;
                                 showNotification(`✅ Tocando: ${track.title}`, 1200);
@@ -1311,16 +1343,16 @@
                     backgroundAudio.volume = 0.001;
                     await backgroundAudio.play();
                     isBackgroundActive = true;
-                    audioStatus.classList.add('active');
-                    audioStatus.innerHTML = '<span class="dot"></span> Ativado';
+                    audioStatusBtn.innerHTML = '<span class="dot"></span> Ativado';
+                    audioStatusBtn.className = 'top-btn ativo';
                     if ('wakeLock' in navigator) try { await navigator.wakeLock.request('screen'); } catch(e) {}
                     await playMusic();
                     showLoading(false);
                     return true;
                 } catch (error) {
                     isBackgroundActive = true;
-                    audioStatus.classList.add('active');
-                    audioStatus.innerHTML = '<span class="dot"></span> Ativado';
+                    audioStatusBtn.innerHTML = '<span class="dot"></span> Ativado';
+                    audioStatusBtn.className = 'top-btn ativo';
                     await playMusic();
                     showLoading(false);
                     return true;
@@ -1343,9 +1375,10 @@
             }
 
             // ============================================================
-            // INICIALIZAÇÃO
+            // INICIALIZAÇÃO - SEMPRE COM O JSON PRINCIPAL
             // ============================================================
             async function iniciar() {
+                // TENTA CARREGAR DO LOCALSTORAGE PRIMEIRO
                 if (carregarDoLocalStorage()) {
                     setTimeout(() => {
                         splash.classList.add('hidden');
@@ -1354,15 +1387,18 @@
                             appContainer.style.display = 'block';
                             tapToStart.style.display = 'block';
                             goFullscreen();
+                            iniciarTeachingBar();
                         }, 500);
                     }, 500);
                     return;
                 }
 
                 try {
-                    const listaMPB = await carregarPlaylistPorGenero('MPB');
-                    if (listaMPB && listaMPB.length > 0) {
-                        musicas = listaMPB;
+                    // CARREGA A PLAYLIST PRINCIPAL DO JSON
+                    const listaPrincipal = await carregarPlaylistPrincipal();
+                    
+                    if (listaPrincipal && listaPrincipal.length > 0) {
+                        musicas = listaPrincipal;
                         modoAtual = 'MPB';
                         currentPlaylist = shuffleArray([...musicas]);
                         currentIndex = 0;
@@ -1373,12 +1409,13 @@
                             adicionarAoHistorico(primeira);
                         }
                         genreBadge.innerHTML = 'MPB';
+                        console.log(`✅ Iniciou com ${musicas.length} músicas da playlist principal`);
                     } else {
-                        const primeiroGenero = Object.keys(GENRE_URLS)[0] || 'MPB';
-                        const listaFallback = await carregarPlaylistPorGenero(primeiroGenero);
-                        if (listaFallback) {
-                            musicas = listaFallback;
-                            modoAtual = primeiroGenero;
+                        // FALLBACK: TENTA MPB
+                        const listaMPB = await carregarPlaylistPorGenero('MPB');
+                        if (listaMPB && listaMPB.length > 0) {
+                            musicas = listaMPB;
+                            modoAtual = 'MPB';
                             currentPlaylist = shuffleArray([...musicas]);
                             currentIndex = 0;
                             ultimoId = null;
@@ -1387,7 +1424,7 @@
                                 updateNowPlaying(primeira);
                                 adicionarAoHistorico(primeira);
                             }
-                            genreBadge.innerHTML = primeiroGenero;
+                            genreBadge.innerHTML = 'MPB';
                         } else {
                             showNotification('❌ Nenhuma playlist carregada', 2000);
                         }
@@ -1408,6 +1445,7 @@
                             appContainer.style.display = 'block';
                             tapToStart.style.display = 'block';
                             goFullscreen();
+                            iniciarTeachingBar();
                         }, 500);
                     }, 500);
                 } catch (err) {
@@ -1418,8 +1456,8 @@
             // ============================================================
             // EVENTOS DOM
             // ============================================================
-            audio.addEventListener('play', () => { isPlaying = true; playBtn.innerHTML = '<i class="fas fa-pause"></i>'; equalizer.classList.remove('paused'); startTimer(); });
-            audio.addEventListener('pause', () => { isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; equalizer.classList.add('paused'); stopTimer(); });
+            audio.addEventListener('play', () => { isPlaying = true; playBtn.innerHTML = '<i class="fas fa-pause"></i>'; startTimer(); });
+            audio.addEventListener('pause', () => { isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; stopTimer(); });
             audio.addEventListener('ended', () => { if (!carregandoMusica) nextTrack(); });
 
             heartBtn.addEventListener('click', () => {
@@ -1480,7 +1518,6 @@
                     audio.pause(); 
                     isPlaying = false;
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    equalizer.classList.add('paused');
                     showNotification('💤 Rádio desligada pelo Sleep Timer', 2000); 
                 }, mins * 60000);
             });
@@ -1626,6 +1663,11 @@
                 }
                 lastTap = now;
                 showControls();
+                // Mostra a mensagem "Toque na tela" ao clicar
+                teachingBar.classList.add('show');
+                setTimeout(() => {
+                    teachingBar.classList.remove('show');
+                }, 3000);
             });
 
             function openGenres() {
