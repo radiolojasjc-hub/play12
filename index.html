@@ -26,22 +26,19 @@
         .top-btn.ativo .dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        .search-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
-        .search-input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 2px 10px; color: white; font-size: 0.5rem; width: 70px; transition: width 0.3s; -webkit-appearance: none; appearance: none; padding-right: 22px; height: 24px; }
-        .search-input:focus { width: 110px; outline: none; border-color: var(--neon-cyan); }
-        .search-input::placeholder { color: #888; font-size: 0.45rem; }
-        .clear-search { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.5rem; display: none; padding: 0 2px; }
-        .clear-search:active { color: #fff; }
-        
-        .menu-button { background: rgba(255,255,255,0.05); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
-        .menu-button:active { background: var(--neon-cyan); color: #000; }
-        .menu-popup { position: absolute; top: 42px; right: 8px; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; z-index: 32; display: none; flex-direction: column; gap: 4px; border: 1px solid var(--neon-cyan); min-width: 130px; }
-        .menu-popup.open { display: flex; }
-        .menu-popup button { background: rgba(255,255,255,0.08); border: none; color: white; padding: 5px 12px; border-radius: 30px; font-size: 0.6rem; display: flex; align-items: center; gap: 6px; cursor: pointer; text-align: left; }
-        .menu-popup button:active { background: var(--neon-cyan); color: #000; }
-        .menu-popup .close-menu-btn { background: rgba(255,45,127,0.2); border: 1px solid #ff2d7f; color: #ff2d7f; }
-        
-        .info-scroll { position: fixed; top: 42px; left: 0; right: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); padding: 8px 12px; z-index: 30; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; white-space: nowrap; }
+        .info-scroll { 
+            position: fixed; 
+            top: 35px; 
+            left: 0; 
+            right: 0; 
+            background: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(8px); 
+            padding: 6px 12px; 
+            z-index: 30; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            overflow: hidden; 
+            white-space: nowrap; 
+        }
         .info-scroll p { color: white; font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; animation: scrollText 20s linear infinite; display: inline-block; padding-right: 50px; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
@@ -241,9 +238,29 @@
         }
         .close-genres:active { transform: scale(0.95); }
         
-        .feedback-modal .stars { display: flex; justify-content: center; gap: 8px; margin: 10px 0; }
-        .feedback-modal .star { font-size: 2.2rem; color: #555; cursor: pointer; transition: 0.15s; }
-        .feedback-modal .star.active { color: #ffd700; text-shadow: 0 0 15px #ffd700; }
+        /* FEEDBACK MELHORADO */
+        .feedback-modal .feedback-label {
+            color: #ccc;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        .feedback-modal .stars { 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+            margin: 12px 0 15px 0; 
+        }
+        .feedback-modal .star { 
+            font-size: 2.4rem; 
+            color: #555; 
+            cursor: pointer; 
+            transition: 0.15s; 
+        }
+        .feedback-modal .star.active { 
+            color: #ffd700; 
+            text-shadow: 0 0 20px rgba(255,215,0,0.6); 
+        }
+        .feedback-modal .star:active { transform: scale(1.2); }
         .feedback-modal textarea {
             width: 100%;
             height: 80px;
@@ -256,7 +273,13 @@
             font-size: 0.85rem;
         }
         .feedback-modal textarea::placeholder { color: #666; }
-        .feedback-modal button {
+        .feedback-modal .feedback-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .feedback-modal .btn-send {
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             border: none;
             padding: 12px;
@@ -264,15 +287,20 @@
             color: #000;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 8px;
             font-size: 0.95rem;
         }
-        .feedback-modal button:active { transform: scale(0.95); }
-        .feedback-modal .close-feedback {
-            background: rgba(255,255,255,0.1) !important;
-            color: white !important;
-            margin-top: 5px;
+        .feedback-modal .btn-send:active { transform: scale(0.95); }
+        .feedback-modal .btn-close-feedback {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 30px;
+            color: #aaa;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
         }
+        .feedback-modal .btn-close-feedback:active { background: rgba(255,255,255,0.15); }
         
         @media (max-width: 480px) {
             .now-playing .fav-heart { font-size: 3.5rem; }
@@ -280,10 +308,8 @@
             .top-btn { font-size: 0.45rem; padding: 2px 8px; height: 20px; }
             .fab-main { width: 42px; height: 42px; font-size: 1rem; }
             .fab-sub-btn { padding: 5px 10px; font-size: 0.55rem; min-width: 85px; }
-            .search-input { width: 50px; font-size: 0.4rem; padding-right: 18px; height: 20px; }
-            .search-input:focus { width: 85px; }
             .top-bar { padding: 4px 6px; }
-            .info-scroll { top: 40px; padding: 6px 10px; }
+            .info-scroll { top: 35px; padding: 6px 10px; }
             .info-scroll p { font-size: 0.75rem; letter-spacing: 0px; }
             .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; }
             .play-big { width: 36px; height: 36px; font-size: 0.9rem; }
@@ -293,11 +319,10 @@
             .genres-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .genre-card { font-size: 0.6rem; aspect-ratio: 4/2.2; }
             .fab-container { bottom: 80px; right: 8px; }
-            .menu-button { width: 20px; height: 20px; font-size: 0.6rem; }
             #tap-to-start { padding: 10px 18px; font-size: 0.9rem; bottom: 25%; }
             .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
-            .clear-search { font-size: 0.4rem; right: 4px; }
             .top-buttons { gap: 4px; }
+            .feedback-modal .star { font-size: 2rem; }
         }
     </style>
 </head>
@@ -322,14 +347,9 @@
                 <button class="top-btn ativo" id="audioStatusBtn">
                     <span class="dot"></span> Ativado
                 </button>
-                <div class="search-wrapper">
-                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text">
-                    <button class="clear-search" id="clearSearchBtn"><i class="fas fa-times"></i></button>
-                </div>
                 <button class="top-btn" id="favTopBtn">
                     <i class="fas fa-heart"></i> <span class="badge" id="favCount">0</span>
                 </button>
-                <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
             </div>
         </div>
         
@@ -362,7 +382,7 @@
 
     <div class="feedback-modal" id="feedbackModal">
         <h3><i class="fas fa-star"></i> Avalie o App</h3>
-        <p>Sua opinião é importante para nós!</p>
+        <p class="feedback-label">Sua opinião é importante para nós!</p>
         <div class="stars" id="starRating">
             <i class="far fa-star star" data-rating="1"></i>
             <i class="far fa-star star" data-rating="2"></i>
@@ -371,8 +391,10 @@
             <i class="far fa-star star" data-rating="5"></i>
         </div>
         <textarea id="feedbackText" placeholder="Escreva sua opinião ou sugestão..."></textarea>
-        <button id="sendFeedbackBtn"><i class="fab fa-whatsapp"></i> Enviar via WhatsApp</button>
-        <button id="closeFeedbackBtn" class="close-feedback">Cancelar</button>
+        <div class="feedback-buttons">
+            <button class="btn-send" id="sendFeedbackBtn"><i class="fab fa-whatsapp"></i> Enviar via WhatsApp</button>
+            <button class="btn-close-feedback" id="closeFeedbackBtn">Cancelar</button>
+        </div>
     </div>
 
     <div class="historico-modal" id="historicoModal">
@@ -401,15 +423,6 @@
             <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt"></i> Compartilhar</button>
         </div>
         <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
-    </div>
-
-    <div class="menu-popup" id="menuPopup">
-        <button class="close-menu-btn" id="closeMenuBtn"><i class="fas fa-times"></i> Fechar</button>
-        <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela Cheia</button>
-        <button id="reloadPlaylistBtn"><i class="fas fa-sync"></i> Recarregar Playlist</button>
-        <button id="btStatusMenuBtn"><i class="fab fa-bluetooth"></i> Procurar Bluetooth</button>
-        <button id="feedbackMenuBtn"><i class="fas fa-star"></i> Feedback</button>
-        <button id="sleepMenuBtn"><i class="fas fa-moon"></i> Sleep Timer</button>
     </div>
 
     <div class="notification" id="notification">Mensagem</div>
@@ -486,7 +499,6 @@
             const splash = document.getElementById('splash');
             const tapToStart = document.getElementById('tap-to-start');
             const appContainer = document.getElementById('appContainer');
-            const menuButton = document.getElementById('menuButton');
             const notification = document.getElementById('notification');
             const bottomControls = document.getElementById('bottomControls');
             const shuffleBtn = document.getElementById('shuffleBtn');
@@ -494,11 +506,8 @@
             const heartBtn = document.getElementById('heartBtn');
             const favTopBtn = document.getElementById('favTopBtn');
             const favCount = document.getElementById('favCount');
-            const searchInput = document.getElementById('searchInput');
-            const clearSearchBtn = document.getElementById('clearSearchBtn');
             const loadingOverlay = document.getElementById('loadingOverlay');
             const backgroundAudio = document.getElementById('backgroundAudio');
-            const menuPopup = document.getElementById('menuPopup');
             const teachingBar = document.getElementById('teachingBar');
             const audioStatusBtn = document.getElementById('audioStatusBtn');
 
@@ -930,7 +939,6 @@
 
             function updateNowPlaying(track) {
                 if (track) {
-                    // SÓ O NOME NO LETREIRO
                     scrollText.innerHTML = `🎵 ${track.title} - ${track.artist}`;
                     updateHeartIcon(track.id);
                 }
@@ -1069,44 +1077,6 @@
                 }
 
                 tentarTocar(urlParaTentar);
-            }
-
-            // ============================================================
-            // BUSCA
-            // ============================================================
-            let buscaTimeout = null;
-
-            function buscarMusica(termo) {
-                if (!termo || termo.length < 2) {
-                    showNotification('📋 Digite pelo menos 2 caracteres', 1000);
-                    return;
-                }
-                
-                const termoLower = termo.toLowerCase().trim();
-                const resultados = musicas.filter(m => 
-                    m.title.toLowerCase().includes(termoLower) ||
-                    m.artist.toLowerCase().includes(termoLower)
-                );
-                
-                if (resultados.length === 0) {
-                    showNotification('🔍 Nenhuma música encontrada', 1500);
-                    return;
-                }
-                
-                const primeira = resultados[0];
-                const lista = musicas.filter(m => m.genero === primeira.genero);
-                const outras = lista.filter(m => m.id !== primeira.id);
-                currentPlaylist = shuffleArray([primeira, ...outras]);
-                currentIndex = 0;
-                ultimoId = primeira.id;
-                historicoReproducao = [];
-                updateNowPlaying(primeira);
-                genreBadge.innerHTML = primeira.genero;
-                
-                if (isBackgroundActive) {
-                    setTimeout(() => playMusic(), 200);
-                }
-                showNotification(`🔍 ${resultados.length} resultado(s) - Tocando: ${primeira.title}`, 2000);
             }
 
             // ============================================================
@@ -1457,55 +1427,6 @@
             document.getElementById('prevBtn').addEventListener('click', prevTrack);
             shuffleBtn.addEventListener('click', toggleShuffle);
 
-            document.getElementById('sleepMenuBtn').addEventListener('click', () => { 
-                menuPopup.classList.remove('open'); 
-                const minutos = prompt('⏰ Desligar em quantos minutos? (5, 15, 30, 60)', '15');
-                if (!minutos) return;
-                const mins = parseInt(minutos);
-                if (isNaN(mins) || mins < 1) { showNotification('⏰ Inválido', 1500); return; }
-                if (sleepTimer) clearTimeout(sleepTimer);
-                showNotification(`⏰ Desligando em ${mins} minutos`, 2000);
-                sleepTimer = setTimeout(() => { 
-                    audio.pause(); 
-                    isPlaying = false;
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    showNotification('💤 Rádio desligada pelo Sleep Timer', 2000); 
-                }, mins * 60000);
-            });
-            
-            document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { 
-                menuPopup.classList.remove('open'); 
-                goFullscreen();
-                showNotification('⛶ Tela cheia ativada', 1000);
-            });
-            
-            document.getElementById('reloadPlaylistBtn').addEventListener('click', () => {
-                menuPopup.classList.remove('open');
-                recarregarPlaylist();
-            });
-
-            document.getElementById('btStatusMenuBtn').addEventListener('click', () => { 
-                menuPopup.classList.remove('open');
-                if (!navigator.bluetooth) { showNotification("❌ Bluetooth não suportado neste navegador", 1500); return; }
-                showNotification("🔍 Procurando dispositivos Bluetooth...", 1500);
-                navigator.bluetooth.requestDevice({ acceptAllDevices: true })
-                    .then(device => {
-                        showNotification(`✅ Conectado a: ${device.name || 'Dispositivo'}`, 2000);
-                    })
-                    .catch(err => {
-                        if (err.message.includes('cancelled')) {
-                            showNotification("❌ Busca cancelada", 1500);
-                        } else {
-                            showNotification("❌ Nenhum dispositivo encontrado", 1500);
-                        }
-                    });
-            });
-            
-            document.getElementById('feedbackMenuBtn').addEventListener('click', () => { 
-                menuPopup.classList.remove('open'); 
-                openFeedback(); 
-            });
-
             document.getElementById('progressBar').addEventListener('click', (e) => {
                 if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
                     const rect = e.currentTarget.getBoundingClientRect();
@@ -1514,45 +1435,7 @@
                 }
             });
 
-            searchInput.addEventListener('input', (e) => {
-                const termo = e.target.value.trim();
-                clearSearchBtn.style.display = termo ? 'block' : 'none';
-                if (buscaTimeout) clearTimeout(buscaTimeout);
-                buscaTimeout = setTimeout(() => {
-                    if (termo === '') {
-                        if (modoAtual && GENRE_URLS[modoAtual]) {
-                            selecionarGenero(modoAtual);
-                        } else {
-                            selecionarGenero('MPB');
-                        }
-                        showNotification('📋 Playlist restaurada', 800);
-                        return;
-                    }
-                    buscarMusica(termo);
-                }, 400);
-            });
-
-            clearSearchBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                searchInput.dispatchEvent(new Event('input'));
-                clearSearchBtn.style.display = 'none';
-                searchInput.focus();
-            });
-
-            menuButton.addEventListener('click', (e) => { 
-                e.stopPropagation(); 
-                menuPopup.classList.toggle('open'); 
-                showControls(); 
-            });
-
-            document.getElementById('closeMenuBtn').addEventListener('click', () => { 
-                menuPopup.classList.remove('open'); 
-            });
-
             document.addEventListener('click', (e) => {
-                if (menuPopup.classList.contains('open') && !menuPopup.contains(e.target) && e.target !== menuButton) {
-                    menuPopup.classList.remove('open');
-                }
                 showControls();
             });
 
@@ -1591,6 +1474,7 @@
                     });
                 });
             });
+            
             document.getElementById('sendFeedbackBtn').addEventListener('click', () => {
                 const comment = document.getElementById('feedbackText').value;
                 const stars = document.querySelectorAll('.star.active').length;
