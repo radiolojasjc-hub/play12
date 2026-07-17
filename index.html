@@ -7,39 +7,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #0a0a0a; overflow: hidden; height: 100vh; }
+        body { background: #0a0a0a; overflow: hidden; height: 100vh; width: 100vw; }
         :root { --neon-cyan: #00f3ff; --neon-pink: #ff2d7f; }
         
-        .video-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.4; }
+        /* VÍDEO OCUPA 100% DA TELA SEM BORDAS */
+        .video-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            object-fit: cover; 
+            z-index: 0; 
+            opacity: 0.4;
+        }
         .app { position: relative; z-index: 10; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; background: transparent; }
         
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-bottom: 2px solid rgba(255,255,255,0.1); flex-wrap: nowrap; gap: 4px; flex-shrink: 0; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-bottom: 2px solid rgba(255,255,255,0.1); flex-wrap: nowrap; gap: 4px; flex-shrink: 0; }
         .genre-badge { background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 30px; font-size: 0.55rem; font-weight: bold; color: #fff; border-left: 2px solid #00f3ff; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%; cursor: pointer; flex-shrink: 1; min-width: 40px; }
         .genre-badge:active { transform: scale(0.95); }
         .genre-badge.favoritos { border-left-color: #ff2d7f; color: #ff2d7f; background: rgba(255,45,127,0.15); }
-        .top-buttons { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
+        .top-buttons { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
         
-        .top-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 3px 10px; border-radius: 30px; font-size: 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 4px; flex-shrink: 0; height: 24px; white-space: nowrap; }
+        .top-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 2px 8px; border-radius: 30px; font-size: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 3px; flex-shrink: 0; height: 22px; white-space: nowrap; }
         .top-btn:active { transform: scale(0.92); background: var(--neon-cyan); color: #000; }
-        .top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.45rem; font-weight: bold; min-width: 14px; text-align: center; }
+        .top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.4rem; font-weight: bold; min-width: 14px; text-align: center; }
         .top-btn.ativo { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
         .top-btn.ativo .dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
+        /* LETREIRO MAIS COMPACTO */
         .info-scroll { 
             position: fixed; 
-            top: 35px; 
+            top: 34px; 
             left: 0; 
             right: 0; 
-            background: rgba(0,0,0,0.5); 
-            backdrop-filter: blur(8px); 
-            padding: 6px 12px; 
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(4px); 
+            padding: 3px 12px; 
             z-index: 30; 
             border-bottom: 1px solid rgba(255,255,255,0.05); 
             overflow: hidden; 
             white-space: nowrap; 
+            height: 28px;
+            display: flex;
+            align-items: center;
         }
-        .info-scroll p { color: white; font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; animation: scrollText 20s linear infinite; display: inline-block; padding-right: 50px; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
+        .info-scroll p { 
+            color: white; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            letter-spacing: 0.5px; 
+            animation: scrollText 20s linear infinite; 
+            display: inline-block; 
+            padding-right: 50px; 
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+            margin: 0;
+            line-height: 1.2;
+        }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
         .now-playing { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 15; width: 90%; max-width: 400px; user-select: none; -webkit-user-select: none; }
@@ -74,6 +99,15 @@
         .fab-sub-btn:active { background: var(--neon-cyan); color: #000; }
         .fab-sub-btn i { font-size: 0.85rem; width: 18px; text-align: center; pointer-events: none; }
         .fab-sub-btn .fab-icon-youtube { color: #FF0000; }
+        
+        /* MENU POPUP RESTAURADO */
+        .menu-button { background: rgba(255,255,255,0.05); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+        .menu-button:active { background: var(--neon-cyan); color: #000; }
+        .menu-popup { position: absolute; top: 42px; right: 8px; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; z-index: 32; display: none; flex-direction: column; gap: 4px; border: 1px solid var(--neon-cyan); min-width: 130px; }
+        .menu-popup.open { display: flex; }
+        .menu-popup button { background: rgba(255,255,255,0.08); border: none; color: white; padding: 5px 12px; border-radius: 30px; font-size: 0.6rem; display: flex; align-items: center; gap: 6px; cursor: pointer; text-align: left; }
+        .menu-popup button:active { background: var(--neon-cyan); color: #000; }
+        .menu-popup .close-menu-btn { background: rgba(255,45,127,0.2); border: 1px solid #ff2d7f; color: #ff2d7f; }
         
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         #splash.hidden { opacity: 0; pointer-events: none; }
@@ -238,7 +272,6 @@
         }
         .close-genres:active { transform: scale(0.95); }
         
-        /* FEEDBACK MELHORADO */
         .feedback-modal .feedback-label {
             color: #ccc;
             font-size: 0.85rem;
@@ -305,12 +338,12 @@
         @media (max-width: 480px) {
             .now-playing .fav-heart { font-size: 3.5rem; }
             .genre-badge { font-size: 0.45rem; max-width: 22%; padding: 2px 6px; }
-            .top-btn { font-size: 0.45rem; padding: 2px 8px; height: 20px; }
+            .top-btn { font-size: 0.4rem; padding: 2px 6px; height: 18px; }
             .fab-main { width: 42px; height: 42px; font-size: 1rem; }
             .fab-sub-btn { padding: 5px 10px; font-size: 0.55rem; min-width: 85px; }
-            .top-bar { padding: 4px 6px; }
-            .info-scroll { top: 35px; padding: 6px 10px; }
-            .info-scroll p { font-size: 0.75rem; letter-spacing: 0px; }
+            .top-bar { padding: 3px 5px; }
+            .info-scroll { top: 30px; height: 24px; padding: 2px 10px; }
+            .info-scroll p { font-size: 0.65rem; letter-spacing: 0px; }
             .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; }
             .play-big { width: 36px; height: 36px; font-size: 0.9rem; }
             .buttons-row { gap: 8px; }
@@ -319,9 +352,10 @@
             .genres-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .genre-card { font-size: 0.6rem; aspect-ratio: 4/2.2; }
             .fab-container { bottom: 80px; right: 8px; }
+            .menu-button { width: 20px; height: 20px; font-size: 0.6rem; }
             #tap-to-start { padding: 10px 18px; font-size: 0.9rem; bottom: 25%; }
             .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
-            .top-buttons { gap: 4px; }
+            .top-buttons { gap: 3px; }
             .feedback-modal .star { font-size: 2rem; }
         }
     </style>
@@ -350,6 +384,7 @@
                 <button class="top-btn" id="favTopBtn">
                     <i class="fas fa-heart"></i> <span class="badge" id="favCount">0</span>
                 </button>
+                <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
             </div>
         </div>
         
@@ -364,6 +399,16 @@
         </div>
 
         <div class="teaching-bar" id="teachingBar">👆 Toque na tela para <span class="cyan">controles</span></div>
+    </div>
+
+    <!-- MENU POPUP RESTAURADO -->
+    <div class="menu-popup" id="menuPopup">
+        <button class="close-menu-btn" id="closeMenuBtn"><i class="fas fa-times"></i> Fechar</button>
+        <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela Cheia</button>
+        <button id="reloadPlaylistBtn"><i class="fas fa-sync"></i> Recarregar Playlist</button>
+        <button id="btStatusMenuBtn"><i class="fab fa-bluetooth"></i> Procurar Bluetooth</button>
+        <button id="feedbackMenuBtn"><i class="fas fa-star"></i> Feedback</button>
+        <button id="sleepMenuBtn"><i class="fas fa-moon"></i> Sleep Timer</button>
     </div>
 
     <!-- Modais -->
@@ -510,6 +555,8 @@
             const backgroundAudio = document.getElementById('backgroundAudio');
             const teachingBar = document.getElementById('teachingBar');
             const audioStatusBtn = document.getElementById('audioStatusBtn');
+            const menuPopup = document.getElementById('menuPopup');
+            const menuButton = document.getElementById('menuButton');
 
             // ============================================================
             // FUNÇÕES AUXILIARES
@@ -1427,6 +1474,55 @@
             document.getElementById('prevBtn').addEventListener('click', prevTrack);
             shuffleBtn.addEventListener('click', toggleShuffle);
 
+            document.getElementById('sleepMenuBtn').addEventListener('click', () => { 
+                menuPopup.classList.remove('open'); 
+                const minutos = prompt('⏰ Desligar em quantos minutos? (5, 15, 30, 60)', '15');
+                if (!minutos) return;
+                const mins = parseInt(minutos);
+                if (isNaN(mins) || mins < 1) { showNotification('⏰ Inválido', 1500); return; }
+                if (sleepTimer) clearTimeout(sleepTimer);
+                showNotification(`⏰ Desligando em ${mins} minutos`, 2000);
+                sleepTimer = setTimeout(() => { 
+                    audio.pause(); 
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    showNotification('💤 Rádio desligada pelo Sleep Timer', 2000); 
+                }, mins * 60000);
+            });
+            
+            document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { 
+                menuPopup.classList.remove('open'); 
+                goFullscreen();
+                showNotification('⛶ Tela cheia ativada', 1000);
+            });
+            
+            document.getElementById('reloadPlaylistBtn').addEventListener('click', () => {
+                menuPopup.classList.remove('open');
+                recarregarPlaylist();
+            });
+
+            document.getElementById('btStatusMenuBtn').addEventListener('click', () => { 
+                menuPopup.classList.remove('open');
+                if (!navigator.bluetooth) { showNotification("❌ Bluetooth não suportado neste navegador", 1500); return; }
+                showNotification("🔍 Procurando dispositivos Bluetooth...", 1500);
+                navigator.bluetooth.requestDevice({ acceptAllDevices: true })
+                    .then(device => {
+                        showNotification(`✅ Conectado a: ${device.name || 'Dispositivo'}`, 2000);
+                    })
+                    .catch(err => {
+                        if (err.message.includes('cancelled')) {
+                            showNotification("❌ Busca cancelada", 1500);
+                        } else {
+                            showNotification("❌ Nenhum dispositivo encontrado", 1500);
+                        }
+                    });
+            });
+            
+            document.getElementById('feedbackMenuBtn').addEventListener('click', () => { 
+                menuPopup.classList.remove('open'); 
+                openFeedback(); 
+            });
+
             document.getElementById('progressBar').addEventListener('click', (e) => {
                 if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
                     const rect = e.currentTarget.getBoundingClientRect();
@@ -1435,7 +1531,20 @@
                 }
             });
 
+            menuButton.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                menuPopup.classList.toggle('open'); 
+                showControls(); 
+            });
+
+            document.getElementById('closeMenuBtn').addEventListener('click', () => { 
+                menuPopup.classList.remove('open'); 
+            });
+
             document.addEventListener('click', (e) => {
+                if (menuPopup.classList.contains('open') && !menuPopup.contains(e.target) && e.target !== menuButton) {
+                    menuPopup.classList.remove('open');
+                }
                 showControls();
             });
 
