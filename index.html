@@ -335,6 +335,28 @@
         }
         .feedback-modal .btn-close-feedback:active { background: rgba(255,255,255,0.15); }
         
+        /* Indicador de vídeo ativo */
+        .video-indicator {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: #aaa;
+            font-size: 0.5rem;
+            z-index: 25;
+            border: 1px solid rgba(255,255,255,0.05);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .video-indicator .video-num {
+            color: var(--neon-cyan);
+            font-weight: bold;
+        }
+        
         @media (max-width: 480px) {
             .now-playing .fav-heart { font-size: 3.5rem; }
             .genre-badge { font-size: 0.45rem; max-width: 22%; padding: 2px 6px; }
@@ -357,6 +379,7 @@
             .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
             .top-buttons { gap: 3px; }
             .feedback-modal .star { font-size: 2rem; }
+            .video-indicator { bottom: 50px; font-size: 0.4rem; padding: 3px 12px; }
         }
     </style>
 </head>
@@ -470,6 +493,9 @@
         <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
     </div>
 
+    <!-- Indicador de vídeo -->
+    <div class="video-indicator" id="videoIndicator">🎬 Vídeo <span class="video-num" id="videoNum">1</span>/3</div>
+
     <div class="notification" id="notification">Mensagem</div>
     <div id="loadingOverlay"><i class="fas fa-spinner fa-spin"></i></div>
 
@@ -479,6 +505,13 @@
     <script>
         (function() {
             'use strict';
+
+            // ============================================================
+            // VÍDEOS - LISTA DE VÍDEOS PARA LOOP INFINITO
+            // ============================================================
+            const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
+            let videoIndex = 0;
+            let videoInterval = null;
 
             // ============================================================
             // PLAY.JSON - PLAYLIST PRINCIPAL (SEMPRE INICIA AQUI)
@@ -557,6 +590,40 @@
             const audioStatusBtn = document.getElementById('audioStatusBtn');
             const menuPopup = document.getElementById('menuPopup');
             const menuButton = document.getElementById('menuButton');
+            const videoNum = document.getElementById('videoNum');
+            const videoIndicator = document.getElementById('videoIndicator');
+
+            // ============================================================
+            // FUNÇÃO PARA ALTERNAR VÍDEOS
+            // ============================================================
+            function alternarVideo() {
+                videoIndex = (videoIndex + 1) % VIDEOS.length;
+                const novoVideo = VIDEOS[videoIndex];
+                bgVideo.src = novoVideo;
+                bgVideo.load();
+                bgVideo.play().catch(() => {});
+                videoNum.textContent = videoIndex + 1;
+                console.log(`🎬 Vídeo alternado para: ${novoVideo}`);
+            }
+
+            function iniciarLoopVideos() {
+                if (videoInterval) clearInterval(videoInterval);
+                videoIndex = 0;
+                bgVideo.src = VIDEOS[0];
+                bgVideo.load();
+                bgVideo.play().catch(() => {});
+                videoNum.textContent = 1;
+                videoInterval = setInterval(alternarVideo, 60000); // 1 minuto
+                console.log('🎬 Loop de vídeos iniciado (3 vídeos, 1 minuto cada)');
+            }
+
+            function pararLoopVideos() {
+                if (videoInterval) {
+                    clearInterval(videoInterval);
+                    videoInterval = null;
+                    console.log('🎬 Loop de vídeos parado');
+                }
+            }
 
             // ============================================================
             // FUNÇÕES AUXILIARES
@@ -628,7 +695,6 @@
                 let nome = nomeArquivo.replace(/^\.\//, '').replace(/^\/+/, '');
                 nome = nome.replace(/[^a-zA-Z0-9\-_.]/g, '');
                 if (!nome) return '';
-                // Usa o repositório correto baseado no gênero
                 const genero = modoAtual || 'MPB';
                 const repoMap = {
                     'MPB': 'mpbtop',
@@ -1348,6 +1414,8 @@
             async function iniciar() {
                 // TENTA CARREGAR DO LOCALSTORAGE PRIMEIRO
                 if (carregarDoLocalStorage()) {
+                    // Inicia o loop de vídeos
+                    iniciarLoopVideos();
                     setTimeout(() => {
                         splash.classList.add('hidden');
                         setTimeout(() => {
@@ -1405,6 +1473,9 @@
                     updateFavCount();
                     renderFavList();
                     buildGenresGrid();
+
+                    // INICIA O LOOP DE VÍDEOS
+                    iniciarLoopVideos();
 
                     setTimeout(() => {
                         splash.classList.add('hidden');
