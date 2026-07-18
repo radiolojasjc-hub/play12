@@ -507,7 +507,7 @@
             'use strict';
 
             // ============================================================
-            // VÍDEOS - LISTA DE VÍDEOS PARA LOOP INFINITO
+            // VÍDEOS - LISTA DE VÍDEOS PARA LOOP INFINITO (15 SEGUNDOS CADA)
             // ============================================================
             const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
             let videoIndex = 0;
@@ -594,27 +594,47 @@
             const videoIndicator = document.getElementById('videoIndicator');
 
             // ============================================================
-            // FUNÇÃO PARA ALTERNAR VÍDEOS
+            // FUNÇÃO PARA ALTERNAR VÍDEOS (15 SEGUNDOS)
             // ============================================================
             function alternarVideo() {
                 videoIndex = (videoIndex + 1) % VIDEOS.length;
                 const novoVideo = VIDEOS[videoIndex];
+                
+                // Carrega e reproduz o novo vídeo suavemente
                 bgVideo.src = novoVideo;
                 bgVideo.load();
-                bgVideo.play().catch(() => {});
+                bgVideo.play().catch(() => {
+                    // Fallback: tenta novamente em caso de erro
+                    setTimeout(() => {
+                        bgVideo.play().catch(() => {});
+                    }, 100);
+                });
+                
                 videoNum.textContent = videoIndex + 1;
-                console.log(`🎬 Vídeo alternado para: ${novoVideo}`);
+                console.log(`🎬 Vídeo alternado para: ${novoVideo} (${videoIndex + 1}/${VIDEOS.length})`);
             }
 
             function iniciarLoopVideos() {
-                if (videoInterval) clearInterval(videoInterval);
+                // Limpa intervalo anterior se existir
+                if (videoInterval) {
+                    clearInterval(videoInterval);
+                    videoInterval = null;
+                }
+                
+                // Inicia com o primeiro vídeo
                 videoIndex = 0;
                 bgVideo.src = VIDEOS[0];
                 bgVideo.load();
-                bgVideo.play().catch(() => {});
+                bgVideo.play().catch(() => {
+                    setTimeout(() => {
+                        bgVideo.play().catch(() => {});
+                    }, 200);
+                });
                 videoNum.textContent = 1;
-                videoInterval = setInterval(alternarVideo, 60000); // 1 minuto
-                console.log('🎬 Loop de vídeos iniciado (3 vídeos, 1 minuto cada)');
+                
+                // Configura intervalo de 15 segundos (15000ms)
+                videoInterval = setInterval(alternarVideo, 15000);
+                console.log('🎬 Loop de vídeos iniciado (3 vídeos, 15 segundos cada)');
             }
 
             function pararLoopVideos() {
