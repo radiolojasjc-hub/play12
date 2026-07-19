@@ -10,7 +10,6 @@
         body { background: #0a0a0a; overflow: hidden; height: 100vh; width: 100vw; }
         :root { --neon-cyan: #00f3ff; --neon-pink: #ff2d7f; }
         
-        /* VÍDEO OCUPA 100% DA TELA SEM BORDAS */
         .video-bg { 
             position: fixed; 
             top: 0; 
@@ -36,7 +35,6 @@
         .top-btn.ativo .dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        /* LETREIRO MAIS COMPACTO */
         .info-scroll { 
             position: fixed; 
             top: 34px; 
@@ -100,7 +98,6 @@
         .fab-sub-btn i { font-size: 0.85rem; width: 18px; text-align: center; pointer-events: none; }
         .fab-sub-btn .fab-icon-youtube { color: #FF0000; }
         
-        /* MENU POPUP RESTAURADO */
         .menu-button { background: rgba(255,255,255,0.05); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
         .menu-button:active { background: var(--neon-cyan); color: #000; }
         .menu-popup { position: absolute; top: 42px; right: 8px; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; z-index: 32; display: none; flex-direction: column; gap: 4px; border: 1px solid var(--neon-cyan); min-width: 130px; }
@@ -335,7 +332,6 @@
         }
         .feedback-modal .btn-close-feedback:active { background: rgba(255,255,255,0.15); }
         
-        /* Indicador de vídeo ativo */
         .video-indicator {
             position: fixed;
             bottom: 60px;
@@ -424,7 +420,6 @@
         <div class="teaching-bar" id="teachingBar">👆 Toque na tela para <span class="cyan">controles</span></div>
     </div>
 
-    <!-- MENU POPUP RESTAURADO -->
     <div class="menu-popup" id="menuPopup">
         <button class="close-menu-btn" id="closeMenuBtn"><i class="fas fa-times"></i> Fechar</button>
         <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela Cheia</button>
@@ -434,7 +429,6 @@
         <button id="sleepMenuBtn"><i class="fas fa-moon"></i> Sleep Timer</button>
     </div>
 
-    <!-- Modais -->
     <div class="fav-modal" id="favModal">
         <button class="close-fav" id="closeFavModal"><i class="fas fa-times"></i></button>
         <h3><i class="fas fa-heart" style="color:#ff2d7f; -webkit-text-fill-color: #ff2d7f;"></i> Suas Favoritas</h3>
@@ -493,7 +487,6 @@
         <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
     </div>
 
-    <!-- Indicador de vídeo -->
     <div class="video-indicator" id="videoIndicator">🎬 Vídeo <span class="video-num" id="videoNum">1</span>/3</div>
 
     <div class="notification" id="notification">Mensagem</div>
@@ -507,19 +500,19 @@
             'use strict';
 
             // ============================================================
-            // VÍDEOS - LISTA DE VÍDEOS PARA LOOP INFINITO (15 SEGUNDOS CADA)
+            // VÍDEOS - LOOP DE 15 SEGUNDOS
             // ============================================================
             const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
             let videoIndex = 0;
             let videoInterval = null;
 
             // ============================================================
-            // PLAY.JSON - PLAYLIST PRINCIPAL (SEMPRE INICIA AQUI)
+            // PLAYLIST PRINCIPAL (play.json)
             // ============================================================
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
 
             // ============================================================
-            // LINKS DOS GÊNEROS (USANDO OS LINKS DOS REPOSITÓRIOS)
+            // REPOSITÓRIOS POR GÊNERO - CORRIGIDO
             // ============================================================
             const GENRE_URLS = {
                 'MPB': 'https://raw.githubusercontent.com/radiolojasjc-hub/mpbtop/refs/heads/main/mpb.json',
@@ -591,7 +584,6 @@
             const menuPopup = document.getElementById('menuPopup');
             const menuButton = document.getElementById('menuButton');
             const videoNum = document.getElementById('videoNum');
-            const videoIndicator = document.getElementById('videoIndicator');
 
             // ============================================================
             // FUNÇÃO PARA ALTERNAR VÍDEOS (15 SEGUNDOS)
@@ -599,50 +591,22 @@
             function alternarVideo() {
                 videoIndex = (videoIndex + 1) % VIDEOS.length;
                 const novoVideo = VIDEOS[videoIndex];
-                
-                // Carrega e reproduz o novo vídeo suavemente
                 bgVideo.src = novoVideo;
                 bgVideo.load();
-                bgVideo.play().catch(() => {
-                    // Fallback: tenta novamente em caso de erro
-                    setTimeout(() => {
-                        bgVideo.play().catch(() => {});
-                    }, 100);
-                });
-                
+                bgVideo.play().catch(() => {});
                 videoNum.textContent = videoIndex + 1;
-                console.log(`🎬 Vídeo alternado para: ${novoVideo} (${videoIndex + 1}/${VIDEOS.length})`);
+                console.log(`🎬 Vídeo: ${novoVideo} (${videoIndex + 1}/${VIDEOS.length})`);
             }
 
             function iniciarLoopVideos() {
-                // Limpa intervalo anterior se existir
-                if (videoInterval) {
-                    clearInterval(videoInterval);
-                    videoInterval = null;
-                }
-                
-                // Inicia com o primeiro vídeo
+                if (videoInterval) clearInterval(videoInterval);
                 videoIndex = 0;
                 bgVideo.src = VIDEOS[0];
                 bgVideo.load();
-                bgVideo.play().catch(() => {
-                    setTimeout(() => {
-                        bgVideo.play().catch(() => {});
-                    }, 200);
-                });
+                bgVideo.play().catch(() => {});
                 videoNum.textContent = 1;
-                
-                // Configura intervalo de 15 segundos (15000ms)
                 videoInterval = setInterval(alternarVideo, 15000);
-                console.log('🎬 Loop de vídeos iniciado (3 vídeos, 15 segundos cada)');
-            }
-
-            function pararLoopVideos() {
-                if (videoInterval) {
-                    clearInterval(videoInterval);
-                    videoInterval = null;
-                    console.log('🎬 Loop de vídeos parado');
-                }
+                console.log('🎬 Loop de vídeos iniciado (15s cada)');
             }
 
             // ============================================================
@@ -705,18 +669,28 @@
             }
 
             // ============================================================
-            // FUNÇÃO PARA GERAR URL COMPLETA
+            // GERAR URLs - CORRIGIDO COM MAIS OPÇÕES
             // ============================================================
             function gerarUrlCompleta(nomeArquivo) {
                 if (!nomeArquivo || !nomeArquivo.trim()) return '';
                 if (nomeArquivo.startsWith('http://') || nomeArquivo.startsWith('https://')) {
                     return nomeArquivo;
                 }
+                
                 let nome = nomeArquivo.replace(/^\.\//, '').replace(/^\/+/, '');
                 nome = nome.replace(/[^a-zA-Z0-9\-_.]/g, '');
                 if (!nome) return '';
-                const genero = modoAtual || 'MPB';
-                const repoMap = {
+                
+                // Tenta vários repositórios
+                const repos = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
+                const urls = [];
+                
+                repos.forEach(repo => {
+                    urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nome}`);
+                });
+                
+                // Também tenta com o gênero atual
+                const generoMap = {
                     'MPB': 'mpbtop',
                     'POP': 'poptop',
                     'SERTANEJO': 'sertanejo',
@@ -727,13 +701,15 @@
                     'MODA TOP': 'modatop',
                     'RELIGIOSA': 'religiosa'
                 };
-                const repo = repoMap[genero] || 'mpbtop';
-                return `https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nome}`;
+                const repoAtual = generoMap[modoAtual] || 'mpbtop';
+                urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/${repoAtual}/refs/heads/main/${nome}`);
+                
+                // Tenta com o repositório play12 também
+                urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/${nome}`);
+                
+                return urls[0]; // Retorna a primeira URL
             }
 
-            // ============================================================
-            // FUNÇÃO PARA GERAR URLs ALTERNATIVAS
-            // ============================================================
             function gerarUrlsAlternativas(musica) {
                 const urls = new Set();
                 const src = musica.src || '';
@@ -743,40 +719,44 @@
                     if (urlCompleta) urls.add(urlCompleta);
                 }
                 
+                // Variações do nome do arquivo
                 const baseNome = src.replace(/\.[^.]+$/, '');
-                const exts = ['mp3', 'm4a'];
+                const exts = ['mp3', 'm4a', 'mp4', 'aac', 'ogg'];
                 const variacoes = [
                     baseNome,
                     baseNome.replace(/ /g, '_'),
                     baseNome.replace(/ /g, '-'),
                     baseNome.replace(/[^a-zA-Z0-9]/g, ''),
+                    baseNome.replace(/_/g, ''),
+                    baseNome.replace(/-/g, ''),
                     musica.title.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/ /g, '_'),
                     musica.title.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/ /g, '-'),
-                    (musica.artist + '_' + musica.title).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_')
+                    musica.title.replace(/[^a-zA-Z0-9]/g, '').trim(),
+                    (musica.artist + '_' + musica.title).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_'),
+                    (musica.artist + '-' + musica.title).replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-'),
+                    (musica.title + '_' + musica.artist).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_')
                 ];
                 
-                const titleClean = musica.title.replace(/[^a-zA-Z0-9 ]/g, '').trim();
-                if (titleClean && titleClean.length > 2) {
-                    variacoes.push(titleClean);
-                    variacoes.push(titleClean.replace(/ /g, '_'));
-                    variacoes.push(titleClean.replace(/ /g, '-'));
-                }
-                
-                const artist = musica.artist || '';
-                const combo = (artist + ' ' + musica.title).replace(/[^a-zA-Z0-9 ]/g, '').trim();
-                if (combo && combo.length > 3) {
-                    variacoes.push(combo);
-                    variacoes.push(combo.replace(/ /g, '_'));
-                    variacoes.push(combo.replace(/ /g, '-'));
+                // Tenta também com o nome do artista
+                if (musica.artist) {
+                    const artistClean = musica.artist.replace(/[^a-zA-Z0-9]/g, '').trim();
+                    if (artistClean.length > 2) {
+                        variacoes.push(artistClean);
+                        variacoes.push(artistClean + '_' + musica.title.replace(/[^a-zA-Z0-9]/g, '').trim());
+                    }
                 }
                 
                 variacoes.forEach(nome => {
-                    if (nome && nome.trim().length > 0) {
+                    if (nome && nome.trim().length > 2) {
                         exts.forEach(ext => {
                             const nomeLimpo = nome.trim().replace(/[^a-zA-Z0-9\-_]/g, '');
-                            if (nomeLimpo.length > 0) {
-                                const url = gerarUrlCompleta(nomeLimpo + '.' + ext);
-                                if (url) urls.add(url);
+                            if (nomeLimpo.length > 2) {
+                                // Tenta em todos os repositórios
+                                const repos = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
+                                repos.forEach(repo => {
+                                    const url = `https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nomeLimpo}.${ext}`;
+                                    urls.add(url);
+                                });
                             }
                         });
                     }
@@ -879,7 +859,7 @@
             }
 
             // ============================================================
-            // CARREGAMENTO DE PLAYLIST - SEMPRE COMEÇA COM O play.json
+            // CARREGAMENTO DE PLAYLIST
             // ============================================================
             async function carregarPlaylistPrincipal() {
                 try {
@@ -1078,7 +1058,7 @@
             }
 
             // ============================================================
-            // playMusic
+            // playMusic - CORRIGIDO
             // ============================================================
             async function playMusic() {
                 if (carregandoMusica) return;
@@ -1108,59 +1088,47 @@
                 updateNowPlaying(track);
                 adicionarAoHistorico(track);
 
-                let urlParaTentar = track.src;
+                // Pega todas as URLs possíveis
+                const urls = gerarUrlsAlternativas(track);
                 
-                if (!urlParaTentar.startsWith('http://') && !urlParaTentar.startsWith('https://')) {
-                    urlParaTentar = gerarUrlCompleta(urlParaTentar);
+                if (urls.length === 0) {
+                    showNotification("❌ Nenhuma URL para esta música", 1000);
+                    carregandoMusica = false;
+                    setTimeout(nextTrack, 500);
+                    return;
                 }
 
-                if (!urlParaTentar) {
-                    const urls = gerarUrlsAlternativas(track);
-                    if (urls.length === 0) {
-                        showNotification("❌ Nenhuma URL para esta música", 1000);
-                        carregandoMusica = false;
-                        setTimeout(nextTrack, 500);
-                        return;
-                    }
-                    urlParaTentar = urls[0];
-                }
-
-                console.log(`🎯 Tocando: ${track.title} - ${urlParaTentar}`);
+                console.log(`🎯 Tocando: ${track.title} - Tentando ${urls.length} URLs`);
 
                 let timeoutId = null;
                 let sucesso = false;
                 let tentativas = 0;
-                const MAX_TENTATIVAS = 3;
+                const MAX_TENTATIVAS = urls.length;
 
-                function tentarTocar(url) {
+                function tentarTocar(url, index) {
                     tentativas++;
                     if (timeoutId) clearTimeout(timeoutId);
 
-                    if (tentativas > MAX_TENTATIVAS) {
+                    if (tentativas > MAX_TENTATIVAS || index >= urls.length) {
                         showNotification("⏭️ Pulando...", 800);
                         carregandoMusica = false;
                         setTimeout(nextTrack, 300);
                         return;
                     }
 
+                    const urlAtual = urls[index];
+                    console.log(`🔄 Tentativa ${tentativas}/${MAX_TENTATIVAS}: ${urlAtual}`);
+
                     audio.pause();
-                    audio.src = url;
+                    audio.src = urlAtual;
                     audio.load();
 
                     timeoutId = setTimeout(() => {
                         if (!sucesso) {
-                            console.warn(`⏰ Timeout ${tentativas}/${MAX_TENTATIVAS} para ${url}`);
-                            const urls = gerarUrlsAlternativas(track);
-                            const nextUrl = urls.find(u => u !== url);
-                            if (nextUrl) {
-                                tentarTocar(nextUrl);
-                            } else {
-                                showNotification("⏭️ Pulando...", 800);
-                                carregandoMusica = false;
-                                setTimeout(nextTrack, 300);
-                            }
+                            console.warn(`⏰ Timeout para ${urlAtual}`);
+                            tentarTocar(urls, index + 1);
                         }
-                    }, 2500);
+                    }, 5000);
 
                     audio.oncanplay = () => {
                         if (timeoutId) clearTimeout(timeoutId);
@@ -1173,43 +1141,27 @@
                                 carregandoMusica = false;
                                 showNotification(`✅ Tocando: ${track.title}`, 1200);
                                 
-                                if (url !== track.src) {
-                                    track.src = url;
+                                if (urlAtual !== track.src) {
+                                    track.src = urlAtual;
                                     try {
-                                        localStorage.setItem('src_cache_' + track.id, url);
+                                        localStorage.setItem('src_cache_' + track.id, urlAtual);
                                     } catch(e) {}
                                 }
                             })
                             .catch((err) => {
-                                console.warn(`❌ Falha em ${url}:`, err);
-                                const urls = gerarUrlsAlternativas(track);
-                                const nextUrl = urls.find(u => u !== url);
-                                if (nextUrl) {
-                                    tentarTocar(nextUrl);
-                                } else {
-                                    showNotification("⏭️ Pulando...", 800);
-                                    carregandoMusica = false;
-                                    setTimeout(nextTrack, 300);
-                                }
+                                console.warn(`❌ Falha em ${urlAtual}:`, err);
+                                tentarTocar(urls, index + 1);
                             });
                     };
 
                     audio.onerror = () => {
                         if (timeoutId) clearTimeout(timeoutId);
-                        console.warn(`❌ Erro em ${url}`);
-                        const urls = gerarUrlsAlternativas(track);
-                        const nextUrl = urls.find(u => u !== url);
-                        if (nextUrl) {
-                            tentarTocar(nextUrl);
-                        } else {
-                            showNotification("⏭️ Pulando...", 800);
-                            carregandoMusica = false;
-                            setTimeout(nextTrack, 300);
-                        }
+                        console.warn(`❌ Erro em ${urlAtual}`);
+                        tentarTocar(urls, index + 1);
                     };
                 }
 
-                tentarTocar(urlParaTentar);
+                tentarTocar(urls, 0);
             }
 
             // ============================================================
@@ -1239,9 +1191,6 @@
                         ultimoId = track.id;
                         updateNowPlaying(track);
                         adicionarAoHistorico(track);
-                        const url = track.src.startsWith('http') ? track.src : gerarUrlCompleta(track.src);
-                        audio.src = url || track.src;
-                        audio.load();
                     }
                 }
                 showControls();
@@ -1267,14 +1216,18 @@
                 adicionarAoHistorico(track);
                 if (isPlaying) {
                     audio.pause();
-                    const url = track.src.startsWith('http') ? track.src : gerarUrlCompleta(track.src);
-                    audio.src = url || track.src;
-                    audio.load();
-                    audio.play().catch(() => {});
+                    const urls = gerarUrlsAlternativas(track);
+                    if (urls.length > 0) {
+                        audio.src = urls[0];
+                        audio.load();
+                        audio.play().catch(() => {});
+                    }
                 } else {
-                    const url = track.src.startsWith('http') ? track.src : gerarUrlCompleta(track.src);
-                    audio.src = url || track.src;
-                    audio.load();
+                    const urls = gerarUrlsAlternativas(track);
+                    if (urls.length > 0) {
+                        audio.src = urls[0];
+                        audio.load();
+                    }
                 }
                 currentIndex++;
                 showControls();
@@ -1429,12 +1382,10 @@
             }
 
             // ============================================================
-            // INICIALIZAÇÃO - SEMPRE COM O play.json
+            // INICIALIZAÇÃO
             // ============================================================
             async function iniciar() {
-                // TENTA CARREGAR DO LOCALSTORAGE PRIMEIRO
                 if (carregarDoLocalStorage()) {
-                    // Inicia o loop de vídeos
                     iniciarLoopVideos();
                     setTimeout(() => {
                         splash.classList.add('hidden');
@@ -1450,7 +1401,6 @@
                 }
 
                 try {
-                    // CARREGA A PLAYLIST PRINCIPAL DO play.json
                     const listaPrincipal = await carregarPlaylistPrincipal();
                     
                     if (listaPrincipal && listaPrincipal.length > 0) {
@@ -1467,7 +1417,6 @@
                         genreBadge.innerHTML = 'MPB';
                         console.log(`✅ Iniciou com ${musicas.length} músicas do play.json`);
                     } else {
-                        // FALLBACK: TENTA MPB
                         const listaMPB = await carregarPlaylistPorGenero('MPB');
                         if (listaMPB && listaMPB.length > 0) {
                             musicas = listaMPB;
@@ -1494,7 +1443,6 @@
                     renderFavList();
                     buildGenresGrid();
 
-                    // INICIA O LOOP DE VÍDEOS
                     iniciarLoopVideos();
 
                     setTimeout(() => {
