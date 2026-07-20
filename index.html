@@ -486,7 +486,7 @@
             let videoInterval = null;
 
             // ============================================================
-            // PLAYLIST PRINCIPAL (play.json)
+            // PLAYLIST PRINCIPAL (play.json) - INICIA AQUI
             // ============================================================
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
 
@@ -648,7 +648,7 @@
             }
 
             // ============================================================
-            // GERAR URLs - SUPORTE A OPUS
+            // GERAR URLs - SUPORTE A OPUS E MÚLTIPLOS REPOSITÓRIOS
             // ============================================================
             function gerarUrlsAlternativas(musica) {
                 const urls = new Set();
@@ -800,11 +800,12 @@
             }
 
             // ============================================================
-            // CARREGAMENTO DE PLAYLIST
+            // CARREGAMENTO DE PLAYLIST - INICIA COM play.json
             // ============================================================
             async function carregarPlaylistPrincipal() {
                 try {
                     showLoading(true);
+                    console.log('🔄 Carregando playlist principal (play.json):', PLAYLIST_URL);
                     const response = await fetch(PLAYLIST_URL);
                     if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
                     let data = await response.json();
@@ -826,9 +827,11 @@
                     });
                     
                     showLoading(false);
+                    console.log(`✅ Playlist principal carregou ${lista.length} músicas`);
                     return lista;
                 } catch (error) {
                     showLoading(false);
+                    console.error('❌ Erro ao carregar playlist principal:', error);
                     return [];
                 }
             }
@@ -840,6 +843,7 @@
                 
                 try {
                     showLoading(true);
+                    console.log(`🔄 Carregando ${genero} de: ${url}`);
                     const response = await fetch(url);
                     if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
                     let data = await response.json();
@@ -859,9 +863,11 @@
                     });
                     playlistCache[genero] = lista;
                     showLoading(false);
+                    console.log(`✅ ${genero} carregou ${lista.length} músicas`);
                     return lista;
                 } catch (error) {
                     showLoading(false);
+                    console.error(`❌ Erro ao carregar ${genero}:`, error);
                     return null;
                 }
             }
@@ -906,7 +912,10 @@
                     genreBadge.className = 'genre-badge';
                 }
                 const lista = await carregarPlaylistPorGenero(genero);
-                if (!lista || lista.length === 0) return;
+                if (!lista || lista.length === 0) {
+                    showNotification(`⚠️ Nenhuma música para ${genero}`, 1500);
+                    return;
+                }
                 
                 musicas = lista;
                 modoAtual = genero;
@@ -934,6 +943,7 @@
                 buildGenresGrid();
                 document.getElementById('genresModal').classList.remove('open');
                 goFullscreen();
+                showNotification(`🎵 ${genero} (${musicas.length} músicas)`, 2000);
             }
 
             // ============================================================
@@ -988,7 +998,7 @@
             }
 
             // ============================================================
-            // playMusic - CORRIGIDO PARA PULAR MÚSICAS QUE NÃO TOCAM
+            // playMusic - PULA MÚSICAS QUE NÃO TOCAM
             // ============================================================
             async function playMusic() {
                 if (carregandoMusica) return;
@@ -998,7 +1008,6 @@
                 // Limita tentativas para evitar loop infinito
                 if (tentativasFalhas > 20) {
                     tentativasFalhas = 0;
-                    // Recria a playlist
                     currentPlaylist = shuffleArray([...musicas]);
                     currentIndex = 0;
                 }
@@ -1057,7 +1066,6 @@
                     audio.load();
 
                     let timeoutId = setTimeout(() => {
-                        // Timeout - tenta próxima URL
                         audio.oncanplay = null;
                         audio.onerror = null;
                         audio.onloadeddata = null;
@@ -1083,7 +1091,6 @@
                                 }
                             })
                             .catch(() => {
-                                // Falha ao reproduzir - tenta próxima
                                 audio.oncanplay = null;
                                 audio.onerror = null;
                                 audio.onloadeddata = null;
@@ -1099,7 +1106,6 @@
                     };
 
                     audio.onloadeddata = function() {
-                        // Se carregou dados, tenta tocar
                         clearTimeout(timeoutId);
                         audio.play()
                             .then(() => {
@@ -1347,7 +1353,7 @@
             }
 
             // ============================================================
-            // INICIALIZAÇÃO
+            // INICIALIZAÇÃO - SEMPRE COM play.json
             // ============================================================
             async function iniciar() {
                 if (carregarDoLocalStorage()) {
@@ -1366,6 +1372,7 @@
                 }
 
                 try {
+                    // CARREGA A PLAYLIST PRINCIPAL DO play.json
                     const listaPrincipal = await carregarPlaylistPrincipal();
                     
                     if (listaPrincipal && listaPrincipal.length > 0) {
@@ -1380,7 +1387,9 @@
                             adicionarAoHistorico(primeira);
                         }
                         genreBadge.innerHTML = 'MPB';
+                        console.log(`✅ Iniciou com ${musicas.length} músicas do play.json`);
                     } else {
+                        // FALLBACK: TENTA MPB
                         const listaMPB = await carregarPlaylistPorGenero('MPB');
                         if (listaMPB && listaMPB.length > 0) {
                             musicas = listaMPB;
@@ -1394,6 +1403,8 @@
                                 adicionarAoHistorico(primeira);
                             }
                             genreBadge.innerHTML = 'MPB';
+                        } else {
+                            showNotification('❌ Nenhuma playlist carregada', 2000);
                         }
                     }
 
