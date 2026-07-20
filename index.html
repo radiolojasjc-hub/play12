@@ -479,7 +479,7 @@
             'use strict';
 
             // ============================================================
-            // VÍDEOS - LOOP DE 15 SEGUNDOS (SEM INDICADOR NA TELA)
+            // VÍDEOS - LOOP DE 15 SEGUNDOS
             // ============================================================
             const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
             let videoIndex = 0;
@@ -538,7 +538,7 @@
             let ultimoId = null;
             let carregandoMusica = false;
             let teachingTimeout = null;
-            let erroOculto = false;
+            let tentativasFalhas = 0;
 
             const audio = document.getElementById('musicPlayer');
             const playBtn = document.getElementById('playBtn');
@@ -565,7 +565,7 @@
             const menuButton = document.getElementById('menuButton');
 
             // ============================================================
-            // FUNÇÃO PARA ALTERNAR VÍDEOS (15 SEGUNDOS) - SEM INDICADOR
+            // FUNÇÃO PARA ALTERNAR VÍDEOS (15 SEGUNDOS)
             // ============================================================
             function alternarVideo() {
                 videoIndex = (videoIndex + 1) % VIDEOS.length;
@@ -588,18 +588,13 @@
             // FUNÇÕES AUXILIARES
             // ============================================================
             function showNotification(msg, duration = 1500) {
-                // Só mostra notificações se não for erro de música
-                if (msg.includes('❌') || msg.includes('⚠️') || msg.includes('Erro')) {
-                    return; // Oculta mensagens de erro
+                // Só mostra notificações que não são de erro
+                if (msg.includes('❌') || msg.includes('⚠️') || msg.includes('Erro') || msg.includes('⏭️')) {
+                    return;
                 }
                 notification.textContent = msg;
                 notification.classList.add('show');
                 setTimeout(() => notification.classList.remove('show'), duration);
-            }
-
-            function showErrorSilent() {
-                // Função vazia para ocultar erros
-                return;
             }
 
             function formatTime(sec) {
@@ -655,52 +650,25 @@
             // ============================================================
             // GERAR URLs - SUPORTE A OPUS
             // ============================================================
-            function gerarUrlCompleta(nomeArquivo) {
-                if (!nomeArquivo || !nomeArquivo.trim()) return '';
-                if (nomeArquivo.startsWith('http://') || nomeArquivo.startsWith('https://')) {
-                    return nomeArquivo;
-                }
-                
-                let nome = nomeArquivo.replace(/^\.\//, '').replace(/^\/+/, '');
-                nome = nome.replace(/[^a-zA-Z0-9\-_.]/g, '');
-                if (!nome) return '';
-                
-                const repos = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
-                const urls = [];
-                
-                repos.forEach(repo => {
-                    urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nome}`);
-                });
-                
-                const generoMap = {
-                    'MPB': 'mpbtop',
-                    'POP': 'poptop',
-                    'SERTANEJO': 'sertanejo',
-                    'FORRÓ': 'forrotop',
-                    'SAMBA': 'sambatop',
-                    'BREGA': 'bregatop',
-                    'REGGAE': 'reggaetop',
-                    'MODA TOP': 'modatop',
-                    'RELIGIOSA': 'religiosa'
-                };
-                const repoAtual = generoMap[modoAtual] || 'mpbtop';
-                urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/${repoAtual}/refs/heads/main/${nome}`);
-                urls.push(`https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/${nome}`);
-                
-                return urls[0];
-            }
-
             function gerarUrlsAlternativas(musica) {
                 const urls = new Set();
                 const src = musica.src || '';
                 
                 if (src && src.trim()) {
-                    const urlCompleta = gerarUrlCompleta(src);
-                    if (urlCompleta) urls.add(urlCompleta);
+                    if (src.startsWith('http://') || src.startsWith('https://')) {
+                        urls.add(src);
+                    } else {
+                        // Tenta em todos os repositórios
+                        const repos = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
+                        const nome = src.replace(/^\.\//, '').replace(/^\/+/, '');
+                        repos.forEach(repo => {
+                            urls.add(`https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nome}`);
+                        });
+                    }
                 }
                 
+                // Variações do nome do arquivo
                 const baseNome = src.replace(/\.[^.]+$/, '');
-                // ADICIONADO SUPORTE A OPUS
                 const exts = ['mp3', 'm4a', 'mp4', 'aac', 'ogg', 'opus'];
                 const variacoes = [
                     baseNome,
@@ -713,8 +681,7 @@
                     musica.title.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/ /g, '-'),
                     musica.title.replace(/[^a-zA-Z0-9]/g, '').trim(),
                     (musica.artist + '_' + musica.title).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_'),
-                    (musica.artist + '-' + musica.title).replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-'),
-                    (musica.title + '_' + musica.artist).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_')
+                    (musica.artist + '-' + musica.title).replace(/[^a-zA-Z0-9]/g, '-').replace(/-+/g, '-')
                 ];
                 
                 if (musica.artist) {
@@ -732,8 +699,7 @@
                             if (nomeLimpo.length > 2) {
                                 const repos = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
                                 repos.forEach(repo => {
-                                    const url = `https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nomeLimpo}.${ext}`;
-                                    urls.add(url);
+                                    urls.add(`https://raw.githubusercontent.com/radiolojasjc-hub/${repo}/refs/heads/main/${nomeLimpo}.${ext}`);
                                 });
                             }
                         });
@@ -974,20 +940,19 @@
             // REPRODUÇÃO
             // ============================================================
             function obterProximaMusica() {
+                // Se não houver playlist, criar uma
                 if (!currentPlaylist || currentPlaylist.length === 0) {
                     if (musicas.length === 0) return null;
                     currentPlaylist = shuffleArray([...musicas]);
-                    if (ultimoId && currentPlaylist.length > 1) {
-                        const idx = currentPlaylist.findIndex(m => m.id === ultimoId);
-                        if (idx > -1) currentPlaylist.splice(idx, 1);
-                    }
                     currentIndex = 0;
+                    return currentPlaylist[0] || null;
                 }
 
+                // Se chegou ao fim da playlist, recriar
                 if (currentIndex >= currentPlaylist.length) {
+                    if (musicas.length === 0) return null;
                     const ultima = currentPlaylist[currentPlaylist.length - 1];
                     ultimoId = ultima ? ultima.id : null;
-                    if (musicas.length === 0) return null;
                     currentPlaylist = shuffleArray([...musicas]);
                     if (ultimoId && currentPlaylist.length > 1) {
                         const idx = currentPlaylist.findIndex(m => m.id === ultimoId);
@@ -997,7 +962,13 @@
                 }
 
                 const musica = currentPlaylist[currentIndex];
-                if (!musica) return null;
+                if (!musica) {
+                    // Se não encontrou, tenta recriar a playlist
+                    if (musicas.length === 0) return null;
+                    currentPlaylist = shuffleArray([...musicas]);
+                    currentIndex = 0;
+                    return currentPlaylist[0] || null;
+                }
                 currentIndex++;
                 return musica;
             }
@@ -1017,12 +988,21 @@
             }
 
             // ============================================================
-            // playMusic - SEM NOTIFICAÇÕES DE ERRO
+            // playMusic - CORRIGIDO PARA PULAR MÚSICAS QUE NÃO TOCAM
             // ============================================================
             async function playMusic() {
                 if (carregandoMusica) return;
                 if (!isBackgroundActive) return;
                 if (!musicas.length) return;
+                
+                // Limita tentativas para evitar loop infinito
+                if (tentativasFalhas > 20) {
+                    tentativasFalhas = 0;
+                    // Recria a playlist
+                    currentPlaylist = shuffleArray([...musicas]);
+                    currentIndex = 0;
+                }
+
                 if (!currentPlaylist || currentPlaylist.length === 0) {
                     currentPlaylist = shuffleArray([...musicas]);
                     currentIndex = 0;
@@ -1033,7 +1013,7 @@
                 const track = obterProximaMusica();
                 if (!track) {
                     carregandoMusica = false;
-                    setTimeout(nextTrack, 500);
+                    setTimeout(() => { tentativasFalhas++; playMusic(); }, 500);
                     return;
                 }
 
@@ -1045,42 +1025,51 @@
                 
                 if (urls.length === 0) {
                     carregandoMusica = false;
-                    setTimeout(nextTrack, 500);
+                    tentativasFalhas++;
+                    setTimeout(() => playMusic(), 300);
                     return;
                 }
 
-                let timeoutId = null;
                 let sucesso = false;
-                let tentativas = 0;
-                const MAX_TENTATIVAS = urls.length;
+                let tentativaAtual = 0;
 
-                function tentarTocar(url, index) {
-                    tentativas++;
-                    if (timeoutId) clearTimeout(timeoutId);
-
-                    if (tentativas > MAX_TENTATIVAS || index >= urls.length) {
-                        carregandoMusica = false;
-                        setTimeout(nextTrack, 300);
+                function tentarProximaUrl() {
+                    if (tentativaAtual >= urls.length || sucesso) {
+                        if (!sucesso) {
+                            // Todas as URLs falharam - pula a música
+                            tentativasFalhas++;
+                            carregandoMusica = false;
+                            setTimeout(() => playMusic(), 300);
+                        }
                         return;
                     }
 
-                    const urlAtual = urls[index];
+                    const urlAtual = urls[tentativaAtual];
+                    tentativaAtual++;
+
+                    // Limpa eventos anteriores
+                    audio.oncanplay = null;
+                    audio.onerror = null;
+                    audio.onloadeddata = null;
 
                     audio.pause();
                     audio.src = urlAtual;
                     audio.load();
 
-                    timeoutId = setTimeout(() => {
-                        if (!sucesso) {
-                            tentarTocar(urls, index + 1);
-                        }
-                    }, 5000);
+                    let timeoutId = setTimeout(() => {
+                        // Timeout - tenta próxima URL
+                        audio.oncanplay = null;
+                        audio.onerror = null;
+                        audio.onloadeddata = null;
+                        tentarProximaUrl();
+                    }, 4000);
 
-                    audio.oncanplay = () => {
-                        if (timeoutId) clearTimeout(timeoutId);
+                    audio.oncanplay = function() {
+                        clearTimeout(timeoutId);
                         audio.play()
                             .then(() => {
                                 sucesso = true;
+                                tentativasFalhas = 0;
                                 isPlaying = true;
                                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                                 startTimer();
@@ -1094,17 +1083,43 @@
                                 }
                             })
                             .catch(() => {
-                                tentarTocar(urls, index + 1);
+                                // Falha ao reproduzir - tenta próxima
+                                audio.oncanplay = null;
+                                audio.onerror = null;
+                                audio.onloadeddata = null;
+                                tentarProximaUrl();
                             });
                     };
 
-                    audio.onerror = () => {
-                        if (timeoutId) clearTimeout(timeoutId);
-                        tentarTocar(urls, index + 1);
+                    audio.onerror = function() {
+                        clearTimeout(timeoutId);
+                        audio.oncanplay = null;
+                        audio.onloadeddata = null;
+                        tentarProximaUrl();
+                    };
+
+                    audio.onloadeddata = function() {
+                        // Se carregou dados, tenta tocar
+                        clearTimeout(timeoutId);
+                        audio.play()
+                            .then(() => {
+                                sucesso = true;
+                                tentativasFalhas = 0;
+                                isPlaying = true;
+                                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                                startTimer();
+                                carregandoMusica = false;
+                            })
+                            .catch(() => {
+                                audio.oncanplay = null;
+                                audio.onerror = null;
+                                audio.onloadeddata = null;
+                                tentarProximaUrl();
+                            });
                     };
                 }
 
-                tentarTocar(urls, 0);
+                tentarProximaUrl();
             }
 
             // ============================================================
@@ -1116,24 +1131,31 @@
                     playMusic();
                 } else {
                     audio.pause();
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    stopTimer();
                 }
                 showControls();
             }
 
             function nextTrack() {
                 if (carregandoMusica) return;
-                if (!currentPlaylist || currentPlaylist.length === 0) {
-                    currentPlaylist = shuffleArray([...musicas]);
-                    currentIndex = 0;
-                }
+                tentativasFalhas = 0;
                 if (isPlaying) {
-                    playMusic();
+                    audio.pause();
+                    audio.src = '';
+                    audio.load();
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    stopTimer();
+                    setTimeout(() => playMusic(), 200);
                 } else {
                     const track = obterProximaMusica();
                     if (track) {
                         ultimoId = track.id;
                         updateNowPlaying(track);
                         adicionarAoHistorico(track);
+                        playMusic();
                     }
                 }
                 showControls();
@@ -1145,6 +1167,7 @@
                     nextTrack();
                     return;
                 }
+                tentativasFalhas = 0;
                 if (currentIndex <= 0) {
                     currentIndex = currentPlaylist.length - 1;
                 } else {
@@ -1157,22 +1180,16 @@
                 ultimoId = track.id;
                 updateNowPlaying(track);
                 adicionarAoHistorico(track);
-                if (isPlaying) {
-                    audio.pause();
-                    const urls = gerarUrlsAlternativas(track);
-                    if (urls.length > 0) {
-                        audio.src = urls[0];
-                        audio.load();
-                        audio.play().catch(() => {});
-                    }
-                } else {
-                    const urls = gerarUrlsAlternativas(track);
-                    if (urls.length > 0) {
-                        audio.src = urls[0];
-                        audio.load();
-                    }
-                }
+                
+                audio.pause();
+                audio.src = '';
+                audio.load();
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                stopTimer();
+                
                 currentIndex++;
+                setTimeout(() => playMusic(), 200);
                 showControls();
             }
 
@@ -1201,12 +1218,15 @@
             function startTimer() {
                 stopTimer();
                 timerInterval = setInterval(() => {
-                    if (isPlaying && audio.duration && !audio.paused && audio.duration !== Infinity) {
+                    if (isPlaying && audio.duration && !audio.paused && audio.duration !== Infinity && !isNaN(audio.duration)) {
                         progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
                         currentTimeEl.textContent = formatTime(audio.currentTime);
                         totalTimeEl.textContent = formatTime(audio.duration);
                         if (audio.currentTime >= audio.duration - 0.5) {
-                            if (!carregandoMusica) nextTrack();
+                            if (!carregandoMusica) {
+                                tentativasFalhas = 0;
+                                nextTrack();
+                            }
                         }
                     }
                 }, 200);
@@ -1217,9 +1237,14 @@
                 if (carregandoMusica) return;
                 const musica = musicas.find(m => m.id === id);
                 if (!musica) return;
+                
                 audio.pause();
                 audio.src = '';
                 audio.load();
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                stopTimer();
+                
                 modoFavoritosAtivo = false;
                 modoAtual = musica.genero;
                 const lista = musicas.filter(m => m.genero === musica.genero);
@@ -1230,6 +1255,8 @@
                 historicoReproducao = [];
                 updateNowPlaying(musica);
                 genreBadge.innerHTML = musica.genero;
+                tentativasFalhas = 0;
+                
                 if (isBackgroundActive) setTimeout(() => playMusic(), 200);
             }
 
@@ -1294,6 +1321,7 @@
                     audioStatusBtn.innerHTML = '<span class="dot"></span> Ativado';
                     audioStatusBtn.className = 'top-btn ativo';
                     if ('wakeLock' in navigator) try { await navigator.wakeLock.request('screen'); } catch(e) {}
+                    tentativasFalhas = 0;
                     await playMusic();
                     showLoading(false);
                     return true;
@@ -1301,6 +1329,7 @@
                     isBackgroundActive = true;
                     audioStatusBtn.innerHTML = '<span class="dot"></span> Ativado';
                     audioStatusBtn.className = 'top-btn ativo';
+                    tentativasFalhas = 0;
                     await playMusic();
                     showLoading(false);
                     return true;
@@ -1396,9 +1425,37 @@
             // ============================================================
             // EVENTOS DOM
             // ============================================================
-            audio.addEventListener('play', () => { isPlaying = true; playBtn.innerHTML = '<i class="fas fa-pause"></i>'; startTimer(); });
-            audio.addEventListener('pause', () => { isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; stopTimer(); });
-            audio.addEventListener('ended', () => { if (!carregandoMusica) nextTrack(); });
+            audio.addEventListener('play', () => { 
+                isPlaying = true; 
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>'; 
+                startTimer(); 
+            });
+            audio.addEventListener('pause', () => { 
+                isPlaying = false; 
+                playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
+                stopTimer(); 
+            });
+            audio.addEventListener('ended', () => { 
+                if (!carregandoMusica) {
+                    tentativasFalhas = 0;
+                    setTimeout(nextTrack, 100);
+                }
+            });
+
+            // Tratamento de erro do áudio - pula para próxima
+            audio.addEventListener('error', () => {
+                if (!carregandoMusica) {
+                    tentativasFalhas++;
+                    setTimeout(() => {
+                        if (tentativasFalhas < 5) {
+                            playMusic();
+                        } else {
+                            tentativasFalhas = 0;
+                            nextTrack();
+                        }
+                    }, 300);
+                }
+            });
 
             heartBtn.addEventListener('click', () => {
                 const music = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
@@ -1453,6 +1510,7 @@
                     audio.pause(); 
                     isPlaying = false;
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    stopTimer();
                 }, mins * 60000);
             });
             
@@ -1479,9 +1537,12 @@
             });
 
             document.getElementById('progressBar').addEventListener('click', (e) => {
-                if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+                if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration) && audio.duration > 0) {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+                    const novoTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+                    if (novoTime >= 0 && novoTime <= audio.duration) {
+                        audio.currentTime = novoTime;
+                    }
                     showControls();
                 }
             });
