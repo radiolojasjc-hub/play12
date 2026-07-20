@@ -1,9 +1,9 @@
 [
 {"id":1,"artist":"Caribbean Queen","title":"Billy-Ocean","genero":"POP","src":"Billy-Ocean-Caribbean_Queen.m4a"},
-{"id":2,"artist":"Rita-lee","title":"Caso serio","genero":"MPB","src":"Rita-lee-Caso-serio.m4a"},
-{"id":3,"artist":"Cazuza","title":"Codinome Beija Flor","genero":"MPB","src":"Cazuza_Codinome_Beija_Flor.m4a"},
-{"id":4,"artist":"Chicago","title":"If You Leave Me Now","genero":"MPB","src":"Chicago_If_You_Leave_Me_Now.m4a"},
-{"id":5,"artist":"Djavan","title":"Sina","genero":"MPB","src":"Djavan_Sina.m4a"},
+{"id":2,"artist":"America","title":"A-Horse-With-N","genero":"POP","src":"America_A-Horse-With-No"},
+{"id":3,"artist":"Simply-Red","title":"Say-You-Love-Me","genero":"POP","src":"Simply-Red_Say-You-Love-Me.opus"},
+{"id":4,"artist":"Chicago","title":"If You Leave Me Now","genero":"POP","src":"Chicago_If_You_Leave_Me_Now.m4a"},
+{"id":5,"artist":"Phil_Collins_Do-You-Remember.opus","title":"Do-You-Remember","genero":"POP","src":"Phil_Collins_Do-You-Remember.opus"},
 {"id":6,"artist":"George Michael","title":"Father Figure","genero":"POP","src":"George_Michael_Father_Figure.m4a"},
 {"id":7,"artist":"You Give Me Something","title":"James Morrison","genero":"POP","src":"James-morrison.m4a"},
 {"id":8,"artist":"Giorgio Moroder","title":"Lady Lady Lady","genero":"POP","src":"Joe_Esposito_Lady_Lady_Lady.m4a"},
@@ -14,5 +14,9 @@
  {"id":13,"artist":"Mirrors_Justin","title":"Timberlake","genero":"POP","src":"Mirrors_Justin_Timberlake_muzzik.m4a"},
  {"id":14,"artist":"The-Cranberries_Linge.opus","title":"The-Cranberries_Linge.opus","genero":"POP","src":"The-Cranberries_Linge.opus"},
  {"id":15,"artist":"","title":"Summertime-Sadness","genero":"POP","src":"Lana-Del-Rey_Summertime-Sadness.opus"}, 
- {"id":16,"artist":"Coldplay_Paradise.opus","title":"Paradise","genero":"POP","src":"Coldplay_Paradise.opus"}
+ {"id":16,"artist":"Coldplay_Paradise.opus","title":"Paradise","genero":"POP","src":"Coldplay_Paradise.opus"},
+  {"id":17,"artist":"My-Father","title":"s-Eyes.opus","genero":"POP","src":"My-Father_s-Eyes.opus"},
+  {"id":18,"artist":"Mr_Mister_Broken-Wings.opus","title":"Broken-Wings","genero":"POP","src":"Mr_Mister_Broken-Wings.opus"},
+ {"id":19,"artist":"Bob-Dylan","title":"Bob-Dylan_Hurricane","genero":"POP","src":"Bob-Dylan_Hurricane.opus"},
+  {"id":20,"artist":"Annie Lennox","title":"Annie Lennox_Why.opus","genero":"POP","src":"Annie-Lennox_Why.opus"}
 ]
