@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a0a">
-    <title>PLAY 12 • TV</title>
+    <title>PLAY 12 • Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #0a0a0a; overflow: hidden; height: 100vh; width: 100vw; }
         :root { --neon-cyan: #00f3ff; --neon-pink: #ff2d7f; --neon-green: #4ade80; }
         
+        /* ===== VÍDEO DE FUNDO PADRÃO ===== */
         .video-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            object-fit: cover; 
+            z-index: 0; 
+            opacity: 0.4;
+        }
+        
+        /* ===== MODO TV ===== */
+        .video-tv { 
             position: fixed; 
             top: 50%; 
             left: 50%; 
@@ -21,438 +34,140 @@
             width: auto; 
             height: auto;
             z-index: 0; 
-            opacity: 0.5;
+            opacity: 1;
             object-fit: cover;
+            display: none;
         }
+        .video-tv.ativo {
+            display: block;
+        }
+        .video-bg.tv-ativo {
+            opacity: 0.3;
+        }
+        
+        /* ===== OVERLAY DO MODO TV ===== */
+        .tv-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.15);
+            z-index: 1;
+            display: none;
+            pointer-events: none;
+        }
+        .tv-overlay.ativo {
+            display: block;
+        }
+        
         .app { position: relative; z-index: 10; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; background: transparent; }
         
-        .top-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 8px 16px; 
-            background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(8px); 
-            border-bottom: 2px solid rgba(255,255,255,0.1); 
-            flex-wrap: nowrap; 
-            gap: 8px; 
-            flex-shrink: 0; 
-            min-height: 44px;
-        }
-        .genre-badge { 
-            background: rgba(255,255,255,0.08); 
-            padding: 6px 14px; 
-            border-radius: 30px; 
-            font-size: 0.8rem; 
-            font-weight: bold; 
-            color: #fff; 
-            border-left: 3px solid #00f3ff; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            max-width: 25%; 
-            cursor: pointer; 
-            flex-shrink: 1; 
-            min-width: 80px;
-            letter-spacing: 1px;
-        }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-bottom: 2px solid rgba(255,255,255,0.1); flex-wrap: nowrap; gap: 4px; flex-shrink: 0; }
+        .genre-badge { background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 30px; font-size: 0.55rem; font-weight: bold; color: #fff; border-left: 2px solid #00f3ff; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%; cursor: pointer; flex-shrink: 1; min-width: 40px; }
         .genre-badge:active { transform: scale(0.95); }
         .genre-badge.favoritos { border-left-color: #ff2d7f; color: #ff2d7f; background: rgba(255,45,127,0.15); }
-        .top-buttons { display: flex; gap: 8px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
+        .genre-badge.tv-ativo { border-left-color: #ff8800; color: #ff8800; background: rgba(255,136,0,0.15); }
+        .top-buttons { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; flex-shrink: 0; }
         
-        .top-btn { 
-            background: rgba(255,255,255,0.08); 
-            border: 1px solid rgba(255,255,255,0.15); 
-            color: #fff; 
-            padding: 4px 12px; 
-            border-radius: 30px; 
-            font-size: 0.65rem; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 4px; 
-            flex-shrink: 0; 
-            height: 30px; 
-            white-space: nowrap; 
-            transition: all 0.2s;
-        }
+        .top-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 2px 8px; border-radius: 30px; font-size: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 3px; flex-shrink: 0; height: 22px; white-space: nowrap; transition: all 0.2s; }
         .top-btn:active { transform: scale(0.92); background: var(--neon-cyan); color: #000; }
-        .top-btn .badge { 
-            background: #ff2d7f; 
-            color: #000; 
-            border-radius: 50%; 
-            padding: 0 6px; 
-            font-size: 0.5rem; 
-            font-weight: bold; 
-            min-width: 18px; 
-            text-align: center; 
-        }
+        .top-btn .badge { background: #ff2d7f; color: #000; border-radius: 50%; padding: 0 4px; font-size: 0.4rem; font-weight: bold; min-width: 14px; text-align: center; }
         .top-btn.ativo { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #4ade80; }
-        .top-btn.ativo .dot { 
-            width: 6px; 
-            height: 6px; 
-            border-radius: 50%; 
-            background: #4ade80; 
-            display: inline-block; 
-            animation: pulse-dot 1s infinite; 
-        }
+        .top-btn.ativo .dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1s infinite; }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .top-btn.tv-btn { background: rgba(255,136,0,0.15); border-color: #ff8800; color: #ff8800; }
+        .top-btn.tv-btn.active { background: #ff8800; color: #000; border-color: #ff8800; }
         
         .info-scroll { 
             position: fixed; 
-            top: 50px; 
+            top: 34px; 
             left: 0; 
             right: 0; 
-            background: rgba(0,0,0,0.5); 
-            backdrop-filter: blur(8px); 
-            padding: 8px 20px; 
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(4px); 
+            padding: 3px 12px; 
             z-index: 30; 
             border-bottom: 1px solid rgba(255,255,255,0.05); 
             overflow: hidden; 
             white-space: nowrap; 
-            height: 40px;
+            height: 28px;
             display: flex;
             align-items: center;
         }
         .info-scroll p { 
             color: white; 
-            font-size: 1rem; 
+            font-size: 0.75rem; 
             font-weight: 700; 
-            letter-spacing: 1px; 
+            letter-spacing: 0.5px; 
             animation: scrollText 20s linear infinite; 
             display: inline-block; 
             padding-right: 50px; 
             text-shadow: 0 0 30px rgba(0,0,0,0.8);
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.2;
         }
         @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         
-        .now-playing { 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            text-align: center; 
-            z-index: 15; 
-            width: 90%; 
-            max-width: 500px; 
-            user-select: none; 
-            -webkit-user-select: none; 
-        }
-        .now-playing .now-title { 
-            color: white; 
-            font-size: 2rem; 
-            font-weight: 700; 
-            text-shadow: 0 0 40px rgba(0,0,0,0.9); 
-            margin-bottom: 8px; 
-            letter-spacing: 1px;
-        }
-        .now-playing .now-artist { 
-            color: #eee; 
-            font-size: 1.4rem; 
-            font-weight: 300; 
-            text-shadow: 0 0 40px rgba(0,0,0,0.9); 
-            margin-bottom: 12px; 
-        }
-        .now-playing .fav-heart-center { display: flex; justify-content: center; margin: 12px 0; }
-        .now-playing .fav-heart { 
-            font-size: 4.5rem; 
-            color: #555; 
-            cursor: pointer; 
-            transition: all 0.3s; 
-            text-shadow: 0 0 30px rgba(0,0,0,0.9); 
-            display: inline-block; 
-        }
+        .now-playing { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 15; width: 90%; max-width: 400px; user-select: none; -webkit-user-select: none; }
+        .now-playing .now-title { color: white; font-size: 1.4rem; font-weight: 700; text-shadow: 0 0 30px rgba(0,0,0,0.9); margin-bottom: 4px; }
+        .now-playing .now-artist { color: #eee; font-size: 1.0rem; font-weight: 300; text-shadow: 0 0 30px rgba(0,0,0,0.9); margin-bottom: 8px; }
+        .now-playing .fav-heart-center { display: flex; justify-content: center; margin: 10px 0; }
+        .now-playing .fav-heart { font-size: 3.5rem; color: #555; cursor: pointer; transition: all 0.3s; text-shadow: 0 0 30px rgba(0,0,0,0.9); display: inline-block; }
         .now-playing .fav-heart.active { color: #ff2d7f; text-shadow: 0 0 40px rgba(255,45,127,0.5); }
         .now-playing .fav-heart:active { transform: scale(1.2); }
         
-        .teaching-bar { 
-            position: fixed; 
-            bottom: 120px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(12px); 
-            padding: 10px 28px; 
-            border-radius: 40px; 
-            font-size: 0.8rem; 
-            font-weight: 800; 
-            color: #ddd; 
-            z-index: 26; 
-            pointer-events: none; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            white-space: nowrap; 
-            text-align: center; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
-            opacity: 0; 
-            transition: opacity 0.5s ease; 
-        }
+        .teaching-bar { position: fixed; bottom: 115px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); padding: 6px 22px; border-radius: 40px; font-size: 0.6rem; font-weight: 800; color: #ddd; z-index: 26; pointer-events: none; border: 1px solid rgba(255,255,255,0.05); white-space: nowrap; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.5s ease; }
         .teaching-bar.show { opacity: 1; }
         .teaching-bar .cyan { color: var(--neon-cyan); font-weight: 900; }
         
-        .bottom-controls { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(20px); 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            padding: 10px 20px 16px; 
-            z-index: 20; 
-            transform: translateY(100%); 
-            transition: transform 0.3s ease; 
-        }
+        .bottom-controls { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); padding: 6px 12px 10px; z-index: 20; transform: translateY(100%); transition: transform 0.3s ease; }
         .bottom-controls.visible { transform: translateY(0); }
-        .progress-time { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.65rem; 
-            color: #aaa; 
-            margin-bottom: 4px; 
-        }
-        .progress-bar { 
-            height: 4px; 
-            background: rgba(255,255,255,0.15); 
-            cursor: pointer; 
-            border-radius: 4px; 
-            overflow: hidden; 
-        }
-        .progress-fill { 
-            height: 100%; 
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink)); 
-            width: 0%; 
-            border-radius: 4px; 
-        }
-        .buttons-row { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 16px; 
-            margin-top: 8px; 
-        }
-        .ctrl-btn { 
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; 
-            font-size: 1.1rem; 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            transition: all 0.2s;
-        }
+        .progress-time { display: flex; justify-content: space-between; font-size: 0.5rem; color: #aaa; margin-bottom: 2px; }
+        .progress-bar { height: 3px; background: rgba(255,255,255,0.15); cursor: pointer; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink)); width: 0%; border-radius: 4px; }
+        .buttons-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 4px; }
+        .ctrl-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 0.8rem; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
         .ctrl-btn:active { transform: scale(0.92); background: var(--neon-cyan); color: #000; }
-        .play-big { 
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink)); 
-            width: 54px; 
-            height: 54px; 
-            font-size: 1.4rem; 
-            color: #000; 
-            border: none; 
-        }
-        .shuffle-btn { 
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            color: #fff; 
-            font-size: 1rem; 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            transition: all 0.2s;
-        }
+        .play-big { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink)); width: 44px; height: 44px; font-size: 1.1rem; color: #000; border: none; }
+        .shuffle-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 0.7rem; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
         .shuffle-btn.active { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); }
         
-        .fab-container { 
-            position: fixed; 
-            bottom: 110px; 
-            right: 16px; 
-            z-index: 40; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-end; 
-            gap: 8px; 
-        }
-        .fab-main { 
-            background: linear-gradient(135deg, #3a3a3a, #1a1a1a); 
-            width: 56px; 
-            height: 56px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            color: white; 
-            font-size: 1.5rem; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            transition: all 0.3s;
-        }
+        .fab-container { position: fixed; bottom: 100px; right: 12px; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .fab-main { background: linear-gradient(135deg, #3a3a3a, #1a1a1a); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
         .fab-main:active { transform: scale(0.92); }
         .fab-main i { pointer-events: none; }
-        .fab-sub { 
-            background: rgba(0,0,0,0.9); 
-            backdrop-filter: blur(14px); 
-            border-radius: 30px; 
-            padding: 8px; 
-            display: none; 
-            flex-direction: column; 
-            gap: 4px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-        }
+        .fab-sub { background: rgba(0,0,0,0.9); backdrop-filter: blur(14px); border-radius: 30px; padding: 5px; display: none; flex-direction: column; gap: 3px; border: 1px solid rgba(255,255,255,0.1); }
         .fab-sub.open { display: flex; }
-        .fab-sub-btn { 
-            background: rgba(255,255,255,0.05); 
-            border: none; 
-            color: white; 
-            padding: 8px 16px; 
-            border-radius: 25px; 
-            font-size: 0.75rem; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            white-space: nowrap; 
-            min-width: 120px; 
-            transition: all 0.2s;
-        }
+        .fab-sub-btn { background: rgba(255,255,255,0.05); border: none; color: white; padding: 6px 14px; border-radius: 25px; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; min-width: 100px; }
         .fab-sub-btn:active { background: var(--neon-cyan); color: #000; }
-        .fab-sub-btn i { font-size: 1rem; width: 20px; text-align: center; pointer-events: none; }
+        .fab-sub-btn i { font-size: 0.85rem; width: 18px; text-align: center; pointer-events: none; }
         .fab-sub-btn .fab-icon-youtube { color: #FF0000; }
         
-        .menu-button { 
-            background: rgba(255,255,255,0.05); 
-            color: white; 
-            width: 30px; 
-            height: 30px; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.9rem; 
-            cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            flex-shrink: 0; 
-            transition: all 0.2s;
-        }
+        .menu-button { background: rgba(255,255,255,0.05); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
         .menu-button:active { background: var(--neon-cyan); color: #000; }
-        .menu-popup { 
-            position: absolute; 
-            top: 48px; 
-            right: 8px; 
-            background: rgba(0,0,0,0.95); 
-            backdrop-filter: blur(10px); 
-            border-radius: 16px; 
-            padding: 8px; 
-            z-index: 32; 
-            display: none; 
-            flex-direction: column; 
-            gap: 4px; 
-            border: 1px solid var(--neon-cyan); 
-            min-width: 160px; 
-        }
+        .menu-popup { position: absolute; top: 42px; right: 8px; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; z-index: 32; display: none; flex-direction: column; gap: 4px; border: 1px solid var(--neon-cyan); min-width: 130px; }
         .menu-popup.open { display: flex; }
-        .menu-popup button { 
-            background: rgba(255,255,255,0.08); 
-            border: none; 
-            color: white; 
-            padding: 8px 14px; 
-            border-radius: 30px; 
-            font-size: 0.7rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            cursor: pointer; 
-            text-align: left; 
-            transition: all 0.2s;
-        }
+        .menu-popup button { background: rgba(255,255,255,0.08); border: none; color: white; padding: 5px 12px; border-radius: 30px; font-size: 0.6rem; display: flex; align-items: center; gap: 6px; cursor: pointer; text-align: left; }
         .menu-popup button:active { background: var(--neon-cyan); color: #000; }
         .menu-popup .close-menu-btn { background: rgba(255,45,127,0.2); border: 1px solid #ff2d7f; color: #ff2d7f; }
         
-        #splash { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: #0a0a0a; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 9999; 
-            transition: opacity 0.5s; 
-        }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         #splash.hidden { opacity: 0; pointer-events: none; }
         .splash-loading { text-align: center; color: white; }
-        .splash-loading i { font-size: 3rem; color: var(--neon-cyan); animation: spin 1s linear infinite; }
-        .splash-loading p { margin-top: 15px; font-size: 1rem; letter-spacing: 2px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .splash-loading i { font-size: 2rem; color: var(--neon-cyan); }
+        .splash-loading p { margin-top: 10px; font-size: 0.85rem; }
         
-        #tap-to-start { 
-            position: fixed; 
-            bottom: 30%; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: linear-gradient(135deg, #4ade80, #22c55e); 
-            color: #000; 
-            padding: 18px 40px; 
-            border-radius: 60px; 
-            font-weight: 900; 
-            font-size: 1.4rem; 
-            z-index: 10000; 
-            cursor: pointer; 
-            display: none; 
-            animation: btnPulse 1.5s infinite; 
-            border: none; 
-            box-shadow: 0 0 40px rgba(74, 222, 128, 0.6); 
-            letter-spacing: 2px; 
-            text-transform: uppercase; 
-            white-space: nowrap; 
-        }
-        @keyframes btnPulse { 
-            0% { transform: translateX(-50%) scale(1); opacity: 0.9; box-shadow: 0 0 25px rgba(74, 222, 128, 0.3); } 
-            50% { transform: translateX(-50%) scale(1.04); opacity: 1; box-shadow: 0 0 50px rgba(74, 222, 128, 0.8); } 
-            100% { transform: translateX(-50%) scale(1); opacity: 0.9; box-shadow: 0 0 25px rgba(74, 222, 128, 0.3); } 
-        }
+        #tap-to-start { position: fixed; bottom: 30%; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #4ade80, #22c55e); color: #000; padding: 14px 28px; border-radius: 60px; font-weight: 900; font-size: 1.1rem; z-index: 10000; cursor: pointer; display: none; animation: btnPulse 1.5s infinite; border: none; box-shadow: 0 0 40px rgba(74, 222, 128, 0.6); letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; box-shadow: 0 0 25px rgba(74, 222, 128, 0.3); } 50% { transform: translateX(-50%) scale(1.04); opacity: 1; box-shadow: 0 0 50px rgba(74, 222, 128, 0.8); } 100% { transform: translateX(-50%) scale(1); opacity: 0.9; box-shadow: 0 0 25px rgba(74, 222, 128, 0.3); } }
         
-        .notification { 
-            position: fixed; 
-            top: 60px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(10px); 
-            color: var(--neon-cyan); 
-            padding: 6px 18px; 
-            border-radius: 30px; 
-            font-size: 0.7rem; 
-            z-index: 10001; 
-            opacity: 0; 
-            transition: opacity 0.3s; 
-            pointer-events: none; 
-            border-left: 3px solid var(--neon-cyan); 
-        }
+        .notification { position: fixed; top: 52px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); color: var(--neon-cyan); padding: 3px 12px; border-radius: 30px; font-size: 0.55rem; z-index: 10001; opacity: 0; transition: opacity 0.3s; pointer-events: none; border-left: 3px solid var(--neon-cyan); }
         .notification.show { opacity: 1; }
         
-        #loadingOverlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            z-index: 9998; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9998; align-items: center; justify-content: center; }
         #loadingOverlay.active { display: flex; }
-        #loadingOverlay i { font-size: 4rem; color: var(--neon-cyan); animation: spin 1s linear infinite; }
+        #loadingOverlay i { font-size: 3rem; color: var(--neon-cyan); animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .fav-modal, .feedback-modal, .historico-modal {
             position: fixed;
@@ -462,10 +177,10 @@
             background: rgba(20,20,40,0.95);
             backdrop-filter: blur(20px);
             border-radius: 30px;
-            padding: 30px;
+            padding: 25px;
             z-index: 5000;
             width: 90%;
-            max-width: 420px;
+            max-width: 380px;
             text-align: center;
             display: none;
             flex-direction: column;
@@ -481,7 +196,7 @@
             border-image: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink)) 1;
         }
         .fav-modal h3, .feedback-modal h3, .historico-modal h3 {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             margin-bottom: 15px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             -webkit-background-clip: text;
@@ -510,25 +225,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             color: white;
         }
         .fav-item .info, .historico-item .info { flex: 1; cursor: pointer; min-width: 0; }
-        .fav-item .info .title, .historico-item .info .title { font-weight: bold; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .fav-item .info .artist, .historico-item .info .artist { font-size: 0.8rem; color: #aaa; }
-        .fav-item .remove { background: transparent; border: none; color: #ff2d7f; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; }
+        .fav-item .info .title, .historico-item .info .title { font-weight: bold; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fav-item .info .artist, .historico-item .info .artist { font-size: 0.7rem; color: #aaa; }
+        .fav-item .remove { background: transparent; border: none; color: #ff2d7f; font-size: 1.1rem; cursor: pointer; padding: 4px 8px; }
         .fav-empty { color: #888; padding: 30px; text-align: center; }
         .fav-modal .close-btn, .historico-modal .close-btn {
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 30px;
             color: #000;
             font-weight: bold;
             cursor: pointer;
             margin-top: 0;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
         .fav-modal .close-btn:active, .historico-modal .close-btn:active { transform: scale(0.95); }
         
@@ -540,7 +255,7 @@
             background: rgba(20,20,40,0.95);
             backdrop-filter: blur(20px);
             border-radius: 30px 30px 0 0;
-            padding: 20px 16px 24px;
+            padding: 16px 10px 20px;
             z-index: 2000;
             transform: translateY(100%);
             transition: transform 0.3s ease;
@@ -554,7 +269,7 @@
         .genres-modal h3 {
             text-align: center;
             margin-bottom: 12px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -579,7 +294,7 @@
             text-align: center;
             color: white;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             padding: 6px;
         }
         .genre-card:active { transform: scale(0.94); }
@@ -589,12 +304,12 @@
         }
         .close-genres {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             border: none;
             border-radius: 30px;
             color: #000;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             font-weight: bold;
         }
@@ -663,80 +378,86 @@
         }
         .feedback-modal .btn-close-feedback:active { background: rgba(255,255,255,0.15); }
         
-        @media (max-width: 480px) {
-            .now-playing .now-title { font-size: 1.4rem; }
-            .now-playing .now-artist { font-size: 1rem; }
-            .now-playing .fav-heart { font-size: 3rem; }
-            .genre-badge { font-size: 0.55rem; max-width: 20%; padding: 4px 8px; min-width: 60px; }
-            .top-btn { font-size: 0.5rem; padding: 3px 8px; height: 24px; }
-            .fab-main { width: 48px; height: 48px; font-size: 1.2rem; }
-            .fab-sub-btn { padding: 6px 12px; font-size: 0.6rem; min-width: 90px; }
-            .top-bar { padding: 4px 8px; min-height: 36px; }
-            .info-scroll { top: 42px; height: 32px; padding: 4px 12px; }
-            .info-scroll p { font-size: 0.75rem; letter-spacing: 0px; }
-            .ctrl-btn { width: 32px; height: 32px; font-size: 0.8rem; }
-            .play-big { width: 44px; height: 44px; font-size: 1.1rem; }
-            .buttons-row { gap: 10px; }
-            .teaching-bar { bottom: 100px; font-size: 0.55rem; padding: 6px 16px; }
-            .bottom-controls { padding: 6px 12px 12px; }
-            .genres-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .genre-card { font-size: 0.65rem; aspect-ratio: 4/2.2; }
-            .fab-container { bottom: 85px; right: 8px; }
-            .menu-button { width: 26px; height: 26px; font-size: 0.7rem; }
-            #tap-to-start { padding: 14px 24px; font-size: 1rem; bottom: 25%; }
-            .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
-            .top-buttons { gap: 4px; }
-            .feedback-modal .star { font-size: 2rem; }
+        /* ===== MODO TV - TELAS GRANDES ===== */
+        @media (min-width: 1280px) {
+            .top-bar { padding: 8px 16px; }
+            .genre-badge { font-size: 0.8rem; padding: 6px 14px; min-width: 60px; }
+            .top-btn { font-size: 0.7rem; padding: 4px 12px; height: 28px; }
+            .info-scroll { top: 44px; height: 34px; padding: 4px 16px; }
+            .info-scroll p { font-size: 0.9rem; }
+            .now-playing .now-title { font-size: 1.8rem; }
+            .now-playing .now-artist { font-size: 1.3rem; }
+            .now-playing .fav-heart { font-size: 4.5rem; }
+            .ctrl-btn { width: 40px; height: 40px; font-size: 1rem; }
+            .play-big { width: 52px; height: 52px; font-size: 1.3rem; }
+            .buttons-row { gap: 16px; }
+            .teaching-bar { font-size: 0.8rem; padding: 8px 28px; bottom: 130px; }
+            .bottom-controls { padding: 8px 16px 12px; }
+            .fab-main { width: 56px; height: 56px; font-size: 1.4rem; }
+            .fab-container { bottom: 120px; right: 16px; }
+            .menu-button { width: 28px; height: 28px; font-size: 0.9rem; }
+            #tap-to-start { padding: 16px 36px; font-size: 1.3rem; }
         }
         
-        /* TV MODE - 1920x1080 */
-        @media (min-width: 1280px) and (min-height: 720px) {
-            .now-playing .now-title { font-size: 3rem; }
-            .now-playing .now-artist { font-size: 2rem; }
-            .now-playing .fav-heart { font-size: 6rem; }
-            .info-scroll { height: 50px; top: 60px; }
-            .info-scroll p { font-size: 1.2rem; }
-            .top-bar { padding: 12px 24px; min-height: 56px; }
-            .genre-badge { font-size: 1rem; padding: 8px 18px; min-width: 120px; }
-            .top-btn { font-size: 0.8rem; padding: 6px 16px; height: 36px; }
-            .menu-button { width: 36px; height: 36px; font-size: 1rem; }
-            .teaching-bar { bottom: 140px; font-size: 1rem; padding: 12px 32px; }
-            .bottom-controls { padding: 16px 32px 24px; }
-            .ctrl-btn { width: 48px; height: 48px; font-size: 1.3rem; }
-            .play-big { width: 64px; height: 64px; font-size: 1.8rem; }
-            .shuffle-btn { width: 48px; height: 48px; font-size: 1.2rem; }
-            .buttons-row { gap: 20px; }
-            .progress-time { font-size: 0.8rem; }
-            .progress-bar { height: 6px; }
-            .fab-main { width: 64px; height: 64px; font-size: 1.8rem; }
-            .fab-sub-btn { font-size: 0.9rem; padding: 10px 20px; min-width: 150px; }
-            .fav-modal, .feedback-modal, .historico-modal { max-width: 500px; padding: 35px; }
-            .genres-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
-            .genre-card { font-size: 1rem; aspect-ratio: 4/2; }
-            .fav-modal h3, .feedback-modal h3, .historico-modal h3 { font-size: 1.6rem; }
+        @media (max-width: 480px) {
+            .now-playing .now-title { font-size: 1.2rem; }
+            .now-playing .now-artist { font-size: 0.9rem; }
+            .now-playing .fav-heart { font-size: 2.5rem; }
+            .genre-badge { font-size: 0.45rem; max-width: 22%; padding: 2px 6px; }
+            .top-btn { font-size: 0.4rem; padding: 2px 6px; height: 18px; }
+            .fab-main { width: 42px; height: 42px; font-size: 1rem; }
+            .fab-sub-btn { padding: 5px 10px; font-size: 0.55rem; min-width: 85px; }
+            .top-bar { padding: 3px 5px; }
+            .info-scroll { top: 30px; height: 24px; padding: 2px 10px; }
+            .info-scroll p { font-size: 0.65rem; letter-spacing: 0px; }
+            .ctrl-btn { width: 28px; height: 28px; font-size: 0.65rem; }
+            .play-big { width: 36px; height: 36px; font-size: 0.9rem; }
+            .buttons-row { gap: 8px; }
+            .teaching-bar { bottom: 95px; font-size: 0.5rem; padding: 5px 14px; }
+            .bottom-controls { padding: 4px 8px 8px; }
+            .genres-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .genre-card { font-size: 0.6rem; aspect-ratio: 4/2.2; }
+            .fab-container { bottom: 80px; right: 8px; }
+            .menu-button { width: 20px; height: 20px; font-size: 0.6rem; }
+            #tap-to-start { padding: 10px 18px; font-size: 0.9rem; bottom: 25%; }
+            .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
+            .top-buttons { gap: 3px; }
+            .feedback-modal .star { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
+    <!-- VÍDEO PADRÃO -->
     <video id="bgVideo" class="video-bg" autoplay loop muted playsinline>
+        <source src="abc1.mp4" type="video/mp4">
+    </video>
+    
+    <!-- VÍDEO MODO TV -->
+    <video id="videoTV" class="video-tv" autoplay loop muted playsinline>
         <source src="cafe.mp4" type="video/mp4">
     </video>
+    
+    <!-- OVERLAY MODO TV -->
+    <div class="tv-overlay" id="tvOverlay"></div>
 
     <div id="splash">
         <div class="splash-loading">
             <i class="fas fa-circle-notch fa-spin"></i>
-            <p>📺 CARREGANDO PLAYLIST</p>
+            <p>Carregando playlist...</p>
         </div>
     </div>
 
-    <div id="tap-to-start">▶ ATIVAR TV</div>
+    <div id="tap-to-start">▶ ATIVAR RÁDIO</div>
 
     <div class="app" id="appContainer" style="display: none;">
         <div class="top-bar" id="topBar">
-            <div class="genre-badge" id="genreBadge" onclick="openGenres()">📺 TV</div>
+            <div class="genre-badge" id="genreBadge" onclick="openGenres()">MPB</div>
             <div class="top-buttons">
                 <button class="top-btn ativo" id="audioStatusBtn">
                     <span class="dot"></span> Ativado
+                </button>
+                <button class="top-btn tv-btn" id="tvModeBtn">
+                    <i class="fas fa-tv"></i> TV
                 </button>
                 <button class="top-btn" id="favTopBtn">
                     <i class="fas fa-heart"></i> <span class="badge" id="favCount">0</span>
@@ -749,7 +470,7 @@
         </div>
         
         <div class="info-scroll" id="infoScroll">
-            <p id="scrollText">🎵 PLAY 12 - TV 📺 - TOCANDO AGORA! 🎵</p>
+            <p id="scrollText">🎵 RÁDIO PLAY 12 - TOCANDO AGORA! 🎵</p>
         </div>
 
         <div class="now-playing" id="nowPlaying">
@@ -760,7 +481,7 @@
             </div>
         </div>
 
-        <div class="teaching-bar" id="teachingBar">📺 Toque na tela para <span class="cyan">controles</span></div>
+        <div class="teaching-bar" id="teachingBar">👆 Toque na tela para <span class="cyan">controles</span></div>
     </div>
 
     <div class="menu-popup" id="menuPopup">
@@ -771,6 +492,7 @@
         <button id="feedbackMenuBtn"><i class="fas fa-star"></i> Feedback</button>
         <button id="sleepMenuBtn"><i class="fas fa-moon"></i> Sleep Timer</button>
         <button id="historicoMenuBtn"><i class="fas fa-history"></i> Histórico</button>
+        <button id="tvMenuBtn"><i class="fas fa-tv"></i> Modo TV</button>
     </div>
 
     <div class="fav-modal" id="favModal">
@@ -828,6 +550,7 @@
             <button class="fab-sub-btn" id="fabYoutube"><i class="fab fa-youtube fab-icon-youtube"></i> Vídeo YouTube</button>
             <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt"></i> Compartilhar</button>
             <button class="fab-sub-btn" id="fabHistorico"><i class="fas fa-history"></i> Histórico</button>
+            <button class="fab-sub-btn" id="fabTv"><i class="fas fa-tv"></i> Modo TV</button>
         </div>
         <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
     </div>
@@ -843,8 +566,9 @@
             'use strict';
 
             // ============================================================
-            // CONFIGURAÇÕES - MODO TV
+            // CONFIGURAÇÕES
             // ============================================================
+            const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
             const REPOSITORIOS = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
             const EXTENSOES = ['mp3', 'm4a', 'mp4', 'aac', 'ogg', 'opus', 'wav', 'flac'];
@@ -896,6 +620,7 @@
             let carregandoMusica = false;
             let teachingTimeout = null;
             let tentativasFalhas = 0;
+            let modoTVAtivo = false;
 
             const audio = document.getElementById('musicPlayer');
             const playBtn = document.getElementById('playBtn');
@@ -913,6 +638,9 @@
             const bottomControls = document.getElementById('bottomControls');
             const shuffleBtn = document.getElementById('shuffleBtn');
             const bgVideo = document.getElementById('bgVideo');
+            const videoTV = document.getElementById('videoTV');
+            const tvOverlay = document.getElementById('tvOverlay');
+            const tvModeBtn = document.getElementById('tvModeBtn');
             const heartBtn = document.getElementById('heartBtn');
             const favTopBtn = document.getElementById('favTopBtn');
             const favCount = document.getElementById('favCount');
@@ -922,6 +650,62 @@
             const audioStatusBtn = document.getElementById('audioStatusBtn');
             const menuPopup = document.getElementById('menuPopup');
             const menuButton = document.getElementById('menuButton');
+
+            // ============================================================
+            // FUNÇÃO MODO TV
+            // ============================================================
+            function toggleModoTV() {
+                modoTVAtivo = !modoTVAtivo;
+                
+                if (modoTVAtivo) {
+                    // ATIVA MODO TV
+                    bgVideo.classList.add('tv-ativo');
+                    videoTV.classList.add('ativo');
+                    tvOverlay.classList.add('ativo');
+                    tvModeBtn.classList.add('active');
+                    genreBadge.classList.add('tv-ativo');
+                    document.getElementById('tvMenuBtn').innerHTML = '<i class="fas fa-tv"></i> Sair TV';
+                    document.getElementById('fabTv').innerHTML = '<i class="fas fa-tv"></i> Sair TV';
+                    showNotification('📺 Modo TV ATIVADO - Cafe.mp4', 2000);
+                    // Tenta tocar o vídeo TV
+                    videoTV.play().catch(() => {});
+                } else {
+                    // DESATIVA MODO TV
+                    bgVideo.classList.remove('tv-ativo');
+                    videoTV.classList.remove('ativo');
+                    tvOverlay.classList.remove('ativo');
+                    tvModeBtn.classList.remove('active');
+                    genreBadge.classList.remove('tv-ativo');
+                    document.getElementById('tvMenuBtn').innerHTML = '<i class="fas fa-tv"></i> Modo TV';
+                    document.getElementById('fabTv').innerHTML = '<i class="fas fa-tv"></i> Modo TV';
+                    videoTV.pause();
+                    showNotification('📺 Modo TV DESATIVADO', 1500);
+                }
+            }
+
+            // ============================================================
+            // VÍDEOS - LOOP DE 15 SEGUNDOS (APENAS MODO PADRÃO)
+            // ============================================================
+            let videoIndex = 0;
+            let videoInterval = null;
+
+            function alternarVideo() {
+                if (modoTVAtivo) return; // Não alterna em modo TV
+                videoIndex = (videoIndex + 1) % VIDEOS.length;
+                const novoVideo = VIDEOS[videoIndex];
+                bgVideo.src = novoVideo;
+                bgVideo.load();
+                bgVideo.play().catch(() => {});
+            }
+
+            function iniciarLoopVideos() {
+                if (videoInterval) clearInterval(videoInterval);
+                videoIndex = 0;
+                bgVideo.src = VIDEOS[0];
+                bgVideo.load();
+                bgVideo.play().catch(() => {});
+                videoInterval = setInterval(alternarVideo, 15000);
+            }
 
             // ============================================================
             // FUNÇÕES AUXILIARES
@@ -1280,6 +1064,7 @@
                 historicoReproducao = [];
                 genreBadge.innerHTML = genero;
                 genreBadge.className = 'genre-badge';
+                if (modoTVAtivo) genreBadge.classList.add('tv-ativo');
                 const primeira = currentPlaylist[0];
                 if (primeira) {
                     updateNowPlaying(primeira);
@@ -1621,6 +1406,7 @@
                 historicoReproducao = [];
                 updateNowPlaying(musica);
                 genreBadge.innerHTML = musica.genero;
+                if (modoTVAtivo) genreBadge.classList.add('tv-ativo');
                 tentativasFalhas = 0;
                 
                 if (isBackgroundActive) setTimeout(() => playMusic(), 200);
@@ -1717,6 +1503,7 @@
             // ============================================================
             async function iniciar() {
                 if (carregarDoLocalStorage()) {
+                    iniciarLoopVideos();
                     setTimeout(() => {
                         splash.classList.add('hidden');
                         setTimeout(() => {
@@ -1744,7 +1531,7 @@
                             updateNowPlaying(primeira);
                             adicionarAoHistorico(primeira);
                         }
-                        genreBadge.innerHTML = '📺 TV';
+                        genreBadge.innerHTML = 'MPB';
                     } else {
                         const listaMPB = await carregarPlaylistPorGenero('MPB');
                         if (listaMPB && listaMPB.length > 0) {
@@ -1758,7 +1545,7 @@
                                 updateNowPlaying(primeira);
                                 adicionarAoHistorico(primeira);
                             }
-                            genreBadge.innerHTML = '📺 TV';
+                            genreBadge.innerHTML = 'MPB';
                         }
                     }
 
@@ -1769,6 +1556,8 @@
                     updateFavCount();
                     renderFavList();
                     buildGenresGrid();
+
+                    iniciarLoopVideos();
 
                     setTimeout(() => {
                         splash.classList.add('hidden');
@@ -1824,6 +1613,11 @@
                 if (music) { toggleFavorito(music.id); buildGenresGrid(); }
             });
 
+            // ===== MODO TV =====
+            tvModeBtn.addEventListener('click', toggleModoTV);
+            document.getElementById('tvMenuBtn').addEventListener('click', () => { menuPopup.classList.remove('open'); toggleModoTV(); });
+            document.getElementById('fabTv').addEventListener('click', () => { fabMain.click(); toggleModoTV(); });
+
             document.getElementById('favTopBtn').addEventListener('click', openFavModal);
             document.getElementById('closeFavModal').addEventListener('click', () => document.getElementById('favModal').classList.remove('open'));
             document.getElementById('closeFavBtn').addEventListener('click', () => document.getElementById('favModal').classList.remove('open'));
@@ -1850,9 +1644,9 @@
             document.getElementById('fabShare').addEventListener('click', () => {
                 const track = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
                 if (!track) return;
-                const msg = `🎵 Estou ouvindo "${track.title}" - ${track.artist} no Play 12 TV! 📺 Ouça também: ${location.href}`;
+                const msg = `🎵 Estou ouvindo "${track.title}" - ${track.artist} no Play 12! 📻 Ouça também: ${location.href}`;
                 if (navigator.share) {
-                    navigator.share({ title: 'Play 12 TV', text: msg, url: location.href })
+                    navigator.share({ title: 'Play 12', text: msg, url: location.href })
                         .catch(() => {});
                 } else {
                     navigator.clipboard.writeText(msg).catch(() => {});
@@ -1941,6 +1735,7 @@
                         const music = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
                         if (music) { toggleFavorito(music.id); buildGenresGrid(); }
                         break;
+                    case 't': case 'T': toggleModoTV(); break;
                 }
             });
 
