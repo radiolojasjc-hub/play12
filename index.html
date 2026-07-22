@@ -126,7 +126,7 @@
         #loadingOverlay i { font-size: 3rem; color: var(--neon-cyan); animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .fav-modal, .feedback-modal, .historico-modal {
+        .fav-modal, .feedback-modal, .historico-modal, .karaoke-modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -146,13 +146,13 @@
             border: 2px solid transparent;
             box-shadow: 0 0 40px rgba(0,243,255,0.2), 0 0 80px rgba(255,45,127,0.1);
         }
-        .fav-modal.open, .feedback-modal.open, .historico-modal.open {
+        .fav-modal.open, .feedback-modal.open, .historico-modal.open, .karaoke-modal.open {
             display: flex;
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
             border-image: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink)) 1;
         }
-        .fav-modal h3, .feedback-modal h3, .historico-modal h3 {
+        .fav-modal h3, .feedback-modal h3, .historico-modal h3, .karaoke-modal h3 {
             font-size: 1.2rem;
             margin-bottom: 15px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
@@ -160,7 +160,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .fav-modal .close-fav, .historico-modal .close-hist {
+        .fav-modal .close-fav, .historico-modal .close-hist, .karaoke-modal .close-karaoke {
             position: absolute;
             top: 12px;
             right: 16px;
@@ -170,13 +170,29 @@
             font-size: 1.5rem;
             cursor: pointer;
         }
-        .fav-modal .close-fav:active, .historico-modal .close-hist:active { color: #fff; }
+        .fav-modal .close-fav:active, .historico-modal .close-hist:active, .karaoke-modal .close-karaoke:active { color: #fff; }
         
-        .fav-list, .historico-list {
+        .fav-list, .historico-list, .karaoke-list {
             max-height: 50vh;
             overflow-y: auto;
             text-align: left;
             margin-bottom: 15px;
+        }
+        .karaoke-lyrics {
+            color: #ddd;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            text-align: center;
+            padding: 10px;
+            max-height: 40vh;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .karaoke-lyrics .current-line {
+            color: var(--neon-cyan);
+            font-weight: bold;
+            font-size: 1.1rem;
         }
         .fav-item, .historico-item {
             display: flex;
@@ -191,7 +207,7 @@
         .fav-item .info .artist, .historico-item .info .artist { font-size: 0.7rem; color: #aaa; }
         .fav-item .remove { background: transparent; border: none; color: #ff2d7f; font-size: 1.1rem; cursor: pointer; padding: 4px 8px; }
         .fav-empty { color: #888; padding: 30px; text-align: center; }
-        .fav-modal .close-btn, .historico-modal .close-btn {
+        .fav-modal .close-btn, .historico-modal .close-btn, .karaoke-modal .close-btn {
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
             border: none;
             padding: 12px;
@@ -202,7 +218,7 @@
             margin-top: 0;
             font-size: 0.95rem;
         }
-        .fav-modal .close-btn:active, .historico-modal .close-btn:active { transform: scale(0.95); }
+        .fav-modal .close-btn:active, .historico-modal .close-btn:active, .karaoke-modal .close-btn:active { transform: scale(0.95); }
         
         .genres-modal {
             position: fixed;
@@ -335,6 +351,55 @@
         }
         .feedback-modal .btn-close-feedback:active { background: rgba(255,255,255,0.15); }
         
+        .microphone-btn {
+            background: rgba(255,45,127,0.2);
+            border: 1px solid #ff2d7f;
+            color: #ff2d7f;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-shrink: 0;
+            height: 22px;
+            white-space: nowrap;
+        }
+        .microphone-btn.active {
+            background: rgba(74,222,128,0.2);
+            border-color: #4ade80;
+            color: #4ade80;
+            animation: mic-pulse 1s infinite;
+        }
+        @keyframes mic-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .microphone-btn:active { transform: scale(0.92); }
+        
+        .modo-busca {
+            background: rgba(0,243,255,0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-shrink: 0;
+            height: 22px;
+            white-space: nowrap;
+        }
+        .modo-busca.active {
+            background: rgba(255,45,127,0.15);
+            border-color: #ff2d7f;
+            color: #ff2d7f;
+        }
+        .modo-busca:active { transform: scale(0.92); }
+        
         @media (max-width: 480px) {
             .now-playing .fav-heart { font-size: 3.5rem; }
             .genre-badge { font-size: 0.45rem; max-width: 22%; padding: 2px 6px; }
@@ -354,9 +419,12 @@
             .fab-container { bottom: 80px; right: 8px; }
             .menu-button { width: 20px; height: 20px; font-size: 0.6rem; }
             #tap-to-start { padding: 10px 18px; font-size: 0.9rem; bottom: 25%; }
-            .fav-modal, .feedback-modal, .historico-modal { padding: 20px; max-width: 340px; }
+            .fav-modal, .feedback-modal, .historico-modal, .karaoke-modal { padding: 20px; max-width: 340px; }
             .top-buttons { gap: 3px; }
             .feedback-modal .star { font-size: 2rem; }
+            .microphone-btn { font-size: 0.4rem; padding: 2px 6px; height: 18px; }
+            .modo-busca { font-size: 0.4rem; padding: 2px 6px; height: 18px; }
+            .karaoke-lyrics { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -381,11 +449,20 @@
                 <button class="top-btn ativo" id="audioStatusBtn">
                     <span class="dot"></span> Ativado
                 </button>
+                <button class="modo-busca" id="modoBuscaBtn" title="Modo Busca">
+                    <i class="fas fa-search"></i> <span id="modoBuscaTexto">Artista</span>
+                </button>
+                <button class="microphone-btn" id="microphoneBtn" title="Comando de Voz">
+                    <i class="fas fa-microphone"></i>
+                </button>
                 <button class="top-btn" id="favTopBtn">
                     <i class="fas fa-heart"></i> <span class="badge" id="favCount">0</span>
                 </button>
                 <button class="top-btn" id="historicoTopBtn" title="Histórico">
                     <i class="fas fa-history"></i>
+                </button>
+                <button class="top-btn" id="karaokeTopBtn" title="Karaokê">
+                    <i class="fas fa-microphone-alt"></i>
                 </button>
                 <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
             </div>
@@ -412,6 +489,7 @@
         <button id="feedbackMenuBtn"><i class="fas fa-star"></i> Feedback</button>
         <button id="sleepMenuBtn"><i class="fas fa-moon"></i> Sleep Timer</button>
         <button id="historicoMenuBtn"><i class="fas fa-history"></i> Histórico</button>
+        <button id="karaokeMenuBtn"><i class="fas fa-microphone-alt"></i> Karaokê</button>
     </div>
 
     <div class="fav-modal" id="favModal">
@@ -426,6 +504,13 @@
         <h3><i class="fas fa-history"></i> Últimas Tocadas</h3>
         <div class="historico-list" id="historicoList"><div class="fav-empty">Nenhuma música tocada ainda</div></div>
         <button class="close-btn" id="closeHistBtn">FECHAR</button>
+    </div>
+
+    <div class="karaoke-modal" id="karaokeModal">
+        <button class="close-karaoke" id="closeKaraokeModal"><i class="fas fa-times"></i></button>
+        <h3><i class="fas fa-microphone-alt"></i> 🎤 Karaokê</h3>
+        <div class="karaoke-lyrics" id="karaokeLyrics">Selecione uma música para ver a letra</div>
+        <button class="close-btn" id="closeKaraokeBtn">FECHAR</button>
     </div>
 
     <div class="genres-modal" id="genresModal">
@@ -469,6 +554,7 @@
             <button class="fab-sub-btn" id="fabYoutube"><i class="fab fa-youtube fab-icon-youtube"></i> Vídeo YouTube</button>
             <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt"></i> Compartilhar</button>
             <button class="fab-sub-btn" id="fabHistorico"><i class="fas fa-history"></i> Histórico</button>
+            <button class="fab-sub-btn" id="fabKaraoke"><i class="fas fa-microphone-alt"></i> Karaokê</button>
         </div>
         <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
     </div>
@@ -486,11 +572,11 @@
             // ============================================================
             // CONFIGURAÇÕES
             // ============================================================
-            const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
+            const VIDEOS = ['abc1.mp4', 'abc2.mp3', 'abc3.mp4'];
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
             const REPOSITORIOS = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
             const EXTENSOES = ['mp3', 'm4a', 'mp4', 'aac', 'ogg', 'opus', 'wav', 'flac'];
-            const MAX_TENTATIVAS = 5; // 🔥 TENTA 5 VEZES, DEPOIS PULA
+            const MAX_TENTATIVAS = 5;
 
             const GENRE_URLS = {
                 'MPB': 'https://raw.githubusercontent.com/radiolojasjc-hub/mpbtop/refs/heads/main/mpb.json',
@@ -538,6 +624,9 @@
             let carregandoMusica = false;
             let teachingTimeout = null;
             let tentativasFalhas = 0;
+            let modoBusca = 'artista'; // 'artista' ou 'musica'
+            let recognition = null;
+            let isListening = false;
 
             const audio = document.getElementById('musicPlayer');
             const playBtn = document.getElementById('playBtn');
@@ -562,6 +651,9 @@
             const audioStatusBtn = document.getElementById('audioStatusBtn');
             const menuPopup = document.getElementById('menuPopup');
             const menuButton = document.getElementById('menuButton');
+            const microphoneBtn = document.getElementById('microphoneBtn');
+            const modoBuscaBtn = document.getElementById('modoBuscaBtn');
+            const modoBuscaTexto = document.getElementById('modoBuscaTexto');
 
             // ============================================================
             // VÍDEOS - LOOP DE 15 SEGUNDOS
@@ -649,7 +741,7 @@
             }
 
             // ============================================================
-            // GERAR URLs - SISTEMA ROBUSTO
+            // GERAR URLs
             // ============================================================
             function gerarUrlsAlternativas(musica) {
                 const urls = new Set();
@@ -824,6 +916,224 @@
             }
 
             // ============================================================
+            // KARAOKÊ
+            // ============================================================
+            function abrirKaraoke() {
+                const track = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
+                const lyricsEl = document.getElementById('karaokeLyrics');
+                
+                if (!track) {
+                    lyricsEl.textContent = 'Nenhuma música tocando no momento';
+                    document.getElementById('karaokeModal').classList.add('open');
+                    return;
+                }
+                
+                // Busca a letra - pode vir do JSON ou de uma API
+                if (track.lyrics) {
+                    lyricsEl.innerHTML = track.lyrics.replace(/\n/g, '<br>');
+                } else {
+                    lyricsEl.innerHTML = `🎤 <strong>${track.title}</strong>\n\n${track.artist}\n\n🎵 Letra não disponível para esta música.\n\n💡 Adicione "lyrics" no JSON da música.`;
+                }
+                
+                document.getElementById('karaokeModal').classList.add('open');
+            }
+
+            // ============================================================
+            // COMANDO DE VOZ
+            // ============================================================
+            function iniciarReconhecimentoVoz() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    showNotification('❌ Reconhecimento de voz não suportado', 2000);
+                    return;
+                }
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'pt-BR';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    microphoneBtn.classList.add('active');
+                    microphoneBtn.innerHTML = '<i class="fas fa-microphone"></i> Ouvindo...';
+                    showNotification('🎤 Ouvindo... Diga um comando', 2000);
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                    console.log('🎤 Comando:', transcript);
+                    
+                    // Processa o comando
+                    if (transcript.includes('próxima') || transcript.includes('proxima') || transcript.includes('próximo') || transcript.includes('proximo')) {
+                        nextTrack();
+                        showNotification('⏭️ Próxima música', 1000);
+                    } else if (transcript.includes('anterior') || transcript.includes('voltar')) {
+                        prevTrack();
+                        showNotification('⏪ Música anterior', 1000);
+                    } else if (transcript.includes('pausar') || transcript.includes('parar')) {
+                        if (isPlaying) {
+                            togglePlay();
+                            showNotification('⏸️ Pausado', 1000);
+                        }
+                    } else if (transcript.includes('tocar') || transcript.includes('play')) {
+                        if (!isPlaying) {
+                            togglePlay();
+                            showNotification('▶️ Tocando', 1000);
+                        }
+                    } else if (transcript.includes('favorito') || transcript.includes('coração')) {
+                        const music = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
+                        if (music) {
+                            toggleFavorito(music.id);
+                            buildGenresGrid();
+                            showNotification('❤️ Favorito adicionado/removido', 1000);
+                        }
+                    } else if (transcript.includes('shuffle') || transcript.includes('aleatório') || transcript.includes('aleatorio')) {
+                        toggleShuffle();
+                        showNotification('🔀 Aleatório alternado', 1000);
+                    } else if (transcript.includes('karaokê') || transcript.includes('karaoke') || transcript.includes('letra')) {
+                        abrirKaraoke();
+                        showNotification('🎤 Abrindo Karaokê', 1000);
+                    } else if (transcript.includes('gênero') || transcript.includes('genero') || transcript.includes('estilo')) {
+                        openGenres();
+                        showNotification('🎵 Abrindo gêneros', 1000);
+                    } else if (transcript.includes('voltar')) {
+                        // Já tratado acima
+                    } else if (transcript.includes('buscar') || transcript.includes('procure') || transcript.includes('encontre')) {
+                        // Busca por música ou artista
+                        const palavras = transcript.split(' ');
+                        const termos = palavras.filter(p => !['buscar', 'procure', 'encontre', 'por', 'a', 'o', 'e', 'de', 'da', 'do'].includes(p));
+                        if (termos.length > 0) {
+                            const busca = termos.join(' ');
+                            if (modoBusca === 'artista') {
+                                buscarPorArtista(busca);
+                            } else {
+                                buscarPorMusica(busca);
+                            }
+                        }
+                    } else {
+                        // Tenta interpretar como busca
+                        const palavras = transcript.split(' ');
+                        if (palavras.length > 1 && !['próxima', 'proxima', 'anterior', 'pausar', 'parar', 'tocar', 'play', 'favorito', 'shuffle', 'aleatório', 'karaokê'].includes(palavras[0])) {
+                            if (modoBusca === 'artista') {
+                                buscarPorArtista(transcript);
+                            } else {
+                                buscarPorMusica(transcript);
+                            }
+                        } else {
+                            showNotification(`🎤 Comando não reconhecido: "${transcript}"`, 1500);
+                        }
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    isListening = false;
+                    microphoneBtn.classList.remove('active');
+                    microphoneBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                    if (event.error === 'not-allowed') {
+                        showNotification('❌ Permissão de microfone negada', 2000);
+                    } else if (event.error !== 'no-speech') {
+                        showNotification(`❌ Erro: ${event.error}`, 1500);
+                    }
+                };
+
+                recognition.onend = function() {
+                    isListening = false;
+                    microphoneBtn.classList.remove('active');
+                    microphoneBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                };
+
+                try {
+                    recognition.start();
+                } catch(e) {
+                    showNotification('❌ Erro ao iniciar microfone', 1500);
+                }
+            }
+
+            function toggleMicrofone() {
+                if (isListening) {
+                    try {
+                        recognition.stop();
+                    } catch(e) {}
+                    isListening = false;
+                    microphoneBtn.classList.remove('active');
+                    microphoneBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                    showNotification('🎤 Microfone desativado', 1000);
+                } else {
+                    iniciarReconhecimentoVoz();
+                }
+            }
+
+            // ============================================================
+            // MODO BUSCA - ARTISTA OU MÚSICA
+            // ============================================================
+            function toggleModoBusca() {
+                if (modoBusca === 'artista') {
+                    modoBusca = 'musica';
+                    modoBuscaTexto.textContent = 'Música';
+                    modoBuscaBtn.classList.add('active');
+                    showNotification('🔍 Modo: Buscar por MÚSICA', 1000);
+                } else {
+                    modoBusca = 'artista';
+                    modoBuscaTexto.textContent = 'Artista';
+                    modoBuscaBtn.classList.remove('active');
+                    showNotification('🔍 Modo: Buscar por ARTISTA', 1000);
+                }
+            }
+
+            function buscarPorArtista(nome) {
+                const termo = nome.toLowerCase().trim();
+                const resultados = musicas.filter(m => 
+                    m.artist.toLowerCase().includes(termo)
+                );
+                
+                if (resultados.length === 0) {
+                    showNotification(`🔍 Nenhum artista encontrado: "${nome}"`, 1500);
+                    return;
+                }
+                
+                currentPlaylist = shuffleArray([...resultados]);
+                currentIndex = 0;
+                ultimoId = null;
+                historicoReproducao = [];
+                const primeira = currentPlaylist[0];
+                if (primeira) {
+                    updateNowPlaying(primeira);
+                    adicionarAoHistorico(primeira);
+                }
+                genreBadge.innerHTML = `🎤 ${resultados.length} resultados`;
+                genreBadge.className = 'genre-badge';
+                if (isBackgroundActive) setTimeout(() => playMusic(), 200);
+                showNotification(`🎤 ${resultados.length} música(s) de ${nome}`, 1500);
+            }
+
+            function buscarPorMusica(nome) {
+                const termo = nome.toLowerCase().trim();
+                const resultados = musicas.filter(m => 
+                    m.title.toLowerCase().includes(termo)
+                );
+                
+                if (resultados.length === 0) {
+                    showNotification(`🔍 Nenhuma música encontrada: "${nome}"`, 1500);
+                    return;
+                }
+                
+                currentPlaylist = shuffleArray([...resultados]);
+                currentIndex = 0;
+                ultimoId = null;
+                historicoReproducao = [];
+                const primeira = currentPlaylist[0];
+                if (primeira) {
+                    updateNowPlaying(primeira);
+                    adicionarAoHistorico(primeira);
+                }
+                genreBadge.innerHTML = `🎵 ${resultados.length} resultados`;
+                genreBadge.className = 'genre-badge';
+                if (isBackgroundActive) setTimeout(() => playMusic(), 200);
+                showNotification(`🎵 ${resultados.length} música(s) com "${nome}"`, 1500);
+            }
+
+            // ============================================================
             // CARREGAMENTO DE PLAYLIST
             // ============================================================
             async function carregarPlaylistPrincipal() {
@@ -847,6 +1157,7 @@
                     lista.forEach(m => {
                         m.id = m.id || `play12_${Math.random().toString(36).substr(2, 6)}`;
                         m.genero = m.genero || 'MPB';
+                        m.lyrics = m.lyrics || ''; // Suporte a letras
                     });
                     
                     showLoading(false);
@@ -880,6 +1191,7 @@
                     lista.forEach(m => {
                         m.id = m.id || `gen_${genero}_${Math.random().toString(36).substr(2, 6)}`;
                         m.genero = genero;
+                        m.lyrics = m.lyrics || '';
                     });
                     playlistCache[genero] = lista;
                     showLoading(false);
@@ -961,6 +1273,7 @@
                 buildGenresGrid();
                 document.getElementById('genresModal').classList.remove('open');
                 goFullscreen();
+                showNotification(`🎵 ${genero} (${musicas.length} músicas)`, 2000);
             }
 
             // ============================================================
@@ -1021,7 +1334,7 @@
             }
 
             // ============================================================
-            // playMusic - TENTA 5 VEZES, DEPOIS PULA
+            // playMusic
             // ============================================================
             async function playMusic() {
                 if (carregandoMusica) return;
@@ -1494,10 +1807,19 @@
             document.getElementById('closeFeedbackBtn').addEventListener('click', () => document.getElementById('feedbackModal').classList.remove('open'));
             document.getElementById('closeHistModal').addEventListener('click', () => document.getElementById('historicoModal').classList.remove('open'));
             document.getElementById('closeHistBtn').addEventListener('click', () => document.getElementById('historicoModal').classList.remove('open'));
+            document.getElementById('closeKaraokeModal').addEventListener('click', () => document.getElementById('karaokeModal').classList.remove('open'));
+            document.getElementById('closeKaraokeBtn').addEventListener('click', () => document.getElementById('karaokeModal').classList.remove('open'));
 
             document.getElementById('historicoTopBtn').addEventListener('click', abrirHistorico);
             document.getElementById('historicoMenuBtn').addEventListener('click', () => { menuPopup.classList.remove('open'); abrirHistorico(); });
             document.getElementById('fabHistorico').addEventListener('click', () => { fabMain.click(); abrirHistorico(); });
+
+            document.getElementById('karaokeTopBtn').addEventListener('click', abrirKaraoke);
+            document.getElementById('karaokeMenuBtn').addEventListener('click', () => { menuPopup.classList.remove('open'); abrirKaraoke(); });
+            document.getElementById('fabKaraoke').addEventListener('click', () => { fabMain.click(); abrirKaraoke(); });
+
+            microphoneBtn.addEventListener('click', toggleMicrofone);
+            modoBuscaBtn.addEventListener('click', toggleModoBusca);
 
             const fabMain = document.getElementById('fabMain');
             const fabSub = document.getElementById('fabSub');
@@ -1604,6 +1926,8 @@
                         const music = currentPlaylist[currentIndex % currentPlaylist.length] || currentPlaylist[0];
                         if (music) { toggleFavorito(music.id); buildGenresGrid(); }
                         break;
+                    case 'm': case 'M': toggleMicrofone(); break;
+                    case 'k': case 'K': abrirKaraoke(); break;
                 }
             });
 
@@ -1616,6 +1940,7 @@
             document.getElementById('favModal').addEventListener('click', (e) => { if (e.target === document.getElementById('favModal')) document.getElementById('favModal').classList.remove('open'); });
             document.getElementById('feedbackModal').addEventListener('click', (e) => { if (e.target === document.getElementById('feedbackModal')) document.getElementById('feedbackModal').classList.remove('open'); });
             document.getElementById('historicoModal').addEventListener('click', (e) => { if (e.target === document.getElementById('historicoModal')) document.getElementById('historicoModal').classList.remove('open'); });
+            document.getElementById('karaokeModal').addEventListener('click', (e) => { if (e.target === document.getElementById('karaokeModal')) document.getElementById('karaokeModal').classList.remove('open'); });
             document.getElementById('genresModal').addEventListener('click', (e) => { if (e.target === document.getElementById('genresModal')) document.getElementById('genresModal').classList.remove('open'); });
 
             document.querySelectorAll('.star').forEach(star => {
@@ -1661,6 +1986,36 @@
                 document.getElementById('genresModal').classList.add('open');
                 showControls();
             }
+
+            // ============================================================
+            // GESTOS - DESLIZAR PARA TROCAR MÚSICA
+            // ============================================================
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                const diffX = e.changedTouches[0].screenX - touchStartX;
+                const diffY = e.changedTouches[0].screenY - touchStartY;
+                
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX > 50) {
+                        nextTrack();
+                        showNotification('⏭️ Próxima', 800);
+                    } else if (diffX < -50) {
+                        prevTrack();
+                        showNotification('⏪ Anterior', 800);
+                    }
+                } else {
+                    if (diffY < -50) {
+                        showControls();
+                    }
+                }
+            });
 
             window.addEventListener('load', iniciar);
         })();
