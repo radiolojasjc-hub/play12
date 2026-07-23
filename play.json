@@ -18,5 +18,11 @@
   {"id":17,"artist":"My-Father","title":"s-Eyes.opus","genero":"POP","src":"My-Father_s-Eyes.opus"},
   {"id":18,"artist":"Mr_Mister_Broken-Wings.opus","title":"Broken-Wings","genero":"POP","src":"Mr_Mister_Broken-Wings.opus"},
  {"id":19,"artist":"Bob-Dylan","title":"Bob-Dylan_Hurricane","genero":"POP","src":"Bob-Dylan_Hurricane.opus"},
-  {"id":20,"artist":"Annie Lennox","title":"Annie Lennox_Why.opus","genero":"POP","src":"Annie-Lennox_Why.opus"}
+  {"id":20,"artist":"Annie Lennox","title":"Annie Lennox_Why.opus","genero":"POP","src":"Annie-Lennox_Why.opus"},
+ {"id":21,"artist":"Coldplay","title":"ColdplayParadise","genero":"POP","src":"Desconhecido-ColdplayParadise.opus"},
+{"id":22,"artist":"HSCC","title":"You ll Never Find","genero":"POP","src":"HSCC-You-ll-Never-Find.mp3"},
+{"id":23,"artist":"Phil Collins","title":"Do You Remember","genero":"POP","src":"Phil-Collins-Do-You-Remember.opus"},
+{"id":24,"artist":"Phil","title":"Collins - Another Day In Paradise","genero":"POP","src":"Phil-Collins-Another-Day-In-Paradise.m4a"},
+{"id":25,"artist":"Simply-Red","title":"Say-You-Love-Me","genero":"POP","src":"Simply-Red-Say-You-Love-Me.opus"},
+{"id":26,"artist":"The-Way","title":"It-s","genero":"POP","src":"The-Way-It-s.opus"}
 ]
