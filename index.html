@@ -570,7 +570,7 @@
             // ============================================================
             const VIDEOS = ['abc1.mp4', 'abc2.mp4', 'abc3.mp4'];
             const PLAYLIST_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json';
-            const REPOSITORIOS = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'play12'];
+            const REPOSITORIOS = ['mpbtop', 'poptop', 'sertanejo', 'forrotop', 'sambatop', 'bregatop', 'reggaetop', 'modatop', 'religiosa', 'flashbacktop', 'play12'];
             const EXTENSOES = ['mp3', 'm4a', 'mp4', 'aac', 'ogg', 'opus', 'wav', 'flac'];
             const MAX_TENTATIVAS = 5;
 
@@ -583,7 +583,8 @@
                 'BREGA': 'https://raw.githubusercontent.com/radiolojasjc-hub/bregatop/refs/heads/main/brega.json',
                 'REGGAE': 'https://raw.githubusercontent.com/radiolojasjc-hub/reggaetop/refs/heads/main/reggae.json',
                 'MODA TOP': 'https://raw.githubusercontent.com/radiolojasjc-hub/modatop/refs/heads/main/moda.json',
-                'RELIGIOSA': 'https://raw.githubusercontent.com/radiolojasjc-hub/religiosa/refs/heads/main/religiosa.json'
+                'RELIGIOSA': 'https://raw.githubusercontent.com/radiolojasjc-hub/religiosa/refs/heads/main/religiosa.json',
+                'FLASHBACK': 'https://radiolojasjc-hub.github.io/flashbacktop/'
             };
 
             const CORES_POR_GENERO = {
@@ -595,7 +596,8 @@
                 'BREGA': '#ff66aa',
                 'REGGAE': '#00ffaa',
                 'MODA TOP': '#ff4400',
-                'RELIGIOSA': '#aa55ff'
+                'RELIGIOSA': '#aa55ff',
+                'FLASHBACK': '#ff6b35'
             };
 
             // ============================================================
@@ -658,7 +660,6 @@
                 modoTVAtivo = !modoTVAtivo;
                 
                 if (modoTVAtivo) {
-                    // ATIVA MODO TV
                     bgVideo.classList.add('tv-ativo');
                     videoTV.classList.add('ativo');
                     tvOverlay.classList.add('ativo');
@@ -667,10 +668,8 @@
                     document.getElementById('tvMenuBtn').innerHTML = '<i class="fas fa-tv"></i> Sair TV';
                     document.getElementById('fabTv').innerHTML = '<i class="fas fa-tv"></i> Sair TV';
                     showNotification('📺 Modo TV ATIVADO - Cafe.mp4', 2000);
-                    // Tenta tocar o vídeo TV
                     videoTV.play().catch(() => {});
                 } else {
-                    // DESATIVA MODO TV
                     bgVideo.classList.remove('tv-ativo');
                     videoTV.classList.remove('ativo');
                     tvOverlay.classList.remove('ativo');
@@ -690,7 +689,7 @@
             let videoInterval = null;
 
             function alternarVideo() {
-                if (modoTVAtivo) return; // Não alterna em modo TV
+                if (modoTVAtivo) return;
                 videoIndex = (videoIndex + 1) % VIDEOS.length;
                 const novoVideo = VIDEOS[videoIndex];
                 bgVideo.src = novoVideo;
