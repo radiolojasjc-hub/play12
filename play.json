@@ -30,5 +30,9 @@
     {"id":29,"artist":"Jorge Ben","title":"Ive Brussel","genero":"POP","src":"Ive_Brussel_JORGE_BEN.m4a"},
     {"id":30,"artist":"Jota Quest feat Tim Maia","title":"Vale Tudo","genero":"POP","src":"Vale_Tudo_Jota_Quest_Tim_Maia.mp3"},
     {"id":31,"artist":"Jota Quest feat Tim Maia","title":"Azul da Cor do Mar","genero":"POP","src":"Azul_da_Cor_do_Mar_Jota_Quest_Tim_Maia.mp3"},
-    {"id":32,"artist":"LS Jack","title":"Cheia de Charme","genero":"POP","src":"Cheia_de_Charme_LS_Jack.mp3"}
+    {"id":32,"artist":"LS Jack","title":"Cheia de Charme","genero":"POP","src":"Cheia_de_Charme_LS_Jack.mp3"},
+     {"id":33,"artist":"an","title":"vdb1.mp3","genero":"POP","src":"vdb1.mp3"},
+     {"id":34,"artist":"anun","title":"vdb2.mp3","genero":"POP","src":"vdb2.mp3"}
+]
+]
 ]
