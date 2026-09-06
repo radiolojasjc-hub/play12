@@ -1597,18 +1597,13 @@
 // ============================================================
 // VAI DE BOA! MUSIC - v3.0 FINAL (TIMER CORRIDO 24H)
 // ============================================================
-(function() {
-    'use strict';
 // ============================================================
 // VAI DE BOA! MUSIC - v3.0 FINAL (TIMER CORRIDO 24H)
-// JavaScript puro (sem HTML/CSS)
 // ============================================================
 (function() {
     'use strict';
 
-    // ============================================================
-    // CONFIGURAÇÕES
-    // ============================================================
+    // ========== CONFIGURAÇÕES ==========
     const CONFIG = {
         CACHE_VERSION: parseInt(localStorage.getItem('vdb_cache_version') || '1'),
         WHATSAPP_NUMBER: '12988461978',
@@ -1660,9 +1655,7 @@
         }
     };
 
-    // ============================================================
-    // CACHE BUSTING
-    // ============================================================
+    // ========== CACHE BUSTING ==========
     const CacheBuster = {
         get version() { return CONFIG.CACHE_VERSION; },
         set version(v) { localStorage.setItem('vdb_cache_version', String(v)); },
@@ -1683,9 +1676,7 @@
         }
     };
 
-    // ============================================================
-    // DOM HELPERS
-    // ============================================================
+    // ========== DOM HELPERS ==========
     const $ = (id) => document.getElementById(id);
     const dom = {
         loadingScreen: $('loadingScreen'),
@@ -1773,9 +1764,7 @@
         feedbackText: $('feedbackText'),
     };
 
-    // ============================================================
-    // UTILITÁRIOS
-    // ============================================================
+    // ========== UTILITÁRIOS ==========
     function fmt(s) {
         if (!s || isNaN(s)) return '0:00';
         const m = Math.floor(s / 60);
@@ -1838,9 +1827,7 @@
         dom.loadingProgressFill.style.width = Math.min(pct, 100) + '%';
     }
 
-    // ============================================================
-    // NOTIFICATIONS
-    // ============================================================
+    // ========== NOTIFICAÇÕES ==========
     class Notifier {
         constructor() {
             this.queue = [];
@@ -1870,9 +1857,7 @@
     const notifier = new Notifier();
     const notif = (msg, dur = 2000, type = 'info') => notifier.show(msg, dur, type);
 
-    // ============================================================
-    // FINGERPRINT
-    // ============================================================
+    // ========== FINGERPRINT ==========
     function obterFingerprint() {
         try {
             const navegador = navigator.userAgent || '';
@@ -1888,9 +1873,7 @@
         }
     }
 
-    // ============================================================
-    // STATE
-    // ============================================================
+    // ========== STATE ==========
     const state = {
         tempoRestante: 86400,
         desbloqueado: false,
@@ -1926,9 +1909,7 @@
         touchManager: null,
     };
 
-    // ============================================================
-    // SENHAS
-    // ============================================================
+    // ========== SENHAS ==========
     const SENHA_ADMIN = (() => {
         const c = [112, 97, 116, 105, 99, 111, 49, 54, 56, 53];
         return String.fromCharCode(...c);
@@ -1976,91 +1957,70 @@
         return { valida: false };
     }
 
-    // ============================================================
-    // FAVORITOS (IndexedDB) - CORRIGIDO
-    // ============================================================
+    // ========== FAVORITOS (IndexedDB) ==========
     class FavoritesManager {
         constructor() {
             this.db = null;
             this.init();
         }
-        
         async init() {
             return new Promise(resolve => {
                 try {
                     const req = indexedDB.open('VDBFavoritesDB', 2);
-                    
                     req.onupgradeneeded = (e) => {
                         const db = e.target.result;
-                        
                         if (!db.objectStoreNames.contains('favorites')) {
                             const store = db.createObjectStore('favorites', { keyPath: 'id' });
                             store.createIndex('genero', 'genero', { unique: false });
                             store.createIndex('data', 'data', { unique: false });
                         }
-                        
                         if (!db.objectStoreNames.contains('playlists')) {
                             const store = db.createObjectStore('playlists', { keyPath: 'id' });
                             store.createIndex('nome', 'nome', { unique: false });
                             store.createIndex('data', 'data', { unique: false });
                         }
                     };
-                    
                     req.onsuccess = (e) => {
                         this.db = e.target.result;
                         this.migrar();
                         resolve();
                     };
                     req.onerror = () => resolve();
-                } catch (e) { 
+                } catch (e) {
                     console.error('Erro IndexedDB:', e);
-                    resolve(); 
+                    resolve();
                 }
             });
         }
-        
         async migrar() {
             try {
                 const dados = JSON.parse(localStorage.getItem('vfav') || '[]');
                 if (dados.length > 0) {
-                    for (const item of dados) {
-                        await this.add(item);
-                    }
+                    for (const item of dados) await this.add(item);
                     localStorage.removeItem('vfav');
                 }
-            } catch (e) {
-                console.error('Erro migração:', e);
-            }
+            } catch (e) { console.error('Erro migração:', e); }
         }
-        
         async salvarPlaylist(playlist) {
             if (!this.db) {
                 const playlists = JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
                 const idx = playlists.findIndex(p => p.id === playlist.id);
-                if (idx > -1) {
-                    playlists[idx] = { ...playlist, data: Date.now() };
-                } else {
-                    playlists.push({ ...playlist, data: Date.now() });
-                }
+                if (idx > -1) playlists[idx] = { ...playlist, data: Date.now() };
+                else playlists.push({ ...playlist, data: Date.now() });
                 localStorage.setItem('vdb_playlists', JSON.stringify(playlists));
                 return;
             }
-            
             try {
                 const tx = this.db.transaction(['playlists'], 'readwrite');
                 const store = tx.objectStore('playlists');
                 await store.put({ ...playlist, data: Date.now() });
-            } catch (e) {
-                console.error('Erro salvar playlist:', e);
-            }
+            } catch (e) { console.error('Erro salvar playlist:', e); }
         }
-        
         async getPlaylist(id) {
             if (!this.db) {
                 const playlists = JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
                 return playlists.find(p => p.id === id) || null;
             }
-            
             return new Promise(resolve => {
                 try {
                     const tx = this.db.transaction(['playlists'], 'readonly');
@@ -2071,12 +2031,8 @@
                 } catch (e) { resolve(null); }
             });
         }
-        
         async getAllPlaylists() {
-            if (!this.db) {
-                return JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
-            }
-            
+            if (!this.db) return JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
             return new Promise(resolve => {
                 try {
                     const tx = this.db.transaction(['playlists'], 'readonly');
@@ -2087,23 +2043,18 @@
                 } catch (e) { resolve([]); }
             });
         }
-        
         async deletePlaylist(id) {
             if (!this.db) {
                 const playlists = JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
                 localStorage.setItem('vdb_playlists', JSON.stringify(playlists.filter(p => p.id !== id)));
                 return;
             }
-            
             try {
                 const tx = this.db.transaction(['playlists'], 'readwrite');
                 const store = tx.objectStore('playlists');
                 await store.delete(id);
-            } catch (e) {
-                console.error('Erro deletar playlist:', e);
-            }
+            } catch (e) { console.error('Erro deletar playlist:', e); }
         }
-        
         async add(musica) {
             if (!this.db) {
                 const favs = JSON.parse(localStorage.getItem('vfav') || '[]');
@@ -2113,37 +2064,26 @@
                 }
                 return;
             }
-            
             try {
                 const tx = this.db.transaction(['favorites'], 'readwrite');
                 const store = tx.objectStore('favorites');
                 await store.put({ ...musica, data: Date.now() });
-            } catch (e) {
-                console.error('Erro adicionar favorito:', e);
-            }
+            } catch (e) { console.error('Erro adicionar favorito:', e); }
         }
-        
         async remove(id) {
             if (!this.db) {
                 const favs = JSON.parse(localStorage.getItem('vfav') || '[]');
                 localStorage.setItem('vfav', JSON.stringify(favs.filter(f => f.id !== id)));
                 return;
             }
-            
             try {
                 const tx = this.db.transaction(['favorites'], 'readwrite');
                 const store = tx.objectStore('favorites');
                 await store.delete(id);
-            } catch (e) {
-                console.error('Erro remover favorito:', e);
-            }
+            } catch (e) { console.error('Erro remover favorito:', e); }
         }
-        
         async getAll() {
-            if (!this.db) {
-                return JSON.parse(localStorage.getItem('vfav') || '[]');
-            }
-            
+            if (!this.db) return JSON.parse(localStorage.getItem('vfav') || '[]');
             return new Promise(resolve => {
                 try {
                     const tx = this.db.transaction(['favorites'], 'readonly');
@@ -2155,85 +2095,64 @@
             });
         }
     }
-
     const favManager = new FavoritesManager();
 
-    // ============================================================
-    // TIMER CORRIDO DE 24 HORAS
-    // ============================================================
-    const TEMPO_TESTE = 86400; // 24 horas em segundos
-
+    // ========== TIMER CORRIDO 24H ==========
+    const TEMPO_TESTE = 86400;
     function updateTimerDisplay() {
         if (state.desbloqueado) {
             dom.timerLib.textContent = '🔓 Lib';
             dom.timerLib.className = 'timer-lib lib';
             return;
         }
-        
         const tempoRestante = calcularTempoRestante();
         state.tempoRestante = tempoRestante;
-        
         dom.timerLib.textContent = fmtTempo(tempoRestante);
         dom.timerLib.className = 'timer-lib';
         dom.timerLib.style.color = tempoRestante <= 3600 ? '#fd79a8' : '#6c5ce7';
     }
-
     function iniciarTimerCorrido() {
         const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
-        
         if (!expiracaoSalva) {
             const expiracao = Date.now() + (TEMPO_TESTE * 1000);
             localStorage.setItem('vdb_teste_expiracao', String(expiracao));
             console.log('✅ Timer corrido iniciado! Expira em:', new Date(expiracao).toLocaleString());
         }
-        
         state.timerIniciado = true;
-        
         clearInterval(state.timerInterval);
         state.timerInterval = setInterval(() => {
             if (!state.desbloqueado && !document.hidden) {
                 const tempoRestante = calcularTempoRestante();
                 state.tempoRestante = tempoRestante;
-                
                 if (tempoRestante <= 0) {
                     clearInterval(state.timerInterval);
                     bloquear();
                 }
-                
                 updateTimerDisplay();
             }
         }, 1000);
-        
         updateTimerDisplay();
     }
-
     function calcularTempoRestante() {
         const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
-        
         if (!expiracaoSalva) {
             const expiracao = Date.now() + (TEMPO_TESTE * 1000);
             localStorage.setItem('vdb_teste_expiracao', String(expiracao));
             return TEMPO_TESTE;
         }
-        
         const expiracao = parseInt(expiracaoSalva);
         const agora = Date.now();
         const restante = Math.floor((expiracao - agora) / 1000);
-        
         return restante > 0 ? restante : 0;
     }
-
     function restaurarTempo() {
         const tempoRestante = calcularTempoRestante();
-        
         if (tempoRestante > 0) {
             state.tempoRestante = tempoRestante;
             return true;
         }
-        
         return false;
     }
-
     function bloquear() {
         state.desbloqueado = false;
         dom.blockOverlay.classList.add('active');
@@ -2241,19 +2160,15 @@
         dom.audio.pause();
         state.isPlaying = false;
         dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        
         localStorage.setItem('vdb_bloqueado_permanente', 'true');
         localStorage.removeItem('vdb_desbloqueado');
         localStorage.removeItem('vdb_senha_permanente');
         localStorage.removeItem('vdb_teste_expiracao');
-        
         if (dom.infoDispositivo) dom.infoDispositivo.textContent = state.fingerprint;
         notif('⏰ Tempo de teste expirou!', 3000);
     }
 
-    // ============================================================
-    // PLAYER FUNCTIONS
-    // ============================================================
+    // ========== PLAYER FUNCTIONS ==========
     function showControls() {
         dom.bottomControls.classList.add('visible');
         clearTimeout(state.hideControlsTimeout);
@@ -2261,7 +2176,6 @@
             dom.bottomControls.classList.remove('visible');
         }, 4000);
     }
-
     function fullscreen() {
         try {
             const el = document.documentElement;
@@ -2270,7 +2184,6 @@
             else if (el.msRequestFullscreen) el.msRequestFullscreen();
         } catch (e) {}
     }
-
     function forcarTelaCheia() {
         fullscreen();
         setTimeout(fullscreen, 500);
@@ -2278,10 +2191,6 @@
         setTimeout(fullscreen, 2000);
         setTimeout(fullscreen, 3000);
     }
-
-    // ============================================================
-    // ÁUDIO BACKGROUND
-    // ============================================================
     function criarSilentAudio() {
         const sr = 44100, ns = sr * 5;
         const buffer = new ArrayBuffer(44 + ns * 2);
@@ -2304,7 +2213,6 @@
         view.setUint32(40, ns * 2, true);
         return new Blob([buffer], { type: 'audio/wav' });
     }
-
     function manterAudioAtivo() {
         clearInterval(state.backgroundInterval);
         state.backgroundInterval = setInterval(async () => {
@@ -2321,7 +2229,6 @@
             } catch (e) {}
         }, 1000);
     }
-
     async function ativarPlayer() {
         if (state.playerAtivado) return;
         state.playerAtivado = true;
@@ -2353,9 +2260,7 @@
         }
     }
 
-    // ============================================================
-    // PLAYER CONTROLS
-    // ============================================================
+    // ========== CONTROLES ==========
     function togglePlay() {
         if (!state.isBackgroundActive) { notif('🔊 Aguarde...', 1500); return; }
         if (dom.audio.paused) {
@@ -2368,42 +2273,32 @@
         }
         showControls();
     }
-
     function next() {
         if (state.carregandoMusica) return;
         state.indiceAtual = (state.indiceAtual + 1) % state.playlistAtual.length;
         if (state.isBackgroundActive) setTimeout(tocar, 100);
         showControls();
     }
-
     function prev() {
         if (state.carregandoMusica) return;
         state.indiceAtual = (state.indiceAtual - 1 + state.playlistAtual.length) % state.playlistAtual.length;
         if (state.isBackgroundActive) setTimeout(tocar, 100);
         showControls();
     }
-
     function toggleShuffle() {
         state.shuffleMode = !state.shuffleMode;
         dom.shuffleBtn.classList.toggle('active', state.shuffleMode);
         state.playlistAtual = shuffle(state.musicas);
         notif(state.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial');
     }
-
-    // ============================================================
-    // CARREGAR PLAYLIST
-    // ============================================================
     function getUrls(musica) {
         const src = musica.src || '';
         if (!src) return [];
         if (src.startsWith('http')) return [CacheBuster.getUrl(src)];
         const nome = src.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, '');
         const repo = CONFIG.REPOS[musica.genero] || 'play12';
-        return [
-            CacheBuster.getUrl('https://raw.githubusercontent.com/radiolojasjc-hub/' + repo + '/refs/heads/main/' + nome)
-        ];
+        return [CacheBuster.getUrl('https://raw.githubusercontent.com/radiolojasjc-hub/' + repo + '/refs/heads/main/' + nome)];
     }
-
     async function carregarPlaylist(genero) {
         const url = CONFIG.GENRE_URLS[genero];
         if (!url) return null;
@@ -2424,7 +2319,6 @@
             return null;
         }
     }
-
     function atualizarPlaylist() {
         if (!state.playlistAtual.length) return null;
         if (state.indiceAtual >= state.playlistAtual.length) {
@@ -2433,7 +2327,6 @@
         }
         return state.playlistAtual[state.indiceAtual];
     }
-
     async function tocar() {
         if (!state.isBackgroundActive || state.carregandoMusica || !state.musicas.length) return;
         state.carregandoMusica = true;
@@ -2486,7 +2379,6 @@
             setTimeout(next, 100);
         }
     }
-
     function atualizarLetreiro(musica) {
         if (state.scrollPersonalizado) return;
         if (musica) {
@@ -2499,9 +2391,7 @@
         dom.scrollText.style.animation = 'scrollText 20s linear infinite';
     }
 
-    // ============================================================
-    // FAVORITOS (UI) - CORRIGIDO
-    // ============================================================
+    // ========== FAVORITOS UI ==========
     async function carregarFav() {
         try {
             state.favorites = await favManager.getAll();
@@ -2509,12 +2399,10 @@
         } catch (e) { state.favorites = []; }
         updateFavBadge();
     }
-
     function updateFavBadge() {
         dom.favBadge.textContent = state.favorites.length;
         if (dom.choiceBadge) dom.choiceBadge.textContent = state.favorites.length;
     }
-
     function updateHeart(id) {
         const isFav = state.favorites.some(f => f.id === id);
         if (isFav) {
@@ -2525,7 +2413,6 @@
             dom.heartBtn.innerHTML = '<i class="far fa-heart"></i>';
         }
     }
-
     async function toggleFav(musica) {
         if (!musica) return;
         const idx = state.favorites.findIndex(f => f.id === musica.id);
@@ -2550,7 +2437,6 @@
         updateHeart(musica.id);
         await salvarPlaylistAtual();
     }
-
     async function salvarPlaylistAtual() {
         if (state.musicas.length > 0) {
             await favManager.salvarPlaylist({
@@ -2561,7 +2447,6 @@
             });
         }
     }
-
     function renderizarFavoritosModal() {
         dom.favListModal.innerHTML = '';
         if (state.favorites.length === 0) {
@@ -2590,7 +2475,6 @@
             dom.favListModal.appendChild(item);
         });
     }
-
     function tocarFavoritaEspecifica(id) {
         let musica = state.musicas.find(m => m.id === id);
         if (!musica) musica = state.favorites.find(m => m.id === id);
@@ -2609,9 +2493,7 @@
         }
     }
 
-    // ============================================================
-    // GÊNEROS
-    // ============================================================
+    // ========== GÊNEROS ==========
     function renderizarGeneros() {
         dom.genresGrid.innerHTML = '';
         CONFIG.ORDEM.forEach(g => {
@@ -2632,7 +2514,6 @@
             dom.genresGrid.appendChild(card);
         });
     }
-
     async function selecionarGenero(genero) {
         showLoad(true);
         const musicas = await carregarPlaylist(genero);
@@ -2663,13 +2544,10 @@
         await salvarPlaylistAtual();
     }
 
-    // ============================================================
-    // CRIAÇÃO DE MÍDIA
-    // ============================================================
+    // ========== CRIAÇÃO DE MÍDIA ==========
     async function criarMidia() {
         try {
             dom.mediaContainer.innerHTML = '';
-
             const midias = [
                 { tipo: 'video', src: 'logo.mp4' },
                 { tipo: 'imagem', src: 'bob.png' },
@@ -2679,11 +2557,9 @@
                 { tipo: 'imagem', src: 'em.png' },
                 { tipo: 'video', src: 'nova12.mp4' }
             ];
-
             const fallbackDiv = document.createElement('div');
             fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
             dom.mediaContainer.appendChild(fallbackDiv);
-
             midias.forEach((m, i) => {
                 let el;
                 if (m.tipo === 'video') {
@@ -2707,7 +2583,6 @@
                     el.play().catch(() => {});
                 }
             });
-
             const children = dom.mediaContainer.querySelectorAll('video, img');
             if (children.length > 1) {
                 if (state.mediaTimer) clearInterval(state.mediaTimer);
@@ -2724,7 +2599,6 @@
                     state.midiaAtual = (state.midiaAtual + 1) % children.length;
                 }, 5000);
             }
-
         } catch (erro) {
             console.error('❌ Erro crítico ao criar mídias:', erro);
             dom.mediaContainer.innerHTML = '';
@@ -2734,17 +2608,12 @@
         }
     }
 
-    // ============================================================
-    // MODO TV - APENAS 2 VÍDEOS
-    // ============================================================
+    // ========== MODO TV ==========
     async function toggleModoTV() {
         state.modoTV = !state.modoTV;
-        
         if (state.modoTV) {
             notif('📺 Modo TV ATIVADO!', 2000);
-            
             dom.mediaContainer.innerHTML = '';
-            
             CONFIG.VIDEOS_TV.forEach((src, i) => {
                 const video = document.createElement('video');
                 video.src = CacheBuster.getMediaUrl(src);
@@ -2754,61 +2623,44 @@
                 video.playsInline = true;
                 video.load();
                 video.onerror = () => { video.style.display = 'none'; };
-                
                 dom.mediaContainer.appendChild(video);
-                
                 if (i === 0) {
                     video.play().catch(() => {});
                 }
             });
-            
             if (state.mediaTVTimer) clearInterval(state.mediaTVTimer);
             state.midiaTVAtual = 0;
-            
             const videos = dom.mediaContainer.querySelectorAll('video');
             if (videos.length > 1) {
                 state.mediaTVTimer = setInterval(() => {
                     const atual = videos[state.midiaTVAtual];
                     const prox = videos[(state.midiaTVAtual + 1) % videos.length];
-                    
                     if (!atual || !prox) return;
-                    
                     atual.className = 'inactive';
                     atual.pause();
-                    
                     prox.className = 'active';
                     prox.play().catch(() => {});
-                    
                     state.midiaTVAtual = (state.midiaTVAtual + 1) % videos.length;
                 }, 8000);
             }
-            
-            // Remover overlay de clique no modo TV
             const overlay = document.getElementById('videoClickOverlay');
             if (overlay) overlay.remove();
-            
         } else {
             notif('📺 Modo TV DESATIVADO!', 2000);
-            
             if (state.mediaTVTimer) {
                 clearInterval(state.mediaTVTimer);
                 state.mediaTVTimer = null;
             }
-            
             await criarMidia();
             criarOverlayVideoClick();
         }
     }
 
-    // ============================================================
-    // OVERLAY VÍDEO CLIQUE - RESPONSIVO
-    // ============================================================
+    // ========== OVERLAY VÍDEO CLIQUE ==========
     function criarOverlayVideoClick() {
         if (state.modoTV) return;
-        
         const existingOverlay = document.getElementById('videoClickOverlay');
         if (existingOverlay) existingOverlay.remove();
-        
         const overlay = document.createElement('div');
         overlay.id = 'videoClickOverlay';
         overlay.style.cssText = `
@@ -2819,7 +2671,6 @@
             cursor: pointer;
             pointer-events: auto;
         `;
-        
         const video = document.createElement('video');
         video.src = CacheBuster.getMediaUrl(CONFIG.VIDEO_CLICK_URL);
         video.muted = true;
@@ -2835,7 +2686,6 @@
             box-shadow: 0 0 30px rgba(37,211,102,0.5);
             cursor: pointer;
         `;
-        
         const texto = document.createElement('div');
         texto.textContent = '📲 CLIQUE AQUI';
         texto.style.cssText = `
@@ -2852,23 +2702,17 @@
             white-space: nowrap;
             letter-spacing: 1px;
         `;
-        
         overlay.appendChild(video);
         overlay.appendChild(texto);
-        
         overlay.onclick = () => {
             const mensagem = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00');
             window.open('https://wa.me/55' + CONFIG.WHATSAPP_NUMBER + '?text=' + mensagem, '_blank');
         };
-        
         video.play().catch(() => {});
-        
         document.body.appendChild(overlay);
     }
 
-    // ============================================================
-    // CADASTRO
-    // ============================================================
+    // ========== CADASTRO ==========
     function abrirCadastro() {
         const modal = document.createElement('div');
         modal.id = 'cadastroModal';
@@ -2886,7 +2730,6 @@
             justify-content: center;
             padding: 20px;
         `;
-        
         modal.innerHTML = `
             <div style="
                 background: linear-gradient(145deg, #1a1a3e, #0a0a1e);
@@ -2901,7 +2744,6 @@
                 <div style="font-size: 3rem; margin-bottom: 10px;">🎵</div>
                 <h2 style="color: #fff; font-size: 1.5rem; margin-bottom: 5px;">CADASTRO</h2>
                 <p style="color: #888; font-size: 0.8rem; margin-bottom: 20px;">Preencha seus dados para continuar</p>
-                
                 <input type="text" id="cadastroNome" placeholder="Seu nome completo" style="
                     width: 100%;
                     padding: 15px 20px;
@@ -2914,7 +2756,6 @@
                     outline: none;
                     text-align: center;
                 ">
-                
                 <input type="tel" id="cadastroZap" placeholder="Seu WhatsApp (com DDD)" style="
                     width: 100%;
                     padding: 15px 20px;
@@ -2927,7 +2768,6 @@
                     outline: none;
                     text-align: center;
                 ">
-                
                 <div style="
                     background: rgba(108,92,231,0.05);
                     border: 1px solid rgba(108,92,231,0.1);
@@ -2939,7 +2779,6 @@
                     <div style="font-size: 2rem; font-weight: 900; color: #fdcb6e;">R$ 39,00</div>
                     <div style="font-size: 0.6rem; color: #666;">Acesso vitalício • Pagamento único</div>
                 </div>
-                
                 <button id="cadastroConfirmarBtn" style="
                     width: 100%;
                     padding: 16px;
@@ -2952,7 +2791,6 @@
                     cursor: pointer;
                     margin-bottom: 10px;
                 ">📱 CONFIRMAR E COMPRAR</button>
-                
                 <button id="cadastroCancelarBtn" style="
                     width: 100%;
                     padding: 12px;
@@ -2965,57 +2803,25 @@
                 ">✕ Cancelar</button>
             </div>
         `;
-        
         document.body.appendChild(modal);
-        
-        document.getElementById('cadastroCancelarBtn').onclick = () => {
-            modal.remove();
-        };
-        
+        document.getElementById('cadastroCancelarBtn').onclick = () => modal.remove();
         document.getElementById('cadastroConfirmarBtn').onclick = () => {
             const nome = document.getElementById('cadastroNome').value.trim();
             const zap = document.getElementById('cadastroZap').value.trim();
-            
-            if (!nome || nome.length < 2) {
-                alert('⚠️ Digite seu nome completo!');
-                return;
-            }
-            
-            if (!zap || zap.length < 8) {
-                alert('⚠️ Digite seu WhatsApp corretamente!');
-                return;
-            }
-            
-            state.cadastro = {
-                nome: nome,
-                zap: zap,
-                data: new Date().toISOString()
-            };
-            
+            if (!nome || nome.length < 2) { alert('⚠️ Digite seu nome completo!'); return; }
+            if (!zap || zap.length < 8) { alert('⚠️ Digite seu WhatsApp corretamente!'); return; }
+            state.cadastro = { nome, zap, data: new Date().toISOString() };
             localStorage.setItem('vdb_cadastro', JSON.stringify(state.cadastro));
-            
-            const mensagem = `🎵 *VAI DE BOA! MUSIC*\n\n` +
-                           `👤 *Nome:* ${nome}\n` +
-                           `📱 *WhatsApp:* ${zap}\n` +
-                           `💰 *Valor:* R$ 39,00 (Vitalício)\n\n` +
-                           `✅ Quero comprar o acesso!`;
-            
+            const mensagem = `🎵 *VAI DE BOA! MUSIC*\n\n👤 *Nome:* ${nome}\n📱 *WhatsApp:* ${zap}\n💰 *Valor:* R$ 39,00 (Vitalício)\n\n✅ Quero comprar o acesso!`;
             window.open('https://wa.me/55' + CONFIG.WHATSAPP_NUMBER + '?text=' + encodeURIComponent(mensagem), '_blank');
-            
             modal.remove();
-            
             notif('✅ Cadastro enviado! Aguarde ativação!', 3000);
         };
     }
 
-    // ============================================================
-    // ADMIN PANEL
-    // ============================================================
+    // ========== ADMIN ==========
     function abrirAdmin() {
-        if (state.adminBloqueado) {
-            notif('🔒 Painel bloqueado por segurança!', 2000);
-            return;
-        }
+        if (state.adminBloqueado) { notif('🔒 Painel bloqueado por segurança!', 2000); return; }
         const senha = prompt('🔐 Digite a senha do painel admin:');
         if (senha === null) { notif('❌ Acesso cancelado!', 1500); return; }
         if (senha === SENHA_ADMIN) {
@@ -3029,17 +2835,12 @@
             if (state.adminTentativas >= 3) {
                 state.adminBloqueado = true;
                 notif('🔒 Painel bloqueado por muitas tentativas!', 3000);
-                setTimeout(() => {
-                    state.adminBloqueado = false;
-                    state.adminTentativas = 0;
-                    notif('🔓 Painel desbloqueado, tente novamente!', 2000);
-                }, 60000);
+                setTimeout(() => { state.adminBloqueado = false; state.adminTentativas = 0; notif('🔓 Painel desbloqueado, tente novamente!', 2000); }, 60000);
             } else {
                 notif('❌ Senha incorreta! Tentativas: ' + state.adminTentativas + '/3', 2000);
             }
         }
     }
-
     function adicionarHistorico(senha, tipo) {
         const historico = JSON.parse(localStorage.getItem('vdb_historico_senhas') || '[]');
         historico.unshift({ senha, tipo, data: new Date().toLocaleString() });
@@ -3047,7 +2848,6 @@
         localStorage.setItem('vdb_historico_senhas', JSON.stringify(historico));
         carregarHistorico();
     }
-
     function carregarHistorico() {
         const historico = JSON.parse(localStorage.getItem('vdb_historico_senhas') || '[]');
         dom.historicoSenhas.innerHTML = '';
@@ -3060,24 +2860,19 @@
             dom.historicoSenhas.appendChild(div);
         });
     }
-
     function atualizarTotalSenhas() {
         const historico = JSON.parse(localStorage.getItem('vdb_historico_senhas') || '[]');
         dom.totalSenhas.textContent = historico.length;
     }
 
-    // ============================================================
-    // QR CODE
-    // ============================================================
+    // ========== QR CODE ==========
     function gerarQrCode() {
         const url = encodeURIComponent(window.location.href);
         dom.qrCodeImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + url + '&margin=20&format=png&bgcolor=ffffff&color=000000';
         dom.qrCodeModal.classList.add('active');
     }
 
-    // ============================================================
-    // TOUCH MANAGER
-    // ============================================================
+    // ========== TOUCH MANAGER ==========
     class TouchManager {
         constructor() {
             this.swipeThreshold = 50;
@@ -3214,9 +3009,7 @@
         }
     }
 
-    // ============================================================
-    // HANDLE LIBERAR
-    // ============================================================
+    // ========== HANDLE LIBERAR ==========
     function handleLiberar() {
         const senha = dom.senhaInput.value.trim();
         if (!senha) {
@@ -3248,33 +3041,20 @@
         }
     }
 
-    // ============================================================
-    // INICIALIZAÇÃO
-    // ============================================================
+    // ========== INICIALIZAÇÃO ==========
     async function iniciar() {
         console.log('🚀 Iniciando VAI DE BOA! MUSIC v3.0 FINAL (TIMER CORRIDO)...');
-
         try {
             state.fingerprint = obterFingerprint();
             dom.infoDispositivo.textContent = '🆔 ' + state.fingerprint;
-            console.log('✅ Fingerprint obtido');
-
             state.touchManager = new TouchManager();
-            console.log('✅ Touch Manager ativado');
-
             updateProgress(10);
             await carregarFav();
             updateProgress(20);
-            console.log('✅ Favoritos carregados:', state.favorites.length);
-
             await criarMidia();
             updateProgress(30);
-            console.log('✅ Mídia configurada');
-
             const cadastroSalvo = localStorage.getItem('vdb_cadastro');
-            if (cadastroSalvo) {
-                state.cadastro = JSON.parse(cadastroSalvo);
-            }
+            if (cadastroSalvo) state.cadastro = JSON.parse(cadastroSalvo);
 
             if (localStorage.getItem('vdb_desbloqueado') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true') {
                 state.desbloqueado = true;
@@ -3283,29 +3063,24 @@
                 dom.timerLib.textContent = '🔓 Lib';
                 dom.timerLib.className = 'timer-lib lib';
                 updateProgress(60);
-                console.log('✅ Usuário já desbloqueado');
                 setTimeout(() => ativarPlayer(), 1000);
             } else if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') {
                 dom.blockOverlay.classList.add('active');
                 dom.blockOverlay.style.display = 'flex';
                 notif('⏰ Teste expirado!', 3000);
-                console.log('⏰ Teste expirado');
             } else {
                 if (restaurarTempo()) {
                     dom.blockOverlay.style.display = 'none';
                     updateProgress(60);
-                    console.log('✅ Tempo corrido restaurado:', state.tempoRestante, 'segundos restantes');
                     setTimeout(() => ativarPlayer(), 500);
                 } else if (!localStorage.getItem('vdb_bloqueado_permanente')) {
                     iniciarTimerCorrido();
                     dom.blockOverlay.style.display = 'none';
                     updateProgress(60);
-                    console.log('✅ Timer corrido de 24h iniciado!');
                     setTimeout(() => ativarPlayer(), 500);
                 } else {
                     dom.blockOverlay.classList.add('active');
                     dom.blockOverlay.style.display = 'flex';
-                    notif('⏰ Teste expirado!', 3000);
                 }
             }
 
@@ -3326,147 +3101,79 @@
                         const m = state.playlistAtual[0];
                         if (m) { atualizarLetreiro(m); updateHeart(m.id); }
                         primeiraPlaylistCarregada = true;
-                        console.log('✅ Playlist carregada:', g);
                         break;
                     }
-                } catch (e) {
-                    console.warn('⚠️ Falha ao carregar gênero', g, e);
-                }
+                } catch (e) { console.warn('Falha ao carregar', g, e); }
             }
-
             if (!primeiraPlaylistCarregada) {
-                console.warn('⚠️ Nenhuma playlist carregada, usando fallback local');
                 state.musicas = [
                     { id: 'fallback1', title: 'Música Exemplo', artist: 'Artista', src: '', genero: 'BÔNUS' },
                     { id: 'fallback2', title: 'Outra Música', artist: 'Artista 2', src: '', genero: 'BÔNUS' }
                 ];
                 state.playlistAtual = shuffle(state.musicas);
                 dom.generoNome.textContent = 'BÔNUS';
-                dom.generoNome.style.background = 'linear-gradient(135deg, #fdcb6e, #f0932b)';
-                dom.generoNome.style.webkitBackgroundClip = 'text';
-                dom.generoNome.style.webkitTextFillColor = 'transparent';
-                dom.generoNome.style.backgroundClip = 'text';
-                atualizarLetreiro(state.musicas[0]);
                 notif('⚠️ Modo offline - algumas músicas podem não tocar', 3000);
             }
             renderizarGeneros();
             updateProgress(90);
-
             setTimeout(() => {
                 dom.loadingScreen.style.display = 'none';
                 dom.playerContainer.classList.add('visible');
                 updateProgress(100);
-                console.log('✅ Player visível');
             }, 1500);
-
             updateTimerDisplay();
             forcarTelaCheia();
-
             if (state.desbloqueado) {
                 setTimeout(() => ativarPlayer(), 1500);
                 setTimeout(() => criarOverlayVideoClick(), 2000);
             }
-
-            const fullscreenInterval = setInterval(() => { fullscreen(); }, 2000);
-            setTimeout(() => { clearInterval(fullscreenInterval); }, 20000);
+            const fullscreenInterval = setInterval(() => fullscreen(), 2000);
+            setTimeout(() => clearInterval(fullscreenInterval), 20000);
             document.addEventListener('click', function fsClick() { fullscreen(); });
-
             carregarHistorico();
             atualizarTotalSenhas();
-
             setTimeout(() => {
                 if (dom.loadingScreen.style.display !== 'none') {
-                    console.warn('⚠️ Loading travado, forçando saída');
                     dom.loadingScreen.style.display = 'none';
                     dom.playerContainer.classList.add('visible');
                     notif('⚠️ App iniciado com fallback', 3000);
                 }
             }, 10000);
 
-            // ============================================================
-            // EVENT LISTENERS
-            // ============================================================
+            // ========== EVENT LISTENERS ==========
             dom.playBtn.onclick = togglePlay;
             dom.prevBtn.onclick = prev;
             dom.nextBtn.onclick = next;
             dom.shuffleBtn.onclick = toggleShuffle;
-
             dom.progressBar.onclick = (e) => {
                 if (dom.audio.duration) {
                     const rect = e.currentTarget.getBoundingClientRect();
                     dom.audio.currentTime = ((e.clientX - rect.left) / rect.width) * dom.audio.duration;
                 }
             };
-
             dom.heartBtn.onclick = () => {
                 const m = state.playlistAtual[state.indiceAtual % state.playlistAtual.length] || state.playlistAtual[0];
                 if (m) toggleFav(m);
             };
-
             dom.btnGeneroFav.onclick = () => {
                 dom.choiceMenu.classList.add('open');
                 dom.choiceBadge.textContent = state.favorites.length;
             };
-            dom.choiceGenres.onclick = () => {
-                dom.choiceMenu.classList.remove('open');
-                dom.genresModal.classList.add('open');
-            };
-            dom.choiceFavorites.onclick = () => {
-                dom.choiceMenu.classList.remove('open');
-                renderizarFavoritosModal();
-                dom.favModal.classList.add('open');
-            };
+            dom.choiceGenres.onclick = () => { dom.choiceMenu.classList.remove('open'); dom.genresModal.classList.add('open'); };
+            dom.choiceFavorites.onclick = () => { dom.choiceMenu.classList.remove('open'); renderizarFavoritosModal(); dom.favModal.classList.add('open'); };
             dom.choiceClose.onclick = () => dom.choiceMenu.classList.remove('open');
-
             dom.closeGenresBtn.onclick = () => dom.genresModal.classList.remove('open');
             dom.closeFavBtn.onclick = () => dom.favModal.classList.remove('open');
-
-            dom.fabGeneros.onclick = () => {
-                dom.choiceMenu.classList.add('open');
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
-
-            dom.fabCadastro.onclick = () => {
-                abrirCadastro();
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
-
-            dom.fabModoTV.onclick = () => {
-                toggleModoTV();
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
-
-            dom.menuButton.onclick = (e) => {
-                e.stopPropagation();
-                dom.menuPopup.classList.toggle('open');
-            };
+            dom.fabGeneros.onclick = () => { dom.choiceMenu.classList.add('open'); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
+            dom.fabCadastro.onclick = () => { abrirCadastro(); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
+            dom.fabModoTV.onclick = () => { toggleModoTV(); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
+            dom.menuButton.onclick = (e) => { e.stopPropagation(); dom.menuPopup.classList.toggle('open'); };
             dom.closeMenuBtn.onclick = () => dom.menuPopup.classList.remove('open');
-            dom.fullscreenMenuBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                forcarTelaCheia();
-            };
-            dom.modoTVMenuBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                toggleModoTV();
-            };
-            dom.cadastroMenuBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                abrirCadastro();
-            };
-            dom.reloadPlaylistBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                location.reload();
-            };
-            dom.feedbackMenuBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                dom.feedbackModal.classList.add('open');
-            };
+            dom.fullscreenMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarTelaCheia(); };
+            dom.modoTVMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); toggleModoTV(); };
+            dom.cadastroMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); abrirCadastro(); };
+            dom.reloadPlaylistBtn.onclick = () => { dom.menuPopup.classList.remove('open'); location.reload(); };
+            dom.feedbackMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.feedbackModal.classList.add('open'); };
             dom.sleepMenuBtn.onclick = () => {
                 dom.menuPopup.classList.remove('open');
                 const mins = parseInt(prompt('⏰ Desligar em quantos minutos?', '15'));
@@ -3481,51 +3188,19 @@
                     notif('⏰ Sleep: ' + mins + ' min', 2000);
                 }
             };
-            dom.qrCodeMenuBtn.onclick = () => {
-                dom.menuPopup.classList.remove('open');
-                gerarQrCode();
-            };
-            dom.fabQrCode.onclick = () => {
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-                gerarQrCode();
-            };
+            dom.qrCodeMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); gerarQrCode(); };
+            dom.fabQrCode.onclick = () => { dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; gerarQrCode(); };
             dom.qrCloseBtn.onclick = () => dom.qrCodeModal.classList.remove('active');
-            dom.qrCodeModal.onclick = (e) => {
-                if (e.target === dom.qrCodeModal) dom.qrCodeModal.classList.remove('active');
-            };
-
-            dom.fabMain.onclick = () => {
-                state.fabOpen = !state.fabOpen;
-                dom.fabSub.classList.toggle('open', state.fabOpen);
-                dom.fabMain.innerHTML = state.fabOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>';
-            };
-            dom.fabYoutube.onclick = () => {
-                window.open('https://sites.google.com/view/rogersjc/in%C3%ADcio');
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
-            dom.fabShare.onclick = () => {
-                navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500));
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
-            dom.fabFeedback.onclick = () => {
-                dom.feedbackModal.classList.add('open');
-                dom.fabSub.classList.remove('open');
-                state.fabOpen = false;
-                dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>';
-            };
+            dom.qrCodeModal.onclick = (e) => { if (e.target === dom.qrCodeModal) dom.qrCodeModal.classList.remove('active'); };
+            dom.fabMain.onclick = () => { state.fabOpen = !state.fabOpen; dom.fabSub.classList.toggle('open', state.fabOpen); dom.fabMain.innerHTML = state.fabOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>'; };
+            dom.fabYoutube.onclick = () => { window.open('https://sites.google.com/view/rogersjc/in%C3%ADcio'); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
+            dom.fabShare.onclick = () => { navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500)); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
+            dom.fabFeedback.onclick = () => { dom.feedbackModal.classList.add('open'); dom.fabSub.classList.remove('open'); state.fabOpen = false; dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; };
 
             document.querySelectorAll('.star').forEach(star => {
                 star.onclick = () => {
-                    const rating = parseInt(star.dataset.rating);
-                    document.querySelectorAll('.star').forEach((s, i) => {
-                        s.className = i < rating ? 'fas fa-star star active' : 'far fa-star star';
-                    });
+                    const r = parseInt(star.dataset.rating);
+                    document.querySelectorAll('.star').forEach((s, i) => s.className = i < r ? 'fas fa-star star active' : 'far fa-star star');
                 };
             });
             dom.sendFeedbackBtn.onclick = () => {
@@ -3538,12 +3213,11 @@
 
             dom.senhaInput.onkeydown = (e) => { if (e.key === 'Enter') handleLiberar(); };
             dom.btnLiberar.onclick = handleLiberar;
-
             dom.infoScroll.addEventListener('click', function(e) {
                 e.stopPropagation();
                 state.clickCount++;
                 clearTimeout(state.clickTimer);
-                state.clickTimer = setTimeout(() => { state.clickCount = 0; }, 3000);
+                state.clickTimer = setTimeout(() => state.clickCount = 0, 3000);
                 if (state.clickCount >= 8) {
                     state.clickCount = 0;
                     clearTimeout(state.clickTimer);
@@ -3567,7 +3241,6 @@
                 dom.adminFingerprintInput.focus();
                 notif('✅ Senha gerada para o dispositivo!', 2000);
             };
-
             dom.adminGerarUniversalBtn.onclick = function() {
                 const senhaUniversal = gerarSenhaUniversal();
                 dom.adminSenhaGerada.value = senhaUniversal;
@@ -3577,27 +3250,21 @@
                 dom.adminFingerprintInput.value = '';
                 notif('✅ Senha universal gerada!', 2000);
             };
-
             dom.adminLimparBtn.onclick = function() {
                 dom.adminSenhaGerada.value = '';
                 dom.infoSenha.textContent = '';
                 notif('🗑️ Limpo!', 1000);
             };
-
             dom.btnCopiarSenha.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
             dom.adminCopiarSenhaBtn.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
             dom.btnCopiarFingerprint.onclick = () => copiarTexto(state.fingerprint, '📋 ID copiado!');
-
             dom.adminEnviarWhatsBtn.onclick = function() {
                 const senha = dom.adminSenhaGerada.value;
                 if (!senha) { notif('⚠️ Gere uma senha primeiro!', 1500); return; }
                 const mensagem = '🔑 *VAI DE BOA! MUSIC*%0A%0ASua senha de acesso:%0A%0A`' + senha + '`%0A%0A📱 Copie e cole no app para liberar!%0A🎵 Aproveite todas as músicas!';
                 window.open('https://wa.me/55' + CONFIG.WHATSAPP_NUMBER + '?text=' + mensagem, '_blank');
             };
-
-            dom.adminCloseBtn.onclick = function() {
-                dom.adminPanel.classList.remove('open');
-            };
+            dom.adminCloseBtn.onclick = function() { dom.adminPanel.classList.remove('open'); };
 
             dom.audio.ontimeupdate = () => {
                 if (dom.audio.duration) {
@@ -3616,22 +3283,18 @@
                 if (e.key === 'ArrowLeft') prev();
                 if (e.key === 's' || e.key === 'S') toggleShuffle();
             });
-
             document.addEventListener('click', (e) => {
                 if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll')) return;
                 showControls();
             });
-
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') {
                     forcarTelaCheia();
                     if (!state.desbloqueado && state.timerIniciado) {
-                        const tempoRestante = calcularTempoRestante();
-                        state.tempoRestante = tempoRestante;
+                        const tr = calcularTempoRestante();
+                        state.tempoRestante = tr;
                         updateTimerDisplay();
-                        if (tempoRestante <= 0) {
-                            bloquear();
-                        }
+                        if (tr <= 0) bloquear();
                     }
                     if (state.isPlaying && dom.audio && dom.audio.paused && dom.audio.src) {
                         dom.audio.play().then(() => {
@@ -3649,11 +3312,7 @@
                     if ('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(() => {});
                 }
             });
-
-            dom.forceUpdateBtn.onclick = () => {
-                CacheBuster.forceUpdate();
-                dom.menuPopup.classList.remove('open');
-            };
+            dom.forceUpdateBtn.onclick = () => { CacheBuster.forceUpdate(); dom.menuPopup.classList.remove('open'); };
 
             console.log('🐵 VAI DE BOA! MUSIC v3.0 FINAL');
             console.log('⏰ Timer corrido de 24 horas ativo');
@@ -3661,18 +3320,13 @@
             console.log('📺 Modo TV: tvbob.mp4 + amytv.mp4');
             console.log('📲 Banner clik.mp4 responsivo (70-120px)');
             console.log('🔒 Banner oculto no Modo TV');
-
         } catch (erro) {
-            console.error('❌ ERRO FATAL NA INICIALIZAÇÃO:', erro);
+            console.error('❌ ERRO FATAL:', erro);
             dom.loadingScreen.style.display = 'none';
             dom.playerContainer.classList.add('visible');
             notif('⚠️ Erro ao iniciar, mas você pode tentar recarregar', 5000);
         }
     }
 
-    // ============================================================
-    // START
-    // ============================================================
     iniciar();
-
 })();
