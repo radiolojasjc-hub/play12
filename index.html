@@ -1596,7 +1596,7 @@
 
 <script>
 // ============================================================
-// VAI DE BOA! MUSIC - v3.0 FINAL
+// VAI DE BOA! MUSIC - v3.0 FINAL (TIMER CORRIDO 24H)
 // ============================================================
 (function() {
     'use strict';
@@ -1780,8 +1780,12 @@
 
     function fmtTempo(s) {
         if (s < 0) s = 0;
-        const m = Math.floor(s / 60);
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
         const seg = Math.floor(s % 60);
+        if (h > 0) {
+            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
+        }
         return String(m).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
     }
 
@@ -2145,51 +2149,78 @@
     const favManager = new FavoritesManager();
 
     // ============================================================
-    // PLAYER FUNCTIONS
+    // TIMER CORRIDO DE 24 HORAS
     // ============================================================
+    const TEMPO_TESTE = 86400; // 24 horas em segundos
+
     function updateTimerDisplay() {
         if (state.desbloqueado) {
             dom.timerLib.textContent = '🔓 Lib';
             dom.timerLib.className = 'timer-lib lib';
             return;
         }
-        if (state.timerIniciado) {
-            dom.timerLib.textContent = fmtTempo(state.tempoRestante);
-            dom.timerLib.className = 'timer-lib';
-            dom.timerLib.style.color = state.tempoRestante <= 60 ? '#fd79a8' : '#6c5ce7';
-        } else {
-            dom.timerLib.textContent = fmtTempo(86400);
-            dom.timerLib.className = 'timer-lib';
-            dom.timerLib.style.color = '#6c5ce7';
-        }
+        
+        const tempoRestante = calcularTempoRestante();
+        state.tempoRestante = tempoRestante;
+        
+        dom.timerLib.textContent = fmtTempo(tempoRestante);
+        dom.timerLib.className = 'timer-lib';
+        dom.timerLib.style.color = tempoRestante <= 60 ? '#fd79a8' : '#6c5ce7';
     }
 
-    function startTimer() {
-        if (!state.playerAtivado || state.desbloqueado) return;
-        if (state.timerIniciado) return;
+    function iniciarTimerCorrido() {
+        const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
+        
+        if (!expiracaoSalva) {
+            const expiracao = Date.now() + (TEMPO_TESTE * 1000);
+            localStorage.setItem('vdb_teste_expiracao', String(expiracao));
+            console.log('✅ Timer corrido iniciado! Expira em:', new Date(expiracao).toLocaleString());
+        }
+        
         state.timerIniciado = true;
+        
         clearInterval(state.timerInterval);
         state.timerInterval = setInterval(() => {
             if (!state.desbloqueado && !document.hidden) {
-                state.tempoRestante--;
-                if (state.tempoRestante <= 0) {
+                const tempoRestante = calcularTempoRestante();
+                state.tempoRestante = tempoRestante;
+                
+                if (tempoRestante <= 0) {
                     clearInterval(state.timerInterval);
                     bloquear();
                 }
+                
                 updateTimerDisplay();
-                localStorage.setItem('vdb_tempo_restante', String(Date.now() + state.tempoRestante * 1000));
             }
         }, 1000);
+        
         updateTimerDisplay();
     }
 
+    function calcularTempoRestante() {
+        const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
+        
+        if (!expiracaoSalva) {
+            const expiracao = Date.now() + (TEMPO_TESTE * 1000);
+            localStorage.setItem('vdb_teste_expiracao', String(expiracao));
+            return TEMPO_TESTE;
+        }
+        
+        const expiracao = parseInt(expiracaoSalva);
+        const agora = Date.now();
+        const restante = Math.floor((expiracao - agora) / 1000);
+        
+        return restante > 0 ? restante : 0;
+    }
+
     function restaurarTempo() {
-        const salvo = localStorage.getItem('vdb_tempo_restante');
-        if (salvo && parseInt(salvo) > Date.now()) {
-            state.tempoRestante = Math.floor((parseInt(salvo) - Date.now()) / 1000);
-            if (state.tempoRestante > 86400) state.tempoRestante = 86400;
+        const tempoRestante = calcularTempoRestante();
+        
+        if (tempoRestante > 0) {
+            state.tempoRestante = tempoRestante;
             return true;
         }
+        
         return false;
     }
 
@@ -2200,14 +2231,19 @@
         dom.audio.pause();
         state.isPlaying = false;
         dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        
         localStorage.setItem('vdb_bloqueado_permanente', 'true');
         localStorage.removeItem('vdb_desbloqueado');
         localStorage.removeItem('vdb_senha_permanente');
-        localStorage.removeItem('vdb_tempo_restante');
+        localStorage.removeItem('vdb_teste_expiracao');
+        
         if (dom.infoDispositivo) dom.infoDispositivo.textContent = state.fingerprint;
         notif('⏰ Tempo de teste expirou!', 3000);
     }
 
+    // ============================================================
+    // PLAYER FUNCTIONS
+    // ============================================================
     function showControls() {
         dom.bottomControls.classList.add('visible');
         clearTimeout(state.hideControlsTimeout);
@@ -2294,7 +2330,7 @@
             }
             updateProgress(70);
             forcarTelaCheia();
-            startTimer();
+            iniciarTimerCorrido();
             updateProgress(100);
             setTimeout(() => tocar(), 500);
         } catch (e) {
@@ -2302,7 +2338,7 @@
             dom.audioStatus.classList.add('active');
             updateProgress(100);
             forcarTelaCheia();
-            startTimer();
+            iniciarTimerCorrido();
             setTimeout(() => tocar(), 500);
         }
     }
@@ -3186,6 +3222,8 @@
             dom.senhaInput.value = '';
             localStorage.setItem('vdb_desbloqueado', 'true');
             localStorage.setItem('vdb_senha_permanente', 'true');
+            localStorage.removeItem('vdb_teste_expiracao');
+            localStorage.removeItem('vdb_bloqueado_permanente');
             notif(resultado.msg, 3000);
             if (!state.playerAtivado) setTimeout(ativarPlayer, 500);
         } else {
@@ -3204,7 +3242,7 @@
     // INICIALIZAÇÃO
     // ============================================================
     async function iniciar() {
-        console.log('🚀 Iniciando VAI DE BOA! MUSIC v3.0 FINAL...');
+        console.log('🚀 Iniciando VAI DE BOA! MUSIC v3.0 FINAL (TIMER CORRIDO)...');
 
         try {
             state.fingerprint = obterFingerprint();
@@ -3246,15 +3284,18 @@
                 if (restaurarTempo()) {
                     dom.blockOverlay.style.display = 'none';
                     updateProgress(60);
-                    console.log('✅ Tempo restaurado');
+                    console.log('✅ Tempo corrido restaurado:', state.tempoRestante, 'segundos restantes');
                     setTimeout(() => ativarPlayer(), 500);
-                } else {
-                    localStorage.setItem('vdb_tempo_restante', String(Date.now() + 86400 * 1000));
-                    state.tempoRestante = 86400;
+                } else if (!localStorage.getItem('vdb_bloqueado_permanente')) {
+                    iniciarTimerCorrido();
                     dom.blockOverlay.style.display = 'none';
                     updateProgress(60);
-                    console.log('✅ Novo tempo de teste iniciado');
+                    console.log('✅ Timer corrido de 24h iniciado!');
                     setTimeout(() => ativarPlayer(), 500);
+                } else {
+                    dom.blockOverlay.classList.add('active');
+                    dom.blockOverlay.style.display = 'flex';
+                    notif('⏰ Teste expirado!', 3000);
                 }
             }
 
@@ -3572,16 +3613,15 @@
             });
 
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'hidden') {
-                    if (state.timerIniciado && !state.desbloqueado) {
-                        localStorage.setItem('vdb_tempo_restante', String(Date.now() + state.tempoRestante * 1000));
-                    }
-                }
                 if (document.visibilityState === 'visible') {
                     forcarTelaCheia();
                     if (!state.desbloqueado && state.timerIniciado) {
-                        restaurarTempo();
+                        const tempoRestante = calcularTempoRestante();
+                        state.tempoRestante = tempoRestante;
                         updateTimerDisplay();
+                        if (tempoRestante <= 0) {
+                            bloquear();
+                        }
                     }
                     if (state.isPlaying && dom.audio && dom.audio.paused && dom.audio.src) {
                         dom.audio.play().then(() => {
@@ -3606,6 +3646,7 @@
             };
 
             console.log('🐵 VAI DE BOA! MUSIC v3.0 FINAL');
+            console.log('⏰ Timer corrido de 24 horas ativo');
             console.log('✅ Favoritos salvando lista completa');
             console.log('📺 Modo TV: tvbob.mp4 + amytv.mp4');
             console.log('📲 Banner clik.mp4 responsivo (70-120px)');
@@ -3625,84 +3666,3 @@
     iniciar();
 
 })();
-</script>
-
-<script>
-(function() {
-    'use strict';
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(() => console.log('✅ Service Worker registrado!'))
-            .catch(err => console.warn('⚠️ Falha SW:', err));
-    }
-
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        mostrarBotaoInstalar();
-    });
-
-    function mostrarBotaoInstalar() {
-        if (window.matchMedia('(display-mode: standalone)').matches) return;
-
-        const btn = document.createElement('button');
-        btn.id = 'btnInstalarApp';
-        btn.innerHTML = '📲 Instalar App';
-        btn.style.cssText = `
-            position: fixed;
-            bottom: 160px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #6c5ce7, #00cec9);
-            color: #fff;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 1rem;
-            box-shadow: 0 6px 30px rgba(108,92,231,0.4);
-            z-index: 99999;
-            cursor: pointer;
-            touch-action: manipulation;
-            animation: pulseBtn 2s infinite;
-        `;
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes pulseBtn {
-                0%, 100% { transform: translateX(-50%) scale(1); }
-                50% { transform: translateX(-50%) scale(1.05); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        btn.onclick = async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const result = await deferredPrompt.userChoice;
-                if (result.outcome === 'accepted') {
-                    notif('✅ App instalado!', 3000);
-                }
-                deferredPrompt = null;
-                btn.remove();
-            }
-        };
-        document.body.appendChild(btn);
-
-        setTimeout(() => {
-            if (btn.parentNode) btn.remove();
-        }, 15000);
-    }
-
-    window.addEventListener('appinstalled', () => {
-        const btn = document.getElementById('btnInstalarApp');
-        if (btn) btn.remove();
-        notif('🎉 App instalado!', 3000);
-    });
-
-})();
-</script>
-
-</body>
-</html>
