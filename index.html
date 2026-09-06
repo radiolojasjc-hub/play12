@@ -7,22 +7,13 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="VDB Music">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0a0a1e">
-    <meta name="msapplication-TileColor" content="#0a0a1e">
-    <meta name="apple-touch-fullscreen" content="yes">
-    
     <link rel="icon" href="favicon30.png" type="image/png">
     <link rel="apple-touch-icon" href="favicon30.png">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* ============================================================
-           ESTILOS MODERNOS - VAI DE BOA! MUSIC v2.0
+           ESTILOS MODERNOS - VAI DE BOA! MUSIC v2.0 (SEM PWA)
            ============================================================ */
         * {
             margin: 0;
@@ -1799,7 +1790,7 @@
 
 <script>
 // ============================================================
-// VAI DE BOA! MUSIC - v2.0 (JavaScript Moderno)
+// VAI DE BOA! MUSIC - v2.0 (JavaScript - SEM PWA)
 // ============================================================
 (function() {
     'use strict';
@@ -2106,7 +2097,7 @@
     };
 
     // ============================================================
-    // SENHAS (ocultas, mas ainda em cliente - será melhorado depois)
+    // SENHAS (ocultas - mantidas)
     // ============================================================
     const SENHA_ADMIN = (() => {
         const c = [112, 97, 116, 105, 99, 111, 49, 54, 56, 53];
@@ -2699,13 +2690,11 @@
     // ============================================================
     function criarMidia() {
         try {
-            // Fallback: fundo gradiente caso os arquivos não existam
             dom.mediaContainer.innerHTML = '';
             const fallbackDiv = document.createElement('div');
             fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
             dom.mediaContainer.appendChild(fallbackDiv);
             
-            // Tenta carregar as mídias opcionais
             const midias = [
                 { tipo: 'video', src: 'logo.mp4' },
                 { tipo: 'imagem', src: 'bob.png' },
@@ -2716,7 +2705,6 @@
                 { tipo: 'imagem', src: 'emili.png' },
                 { tipo: 'video', src: 'logo.mp4' },
             ];
-            // Adiciona as mídias como elementos opcionais
             midias.forEach((m, i) => {
                 let el;
                 if (m.tipo === 'video') {
@@ -2739,7 +2727,6 @@
                 if (i === 0 && m.tipo === 'video') el.play().catch(() => {});
             });
             
-            // Rotação de mídia
             const children = dom.mediaContainer.querySelectorAll('video, img');
             if (children.length > 1) {
                 state.mediaTimer = setInterval(() => {
@@ -3449,7 +3436,7 @@
             // Banner Controller
             state.bannerController = new BannerController();
 
-            console.log('🐵 VAI DE BOA! MUSIC v2.0 - Modernizado');
+            console.log('🐵 VAI DE BOA! MUSIC v2.0 - Somente Site (sem PWA)');
             console.log('📱 Touch gestures ativos');
             console.log('🔄 Cache Busting com versão:', CacheBuster.version);
             console.log('🕵️ Admin: 8 cliques no letreiro');
