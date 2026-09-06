@@ -1767,7 +1767,38 @@
         starRating: $('starRating'),
         feedbackText: $('feedbackText'),
     };
+// ============================================================
+// UTILITÁRIOS - CORRIGIDO (Substitua TODA esta seção)
+// ============================================================
+function fmt(s) {
+    if (!s || isNaN(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const seg = Math.floor(s % 60);
+    return m + ':' + (seg < 10 ? '0' : '') + seg;
+}
 
+function fmtTempo(s) {
+    if (s < 0) s = 0;
+    s = Math.floor(s); // Garante número inteiro
+    
+    const dias = Math.floor(s / 86400);
+    const horas = Math.floor((s % 86400) / 3600);
+    const minutos = Math.floor((s % 3600) / 60);
+    const segundos = Math.floor(s % 60);
+    
+    // Se tiver dias, mostra dias + horas
+    if (dias > 0) {
+        return dias + 'd ' + String(horas).padStart(2, '0') + ':' + String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
+    }
+    
+    // Se tiver horas, mostra HH:MM:SS
+    if (horas > 0) {
+        return String(horas).padStart(2, '0') + ':' + String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
+    }
+    
+    // Se só tiver minutos, mostra MM:SS
+    return String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
+}
     // ============================================================
     // UTILITÁRIOS
     // ============================================================
@@ -1778,16 +1809,7 @@
         return m + ':' + (seg < 10 ? '0' : '') + seg;
     }
 
-    function fmtTempo(s) {
-        if (s < 0) s = 0;
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const seg = Math.floor(s % 60);
-        if (h > 0) {
-            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
-        }
-        return String(m).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
-    }
+    
 
     function shuffle(arr) {
         const x = [...arr];
@@ -2151,96 +2173,7 @@
     // ============================================================
     // TIMER CORRIDO DE 24 HORAS
     // ============================================================
-    const TEMPO_TESTE = 86400; // 24 horas em segundos
-
-    function updateTimerDisplay() {
-        if (state.desbloqueado) {
-            dom.timerLib.textContent = '🔓 Lib';
-            dom.timerLib.className = 'timer-lib lib';
-            return;
-        }
-        
-        const tempoRestante = calcularTempoRestante();
-        state.tempoRestante = tempoRestante;
-        
-        dom.timerLib.textContent = fmtTempo(tempoRestante);
-        dom.timerLib.className = 'timer-lib';
-        dom.timerLib.style.color = tempoRestante <= 60 ? '#fd79a8' : '#6c5ce7';
-    }
-
-    function iniciarTimerCorrido() {
-        const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
-        
-        if (!expiracaoSalva) {
-            const expiracao = Date.now() + (TEMPO_TESTE * 1000);
-            localStorage.setItem('vdb_teste_expiracao', String(expiracao));
-            console.log('✅ Timer corrido iniciado! Expira em:', new Date(expiracao).toLocaleString());
-        }
-        
-        state.timerIniciado = true;
-        
-        clearInterval(state.timerInterval);
-        state.timerInterval = setInterval(() => {
-            if (!state.desbloqueado && !document.hidden) {
-                const tempoRestante = calcularTempoRestante();
-                state.tempoRestante = tempoRestante;
-                
-                if (tempoRestante <= 0) {
-                    clearInterval(state.timerInterval);
-                    bloquear();
-                }
-                
-                updateTimerDisplay();
-            }
-        }, 1000);
-        
-        updateTimerDisplay();
-    }
-
-    function calcularTempoRestante() {
-        const expiracaoSalva = localStorage.getItem('vdb_teste_expiracao');
-        
-        if (!expiracaoSalva) {
-            const expiracao = Date.now() + (TEMPO_TESTE * 1000);
-            localStorage.setItem('vdb_teste_expiracao', String(expiracao));
-            return TEMPO_TESTE;
-        }
-        
-        const expiracao = parseInt(expiracaoSalva);
-        const agora = Date.now();
-        const restante = Math.floor((expiracao - agora) / 1000);
-        
-        return restante > 0 ? restante : 0;
-    }
-
-    function restaurarTempo() {
-        const tempoRestante = calcularTempoRestante();
-        
-        if (tempoRestante > 0) {
-            state.tempoRestante = tempoRestante;
-            return true;
-        }
-        
-        return false;
-    }
-
-    function bloquear() {
-        state.desbloqueado = false;
-        dom.blockOverlay.classList.add('active');
-        dom.blockOverlay.style.display = 'flex';
-        dom.audio.pause();
-        state.isPlaying = false;
-        dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        
-        localStorage.setItem('vdb_bloqueado_permanente', 'true');
-        localStorage.removeItem('vdb_desbloqueado');
-        localStorage.removeItem('vdb_senha_permanente');
-        localStorage.removeItem('vdb_teste_expiracao');
-        
-        if (dom.infoDispositivo) dom.infoDispositivo.textContent = state.fingerprint;
-        notif('⏰ Tempo de teste expirou!', 3000);
-    }
-
+   
     // ============================================================
     // PLAYER FUNCTIONS
     // ============================================================
