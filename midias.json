@@ -1,97 +1,15 @@
-sync function criarMidia() {
-    try {
-        // Limpa o container
-        dom.mediaContainer.innerHTML = '';
-
-        // Fallback local (caso o JSON não carregue)
-        const fallbackMidias = [
-            { tipo: 'video', src: 'logo.mp4' },
-            { tipo: 'imagem', src: 'bob.png' },
-            { tipo: 'imagem', src: 'marina.png' },
-            { tipo: 'imagem', src: 'macaco.png' },
-            { tipo: 'video', src: 'ze.mp4' },
-            { tipo: 'imagem', src: 'mulher.png' },
-            { tipo: 'imagem', src: 'djavan.png' },
-            { tipo: 'imagem', src: 'em.png' },
-            { tipo: 'video', src: 'nova12.mp4' }
-        ];
-
-        let midias = [];
-
-        // Tenta carregar do JSON externo com cache busting
-        try {
-            const response = await fetch(CacheBuster.getUrl('midias.json'));
-            if (response.ok) {
-                midias = await response.json();
-                console.log('📁 Mídias carregadas do JSON:', midias.length);
-            } else {
-                throw new Error('Falha ao carregar midias.json');
-            }
-        } catch (e) {
-            console.warn('⚠️ Usando fallback local para mídias:', e.message);
-            midias = fallbackMidias;
-        }
-
-        // Garante que temos ao menos uma mídia
-        if (!midias || midias.length === 0) {
-            midias = fallbackMidias;
-        }
-
-        // Cria elemento de fundo (fallback visual)
-        const fallbackDiv = document.createElement('div');
-        fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
-        dom.mediaContainer.appendChild(fallbackDiv);
-
-        // Cria cada elemento de mídia
-        midias.forEach((m, i) => {
-            let el;
-            if (m.tipo === 'video') {
-                el = document.createElement('video');
-                el.src = CacheBuster.getMediaUrl(m.src);
-                el.muted = true;
-                el.playsInline = true;
-                el.loop = true;
-                el.load();
-                el.onerror = () => { el.style.display = 'none'; };
-            } else {
-                el = document.createElement('img');
-                el.src = CacheBuster.getMediaUrl(m.src);
-                el.loading = 'lazy';
-                el.alt = 'VDB Music';
-                el.onerror = () => { el.style.display = 'none'; };
-            }
-            el.className = i === 0 ? 'active' : 'inactive';
-            dom.mediaContainer.appendChild(el);
-            if (i === 0 && m.tipo === 'video') {
-                el.play().catch(() => {});
-            }
-        });
-
-        // Alternância automática entre as mídias
-        const children = dom.mediaContainer.querySelectorAll('video, img');
-        if (children.length > 1) {
-            // Limpa timer anterior se existir
-            if (state.mediaTimer) clearInterval(state.mediaTimer);
-            state.mediaTimer = setInterval(() => {
-                const atual = children[state.midiaAtual];
-                const prox = children[(state.midiaAtual + 1) % children.length];
-                if (!atual || !prox) return;
-                atual.className = 'inactive';
-                if (atual.tagName === 'VIDEO') atual.pause();
-                prox.className = 'active';
-                if (prox.tagName === 'VIDEO') {
-                    prox.play().catch(() => {});
-                }
-                state.midiaAtual = (state.midiaAtual + 1) % children.length;
-            }, 5000);
-        }
-
-    } catch (erro) {
-        console.error('❌ Erro crítico ao criar mídias:', erro);
-        // Fallback extremo: apenas fundo escuro
-        dom.mediaContainer.innerHTML = '';
-        const fallbackDiv = document.createElement('div');
-        fallbackDiv.style.cssText = 'position:absolute;inset:0;background:#0a0a1e;z-index:1;';
-        dom.mediaContainer.appendChild(fallbackDiv);
-    }
+{
+  "versao": "1.0.0",
+  "aberto_id": null,
+  "medias": [
+    { "tipo": "video", "src": "logo.mp4" },
+    { "tipo": "imagem", "src": "bob.png" },
+    { "tipo": "imagem", "src": "marina.png" },
+    { "tipo": "imagem", "src": "macaco.png" },
+    { "tipo": "video", "src": "ze.mp4" },
+    { "tipo": "imagem", "src": "mulher.png" },
+    { "tipo": "imagem", "src": "djavan.png" },
+    { "tipo": "imagem", "src": "em.png" },
+    { "tipo": "video", "src": "nova12.mp4" }
+  ]
 }
