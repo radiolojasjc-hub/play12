@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VAI DE BOA! MUSIC!</title>
+    <title>VAI DE BOA! MUSIC</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -269,7 +269,7 @@
         /* ===== INFO SCROLL (SUBIDO) ===== */
         .info-scroll {
             position: fixed;
-            top: 46px;  /* antes 56px - subiu 10px */
+            top: 46px;  /* subiu 10px em relação aos 56px originais */
             left: 0;
             right: 0;
             z-index: 30;
@@ -1529,7 +1529,7 @@
             .top-bar { height: 48px; padding: 4px 10px; }
             .top-right .timer-lib { font-size: 0.6rem; padding: 2px 6px; }
             .top-right .menu-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .info-scroll { top: 42px; height: 34px; }  /* subiu no mobile também */
+            .info-scroll { top: 42px; height: 34px; }  /* subiu para mobile também */
             .info-scroll .letreiro { font-size: 0.7rem; }
             .fav-heart-center .fav-heart { font-size: 3.5rem; }
             .ctrl-btn { width: 36px; height: 36px; font-size: 0.85rem; min-width: 44px; min-height: 44px; }
@@ -1854,35 +1854,21 @@
     };
 
     // ============================================================
-    // CACHE BUSTING REFORÇADO
+    // CACHE BUSTING REFORÇADO (mantido)
     // ============================================================
     const CacheBuster = {
         get version() { return CONFIG.CACHE_VERSION; },
         set version(v) { localStorage.setItem('vdb_cache_version', String(v)); },
-        /**
-         * Adiciona parâmetros de cache busting a qualquer URL
-         * @param {string} url - URL original
-         * @returns {string} URL com ?v=versao&t=timestamp
-         */
         getUrl(url) {
             if (!url) return url;
-            // Se já tiver interrogação, adiciona &, senão ?
             const sep = url.includes('?') ? '&' : '?';
             return `${url}${sep}v=${this.version}&t=${Date.now()}`;
         },
-        /**
-         * Específico para arquivos de mídia (vídeos, imagens, áudios)
-         */
         getMediaUrl(file) {
             if (!file) return file;
-            // Se já for uma URL completa, apenas aplica o cache busting
             if (file.startsWith('http')) return this.getUrl(file);
-            // Para arquivos locais, mantém o nome e aplica
             return this.getUrl(file);
         },
-        /**
-         * Força a atualização de todos os assets incrementando a versão
-         */
         forceUpdate() {
             this.version = this.version + 1;
             notif('🔄 Atualizando mídias...', 1500);
@@ -2121,7 +2107,7 @@
     };
 
     // ============================================================
-    // SENHAS (mantidas intactas)
+    // SENHAS (intactas)
     // ============================================================
     const SENHA_ADMIN = (() => {
         const c = [112, 97, 116, 105, 99, 111, 49, 54, 56, 53];
@@ -2471,7 +2457,6 @@
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
-            // Cache busting aplicado via CacheBuster.getUrl
             const response = await fetch(CacheBuster.getUrl(url), { signal: controller.signal, cache: 'no-store' });
             clearTimeout(timeout);
             let data = await response.json();
@@ -2711,15 +2696,14 @@
     }
 
     // ============================================================
-    // MÍDIA CONTAINER (vídeos/imagens) com cache busting
+    // CRIAÇÃO DE MÍDIA (lista fixa, com cache busting)
     // ============================================================
-    function criarMidia() {
+    async function criarMidia() {
         try {
+            // Limpa o container
             dom.mediaContainer.innerHTML = '';
-            const fallbackDiv = document.createElement('div');
-            fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
-            dom.mediaContainer.appendChild(fallbackDiv);
-            
+
+            // --- Lista fixa de mídias (todas com cache busting via CacheBuster) ---
             const midias = [
                 { tipo: 'video', src: 'logo.mp4' },
                 { tipo: 'imagem', src: 'bob.png' },
@@ -2727,11 +2711,17 @@
                 { tipo: 'imagem', src: 'macaco.png' },
                 { tipo: 'video', src: 'ze.mp4' },
                 { tipo: 'imagem', src: 'mulher.png' },
-                { tipo: 'imagem', src: 'ti.png' },
-             
+                { tipo: 'imagem', src: 'djavan.png' },
                 { tipo: 'imagem', src: 'em.png' },
-                { tipo: 'video', src: 'nova12.mp4' },
+                { tipo: 'video', src: 'nova12.mp4' }
             ];
+
+            // Cria elemento de fundo (fallback visual)
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
+            dom.mediaContainer.appendChild(fallbackDiv);
+
+            // Cria cada elemento de mídia
             midias.forEach((m, i) => {
                 let el;
                 if (m.tipo === 'video') {
@@ -2751,11 +2741,15 @@
                 }
                 el.className = i === 0 ? 'active' : 'inactive';
                 dom.mediaContainer.appendChild(el);
-                if (i === 0 && m.tipo === 'video') el.play().catch(() => {});
+                if (i === 0 && m.tipo === 'video') {
+                    el.play().catch(() => {});
+                }
             });
-            
+
+            // Alternância automática entre as mídias
             const children = dom.mediaContainer.querySelectorAll('video, img');
             if (children.length > 1) {
+                if (state.mediaTimer) clearInterval(state.mediaTimer);
                 state.mediaTimer = setInterval(() => {
                     const atual = children[state.midiaAtual];
                     const prox = children[(state.midiaAtual + 1) % children.length];
@@ -2763,12 +2757,19 @@
                     atual.className = 'inactive';
                     if (atual.tagName === 'VIDEO') atual.pause();
                     prox.className = 'active';
-                    if (prox.tagName === 'VIDEO') prox.play().catch(() => {});
+                    if (prox.tagName === 'VIDEO') {
+                        prox.play().catch(() => {});
+                    }
                     state.midiaAtual = (state.midiaAtual + 1) % children.length;
                 }, 5000);
             }
-        } catch (e) {
-            console.warn('⚠️ Erro ao criar mídia, usando fallback:', e);
+
+        } catch (erro) {
+            console.error('❌ Erro crítico ao criar mídias:', erro);
+            dom.mediaContainer.innerHTML = '';
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.style.cssText = 'position:absolute;inset:0;background:#0a0a1e;z-index:1;';
+            dom.mediaContainer.appendChild(fallbackDiv);
         }
     }
 
@@ -3089,7 +3090,7 @@
             console.log('✅ Favoritos carregados');
 
             // 4. Criar mídia (com cache busting)
-            criarMidia();
+            await criarMidia();
             updateProgress(30);
             console.log('✅ Mídia configurada');
 
