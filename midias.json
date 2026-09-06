@@ -12,7 +12,7 @@
     { "tipo": "imagem", "src": "em.png" },
     { "tipo": "video", "src": "nova12.mp4" },
       { "tipo": "video", "src": "clik.mp4" },
-    
-    { "tipo": "video", "src": "tv.mp4" },
+    { "tipo": "video", "src": "amytv.mp4" },
+    { "tipo": "video", "src": "tvbob.mp4" }
   ]
 }
