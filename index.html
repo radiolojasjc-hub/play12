@@ -1599,6 +1599,12 @@
 // ============================================================
 (function() {
     'use strict';
+// ============================================================
+// VAI DE BOA! MUSIC - v3.0 FINAL (TIMER CORRIDO 24H)
+// JavaScript puro (sem HTML/CSS)
+// ============================================================
+(function() {
+    'use strict';
 
     // ============================================================
     // CONFIGURAÇÕES
@@ -1780,20 +1786,16 @@
     function fmtTempo(s) {
         if (s < 0) s = 0;
         s = Math.floor(s);
-        
         const dias = Math.floor(s / 86400);
         const horas = Math.floor((s % 86400) / 3600);
         const minutos = Math.floor((s % 3600) / 60);
         const segundos = Math.floor(s % 60);
-        
         if (dias > 0) {
             return dias + 'd ' + String(horas).padStart(2, '0') + ':' + String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
         }
-        
         if (horas > 0) {
             return String(horas).padStart(2, '0') + ':' + String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
         }
-        
         return String(minutos).padStart(2, '0') + ':' + String(segundos).padStart(2, '0');
     }
 
@@ -3674,4 +3676,3 @@
     iniciar();
 
 })();
-    
