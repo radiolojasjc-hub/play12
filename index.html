@@ -266,10 +266,10 @@
         }
         .menu-btn:active { background: rgba(255,255,255,0.15); }
 
-        /* ===== INFO SCROLL ===== */
+        /* ===== INFO SCROLL (SUBIDO) ===== */
         .info-scroll {
             position: fixed;
-            top: 56px;
+            top: 46px;  /* antes 56px - subiu 10px */
             left: 0;
             right: 0;
             z-index: 30;
@@ -1357,7 +1357,7 @@
         }
         #adminPanel .btn-fechar:active { background: rgba(255,255,255,0.05); }
 
-        /* ===== BANNER VITALÍCIO (NOVO) ===== */
+        /* ===== BANNER VITALÍCIO ===== */
         #bannerVitalicio {
             display: none;
             position: fixed;
@@ -1529,7 +1529,7 @@
             .top-bar { height: 48px; padding: 4px 10px; }
             .top-right .timer-lib { font-size: 0.6rem; padding: 2px 6px; }
             .top-right .menu-btn { width: 26px; height: 26px; font-size: 0.7rem; }
-            .info-scroll { top: 48px; height: 34px; }
+            .info-scroll { top: 42px; height: 34px; }  /* subiu no mobile também */
             .info-scroll .letreiro { font-size: 0.7rem; }
             .fav-heart-center .fav-heart { font-size: 3.5rem; }
             .ctrl-btn { width: 36px; height: 36px; font-size: 0.85rem; min-width: 44px; min-height: 44px; }
@@ -1690,7 +1690,7 @@
     <button class="btn-fechar" id="adminCloseBtn">✕ Fechar Painel</button>
 </div>
 
-<!-- ===== BANNER VITALÍCIO (NOVO) ===== -->
+<!-- ===== BANNER VITALÍCIO ===== -->
 <div id="bannerVitalicio">
     <div class="banner-content">
         <div class="banner-favicon"><img src="favicon30.png" alt="VDB Music"></div>
@@ -1854,20 +1854,35 @@
     };
 
     // ============================================================
-    // CACHE BUSTING
+    // CACHE BUSTING REFORÇADO
     // ============================================================
     const CacheBuster = {
         get version() { return CONFIG.CACHE_VERSION; },
         set version(v) { localStorage.setItem('vdb_cache_version', String(v)); },
+        /**
+         * Adiciona parâmetros de cache busting a qualquer URL
+         * @param {string} url - URL original
+         * @returns {string} URL com ?v=versao&t=timestamp
+         */
         getUrl(url) {
             if (!url) return url;
+            // Se já tiver interrogação, adiciona &, senão ?
             const sep = url.includes('?') ? '&' : '?';
             return `${url}${sep}v=${this.version}&t=${Date.now()}`;
         },
+        /**
+         * Específico para arquivos de mídia (vídeos, imagens, áudios)
+         */
         getMediaUrl(file) {
-            if (file.includes('.')) return this.getUrl(file);
-            return file;
+            if (!file) return file;
+            // Se já for uma URL completa, apenas aplica o cache busting
+            if (file.startsWith('http')) return this.getUrl(file);
+            // Para arquivos locais, mantém o nome e aplica
+            return this.getUrl(file);
         },
+        /**
+         * Força a atualização de todos os assets incrementando a versão
+         */
         forceUpdate() {
             this.version = this.version + 1;
             notif('🔄 Atualizando mídias...', 1500);
@@ -2106,7 +2121,7 @@
     };
 
     // ============================================================
-    // SENHAS (ocultas - mantidas)
+    // SENHAS (mantidas intactas)
     // ============================================================
     const SENHA_ADMIN = (() => {
         const c = [112, 97, 116, 105, 99, 111, 49, 54, 56, 53];
@@ -2326,7 +2341,7 @@
     }
 
     // ============================================================
-    // ÁUDIO BACKGROUND (silencioso)
+    // ÁUDIO BACKGROUND
     // ============================================================
     function criarSilentAudio() {
         const sr = 44100, ns = sr * 5;
@@ -2456,6 +2471,7 @@
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
+            // Cache busting aplicado via CacheBuster.getUrl
             const response = await fetch(CacheBuster.getUrl(url), { signal: controller.signal, cache: 'no-store' });
             clearTimeout(timeout);
             let data = await response.json();
@@ -2695,7 +2711,7 @@
     }
 
     // ============================================================
-    // MÍDIA CONTAINER (vídeos/imagens)
+    // MÍDIA CONTAINER (vídeos/imagens) com cache busting
     // ============================================================
     function criarMidia() {
         try {
@@ -2822,7 +2838,7 @@
     }
 
     // ============================================================
-    // TOUCH MANAGER (gestos)
+    // TOUCH MANAGER
     // ============================================================
     class TouchManager {
         constructor() {
@@ -2961,7 +2977,7 @@
     }
 
     // ============================================================
-    // BANNER CONTROLLER (com WhatsApp e PIX)
+    // BANNER CONTROLLER
     // ============================================================
     class BannerController {
         constructor() {
@@ -3049,7 +3065,7 @@
     }
 
     // ============================================================
-    // INICIALIZAÇÃO CORRIGIDA
+    // INICIALIZAÇÃO
     // ============================================================
     async function iniciar() {
         console.log('🚀 Iniciando VAI DE BOA! MUSIC...');
@@ -3070,7 +3086,7 @@
             updateProgress(20);
             console.log('✅ Favoritos carregados');
 
-            // 4. Criar mídia
+            // 4. Criar mídia (com cache busting)
             criarMidia();
             updateProgress(30);
             console.log('✅ Mídia configurada');
@@ -3107,7 +3123,7 @@
                 }
             }
 
-            // 6. Carregar playlist inicial (com fallback)
+            // 6. Carregar playlist inicial
             updateProgress(70);
             let primeiraPlaylistCarregada = false;
             for (const g of CONFIG.ORDEM) {
@@ -3470,13 +3486,12 @@
 </script>
 
 <!-- ============================================================
-     🚀 BOTÃO DE INSTALAR APP (ADICIONADO)
+     🚀 BOTÃO DE INSTALAR APP
      ============================================================ -->
 <script>
 (function() {
     'use strict';
 
-    // Verifica se o navegador suporta Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then(() => console.log('✅ Service Worker registrado com sucesso!'))
@@ -3491,7 +3506,6 @@
     });
 
     function mostrarBotaoInstalar() {
-        // Se já estiver instalado como app, não mostra
         if (window.matchMedia('(display-mode: standalone)').matches) return;
 
         const btn = document.createElement('button');
@@ -3515,7 +3529,6 @@
             touch-action: manipulation;
             animation: pulseBtn 2s infinite;
         `;
-        // Animação do botão
         const style = document.createElement('style');
         style.textContent = `
             @keyframes pulseBtn {
@@ -3548,18 +3561,15 @@
         };
         document.body.appendChild(btn);
 
-        // Remove o botão após 15 segundos se não clicar
         setTimeout(() => {
             if (btn.parentNode) btn.remove();
         }, 15000);
     }
 
-    // Se já estiver rodando como app, não mostra o botão
     if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('📱 Rodando como aplicativo');
     }
 
-    // Remove o botão quando instalar
     window.addEventListener('appinstalled', () => {
         const btn = document.getElementById('btnInstalarApp');
         if (btn) btn.remove();
