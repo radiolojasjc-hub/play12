@@ -1334,7 +1334,6 @@
         }
         #adminPanel .btn-fechar:active { background: rgba(255,255,255,0.05); }
 
-        /* NOVO: Overlay do vídeo de clique */
         #videoClickOverlay {
             position: fixed;
             bottom: 120px;
@@ -1384,7 +1383,7 @@
             .fav-item-modal .fav-info .artist { font-size: 0.7rem; }
             .notification { font-size: 0.85rem; padding: 8px 16px; top: 100px; }
             #videoClickOverlay { bottom: 100px; right: 10px; }
-            #videoClickOverlay video { width: 80px !important; height: 80px !important; }
+            #videoClickOverlay video { width: clamp(70px, 15vw, 120px) !important; height: clamp(70px, 15vw, 120px) !important; }
         }
     </style>
 </head>
@@ -1597,7 +1596,7 @@
 
 <script>
 // ============================================================
-// VAI DE BOA! MUSIC - v3.0 (JavaScript COMPLETO)
+// VAI DE BOA! MUSIC - v3.0 FINAL
 // ============================================================
 (function() {
     'use strict';
@@ -1629,9 +1628,11 @@
             'FORRÓ RAIZ': 'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json',
             'ROCK': 'https://raw.githubusercontent.com/radiolojasjc-hub/rock/refs/heads/main/rock.json',
         },
-        MIDIAS_TV_URL: 'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/midias.json',
+        VIDEOS_TV: [
+            'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tvbob.mp4',
+            'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/amytv.mp4'
+        ],
         VIDEO_CLICK_URL: 'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/clik.mp4',
-        VIDEO_TV_URL: 'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tv.mp4',
         CORES: {
             'BÔNUS': '#fdcb6e', 'FLASHBACK': '#e17055', 'RELIGIOSA': '#6c5ce7',
             'ROMÂNTICA': '#fd79a8', 'MPB': '#00b894', 'POP/MIX': '#fd79a8',
@@ -1905,7 +1906,6 @@
         adminTentativas: 0,
         adminBloqueado: false,
         modoTV: false,
-        midiasTV: [],
         midiaTVAtual: 0,
         mediaTVTimer: null,
         cadastro: null,
@@ -2013,14 +2013,6 @@
                         await this.add(item);
                     }
                     localStorage.removeItem('vfav');
-                }
-                
-                const playlists = JSON.parse(localStorage.getItem('vdb_playlists') || '[]');
-                if (playlists.length > 0) {
-                    for (const pl of playlists) {
-                        await this.salvarPlaylist(pl);
-                    }
-                    localStorage.removeItem('vdb_playlists');
                 }
             } catch (e) {
                 console.error('Erro migração:', e);
@@ -2462,7 +2454,7 @@
     }
 
     // ============================================================
-    // FAVORITOS (UI)
+    // FAVORITOS (UI) - CORRIGIDO
     // ============================================================
     async function carregarFav() {
         try {
@@ -2488,31 +2480,31 @@
         }
     }
 
-    function toggleFav(musica) {
+    async function toggleFav(musica) {
         if (!musica) return;
         const idx = state.favorites.findIndex(f => f.id === musica.id);
         if (idx > -1) {
             state.favorites.splice(idx, 1);
-            favManager.remove(musica.id);
+            await favManager.remove(musica.id);
             notif('💔 Removido dos favoritos');
         } else {
-            state.favorites.push({
+            const musicaCompleta = {
                 id: musica.id,
                 title: musica.title,
                 artist: musica.artist,
                 src: musica.src,
-                genero: musica.genero
-            });
-            favManager.add(state.favorites[state.favorites.length - 1]);
+                genero: musica.genero,
+                data: Date.now()
+            };
+            state.favorites.push(musicaCompleta);
+            await favManager.add(musicaCompleta);
             notif('❤️ Adicionado aos favoritos');
         }
         updateFavBadge();
         updateHeart(musica.id);
-        // Salvar playlist completa
-        salvarPlaylistAtual();
+        await salvarPlaylistAtual();
     }
 
-    // NOVO: Salvar playlist completa
     async function salvarPlaylistAtual() {
         if (state.musicas.length > 0) {
             await favManager.salvarPlaylist({
@@ -2622,8 +2614,7 @@
         dom.genresModal.classList.remove('open');
         forcarTelaCheia();
         if (state.isBackgroundActive) setTimeout(tocar, 300);
-        // Salvar playlist
-        salvarPlaylistAtual();
+        await salvarPlaylistAtual();
     }
 
     // ============================================================
@@ -2698,96 +2689,57 @@
     }
 
     // ============================================================
-    // MODO TV
+    // MODO TV - APENAS 2 VÍDEOS
     // ============================================================
-    async function carregarMidiasTV() {
-        try {
-            const response = await fetch(CacheBuster.getUrl(CONFIG.MIDIAS_TV_URL));
-            const data = await response.json();
-            
-            if (Array.isArray(data)) {
-                state.midiasTV = data;
-            } else if (data.midias && Array.isArray(data.midias)) {
-                state.midiasTV = data.midias;
-            } else {
-                state.midiasTV = [
-                    { tipo: 'video', src: CONFIG.VIDEO_TV_URL },
-                    { tipo: 'video', src: CONFIG.VIDEO_CLICK_URL }
-                ];
-            }
-            
-            console.log('✅ Mídias TV carregadas:', state.midiasTV.length);
-            return state.midiasTV;
-        } catch (e) {
-            console.error('❌ Erro carregar mídias TV:', e);
-            state.midiasTV = [
-                { tipo: 'video', src: CONFIG.VIDEO_TV_URL },
-                { tipo: 'video', src: CONFIG.VIDEO_CLICK_URL }
-            ];
-            return state.midiasTV;
-        }
-    }
-
     async function toggleModoTV() {
         state.modoTV = !state.modoTV;
         
         if (state.modoTV) {
             notif('📺 Modo TV ATIVADO!', 2000);
             
-            if (state.midiasTV.length === 0) {
-                await carregarMidiasTV();
-            }
-            
             dom.mediaContainer.innerHTML = '';
             
-            state.midiasTV.forEach((midia, i) => {
-                const el = document.createElement(midia.tipo === 'video' ? 'video' : 'img');
-                el.src = CacheBuster.getMediaUrl(midia.src);
-                el.className = i === 0 ? 'active' : 'inactive';
+            CONFIG.VIDEOS_TV.forEach((src, i) => {
+                const video = document.createElement('video');
+                video.src = CacheBuster.getMediaUrl(src);
+                video.className = i === 0 ? 'active' : 'inactive';
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.load();
+                video.onerror = () => { video.style.display = 'none'; };
                 
-                if (midia.tipo === 'video') {
-                    el.muted = true;
-                    el.loop = true;
-                    el.playsInline = true;
-                    el.load();
-                    el.onerror = () => { el.style.display = 'none'; };
-                    
-                    if (i === 0) {
-                        el.play().catch(() => {});
-                    }
-                } else {
-                    el.loading = 'lazy';
-                    el.alt = 'VDB TV';
-                    el.onerror = () => { el.style.display = 'none'; };
+                dom.mediaContainer.appendChild(video);
+                
+                if (i === 0) {
+                    video.play().catch(() => {});
                 }
-                
-                dom.mediaContainer.appendChild(el);
             });
             
             if (state.mediaTVTimer) clearInterval(state.mediaTVTimer);
             state.midiaTVAtual = 0;
             
-            const children = dom.mediaContainer.querySelectorAll('video, img');
-            if (children.length > 1) {
+            const videos = dom.mediaContainer.querySelectorAll('video');
+            if (videos.length > 1) {
                 state.mediaTVTimer = setInterval(() => {
-                    const atual = children[state.midiaTVAtual];
-                    const prox = children[(state.midiaTVAtual + 1) % children.length];
+                    const atual = videos[state.midiaTVAtual];
+                    const prox = videos[(state.midiaTVAtual + 1) % videos.length];
                     
                     if (!atual || !prox) return;
                     
                     atual.className = 'inactive';
-                    if (atual.tagName === 'VIDEO') atual.pause();
+                    atual.pause();
                     
                     prox.className = 'active';
-                    if (prox.tagName === 'VIDEO') {
-                        prox.play().catch(() => {});
-                    }
+                    prox.play().catch(() => {});
                     
-                    state.midiaTVAtual = (state.midiaTVAtual + 1) % children.length;
+                    state.midiaTVAtual = (state.midiaTVAtual + 1) % videos.length;
                 }, 8000);
             }
             
-            criarOverlayVideoClick();
+            // Remover overlay de clique no modo TV
+            const overlay = document.getElementById('videoClickOverlay');
+            if (overlay) overlay.remove();
             
         } else {
             notif('📺 Modo TV DESATIVADO!', 2000);
@@ -2797,14 +2749,17 @@
                 state.mediaTVTimer = null;
             }
             
-            const overlay = document.getElementById('videoClickOverlay');
-            if (overlay) overlay.remove();
-            
             await criarMidia();
+            criarOverlayVideoClick();
         }
     }
 
+    // ============================================================
+    // OVERLAY VÍDEO CLIQUE - RESPONSIVO
+    // ============================================================
     function criarOverlayVideoClick() {
+        if (state.modoTV) return; // Não mostra no modo TV
+        
         const existingOverlay = document.getElementById('videoClickOverlay');
         if (existingOverlay) existingOverlay.remove();
         
@@ -2826,8 +2781,8 @@
         video.playsInline = true;
         video.autoplay = true;
         video.style.cssText = `
-            width: 120px;
-            height: 120px;
+            width: clamp(70px, 15vw, 120px);
+            height: clamp(70px, 15vw, 120px);
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #25d366;
@@ -3249,7 +3204,7 @@
     // INICIALIZAÇÃO
     // ============================================================
     async function iniciar() {
-        console.log('🚀 Iniciando VAI DE BOA! MUSIC v3.0...');
+        console.log('🚀 Iniciando VAI DE BOA! MUSIC v3.0 FINAL...');
 
         try {
             state.fingerprint = obterFingerprint();
@@ -3358,6 +3313,7 @@
 
             if (state.desbloqueado) {
                 setTimeout(() => ativarPlayer(), 1500);
+                setTimeout(() => criarOverlayVideoClick(), 2000);
             }
 
             const fullscreenInterval = setInterval(() => { fullscreen(); }, 2000);
@@ -3649,12 +3605,11 @@
                 dom.menuPopup.classList.remove('open');
             };
 
-            console.log('🐵 VAI DE BOA! MUSIC v3.0 - COMPLETO');
-            console.log('📱 Touch gestures ativos');
-            console.log('📺 Modo TV disponível');
-            console.log('📝 Cadastro de clientes ativo');
-            console.log('💾 Favoritos com playlists completas');
-            console.log('🔄 Cache Busting versão:', CacheBuster.version);
+            console.log('🐵 VAI DE BOA! MUSIC v3.0 FINAL');
+            console.log('✅ Favoritos salvando lista completa');
+            console.log('📺 Modo TV: tvbob.mp4 + amytv.mp4');
+            console.log('📲 Banner clik.mp4 responsivo (70-120px)');
+            console.log('🔒 Banner oculto no Modo TV');
 
         } catch (erro) {
             console.error('❌ ERRO FATAL NA INICIALIZAÇÃO:', erro);
