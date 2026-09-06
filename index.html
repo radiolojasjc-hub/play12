@@ -17,8 +17,7 @@
     
     <link rel="icon" href="favicon30.png" type="image/png">
     <link rel="apple-touch-icon" href="favicon30.png">
-    <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22VAI%20DE%20BOA%20MUSIC%22%2C%22short_name%22%3A%22VDB%20Music%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a1e%22%2C%22theme_color%22%3A%22%230a0a1e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22favicon30.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
-
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -1798,27 +1797,10 @@
     <button id="closeFeedbackBtn">Cancelar</button>
 </div>
 
-<!-- ============================================================ -->
-<!-- ==================== PARTE 1 FINAL ========================= -->
-<!-- ============================================================ -->
-<!-- O JavaScript está na Parte 2 (será carregado via script) -->
 <script>
-// (O código JS será inserido aqui na Parte 2)
-</script>
-</body>
-</html>
 // ============================================================
 // VAI DE BOA! MUSIC - v2.0 (JavaScript Moderno)
 // ============================================================
-// 1. Cache Busting Avançado
-// 2. Player Completo com Gêneros e Favoritos
-// 3. Sistema de Bloqueio (senhas)
-// 4. Admin Panel (8 cliques no letreiro)
-// 5. Banner Vitalício com WhatsApp e PIX
-// 6. Touch Gestures (swipe, long press)
-// 7. Notificações em Fila
-// ============================================================
-
 (function() {
     'use strict';
 
@@ -1827,8 +1809,8 @@
     // ============================================================
     const CONFIG = {
         CACHE_VERSION: parseInt(localStorage.getItem('vdb_cache_version') || '1'),
-        WHATSAPP_NUMBER: '5512991677246',  // Número do WhatsApp
-        PIX_KEY: '12988461978',            // Chave PIX
+        WHATSAPP_NUMBER: '5512991677246',
+        PIX_KEY: '12988461978',
         GENRE_URLS: {
             'BÔNUS': 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
             'FLASHBACK': 'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -1875,21 +1857,15 @@
     // CACHE BUSTING
     // ============================================================
     const CacheBuster = {
-        get version() {
-            return CONFIG.CACHE_VERSION;
-        },
-        set version(v) {
-            localStorage.setItem('vdb_cache_version', String(v));
-        },
+        get version() { return CONFIG.CACHE_VERSION; },
+        set version(v) { localStorage.setItem('vdb_cache_version', String(v)); },
         getUrl(url) {
             if (!url) return url;
-            const separator = url.includes('?') ? '&' : '?';
-            return `${url}${separator}v=${this.version}&t=${Date.now()}`;
+            const sep = url.includes('?') ? '&' : '?';
+            return `${url}${sep}v=${this.version}&t=${Date.now()}`;
         },
         getMediaUrl(file) {
-            if (file.includes('.')) {
-                return this.getUrl(file);
-            }
+            if (file.includes('.')) return this.getUrl(file);
             return file;
         },
         forceUpdate() {
@@ -2127,14 +2103,11 @@
         adminBloqueado: false,
         bannerController: null,
         touchManager: null,
-        lastInteraction: 0,
-        isFullscreen: false,
     };
 
     // ============================================================
     // SENHAS (ocultas, mas ainda em cliente - será melhorado depois)
     // ============================================================
-    // As senhas são geradas em tempo de execução a partir de arrays (ofuscado)
     const SENHA_ADMIN = (() => {
         const c = [112, 97, 116, 105, 99, 111, 49, 54, 56, 53];
         return String.fromCharCode(...c);
@@ -2725,47 +2698,63 @@
     // MÍDIA CONTAINER (vídeos/imagens)
     // ============================================================
     function criarMidia() {
-        const midias = [
-            { tipo: 'video', src: 'logo.mp4' },
-            { tipo: 'imagem', src: 'bob.png' },
-            { tipo: 'imagem', src: 'marina.png' },
-            { tipo: 'imagem', src: 'macaco.png' },
-            { tipo: 'imagem', src: 'mulher.png' },
-            { tipo: 'imagem', src: 'djavan.png' },
-            { tipo: 'imagem', src: 'emili.png' },
-            { tipo: 'video', src: 'logo.mp4' },
-        ];
-        midias.forEach((m, i) => {
-            let el;
-            if (m.tipo === 'video') {
-                el = document.createElement('video');
-                el.src = CacheBuster.getMediaUrl(m.src);
-                el.muted = true;
-                el.playsInline = true;
-                el.loop = true;
-                el.load();
-            } else {
-                el = document.createElement('img');
-                el.src = CacheBuster.getMediaUrl(m.src);
-                el.loading = 'lazy';
-                el.alt = 'VDB Music';
+        try {
+            // Fallback: fundo gradiente caso os arquivos não existam
+            dom.mediaContainer.innerHTML = '';
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.style.cssText = 'position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;';
+            dom.mediaContainer.appendChild(fallbackDiv);
+            
+            // Tenta carregar as mídias opcionais
+            const midias = [
+                { tipo: 'video', src: 'logo.mp4' },
+                { tipo: 'imagem', src: 'bob.png' },
+                { tipo: 'imagem', src: 'marina.png' },
+                { tipo: 'imagem', src: 'macaco.png' },
+                { tipo: 'imagem', src: 'mulher.png' },
+                { tipo: 'imagem', src: 'djavan.png' },
+                { tipo: 'imagem', src: 'emili.png' },
+                { tipo: 'video', src: 'logo.mp4' },
+            ];
+            // Adiciona as mídias como elementos opcionais
+            midias.forEach((m, i) => {
+                let el;
+                if (m.tipo === 'video') {
+                    el = document.createElement('video');
+                    el.src = CacheBuster.getMediaUrl(m.src);
+                    el.muted = true;
+                    el.playsInline = true;
+                    el.loop = true;
+                    el.load();
+                    el.onerror = () => { el.style.display = 'none'; };
+                } else {
+                    el = document.createElement('img');
+                    el.src = CacheBuster.getMediaUrl(m.src);
+                    el.loading = 'lazy';
+                    el.alt = 'VDB Music';
+                    el.onerror = () => { el.style.display = 'none'; };
+                }
+                el.className = i === 0 ? 'active' : 'inactive';
+                dom.mediaContainer.appendChild(el);
+                if (i === 0 && m.tipo === 'video') el.play().catch(() => {});
+            });
+            
+            // Rotação de mídia
+            const children = dom.mediaContainer.querySelectorAll('video, img');
+            if (children.length > 1) {
+                state.mediaTimer = setInterval(() => {
+                    const atual = children[state.midiaAtual];
+                    const prox = children[(state.midiaAtual + 1) % children.length];
+                    if (!atual || !prox) return;
+                    atual.className = 'inactive';
+                    if (atual.tagName === 'VIDEO') atual.pause();
+                    prox.className = 'active';
+                    if (prox.tagName === 'VIDEO') prox.play().catch(() => {});
+                    state.midiaAtual = (state.midiaAtual + 1) % children.length;
+                }, 5000);
             }
-            el.className = i === 0 ? 'active' : 'inactive';
-            dom.mediaContainer.appendChild(el);
-            if (i === 0 && m.tipo === 'video') el.play().catch(() => {});
-        });
-        const children = dom.mediaContainer.children;
-        if (children.length > 1) {
-            state.mediaTimer = setInterval(() => {
-                const atual = children[state.midiaAtual];
-                const prox = children[(state.midiaAtual + 1) % children.length];
-                if (!atual || !prox) return;
-                atual.className = 'inactive';
-                if (atual.tagName === 'VIDEO') atual.pause();
-                prox.className = 'active';
-                if (prox.tagName === 'VIDEO') prox.play().catch(() => {});
-                state.midiaAtual = (state.midiaAtual + 1) % children.length;
-            }, 5000);
+        } catch (e) {
+            console.warn('⚠️ Erro ao criar mídia, usando fallback:', e);
         }
     }
 
@@ -3062,8 +3051,9 @@
             notif('❌ Senha inválida!', 2000);
         }
     }
+
     // ============================================================
-    // FUNÇÃO DE INICIALIZAÇÃO CORRIGIDA
+    // INICIALIZAÇÃO CORRIGIDA
     // ============================================================
     async function iniciar() {
         console.log('🚀 Iniciando VAI DE BOA! MUSIC...');
@@ -3084,14 +3074,8 @@
             updateProgress(20);
             console.log('✅ Favoritos carregados');
 
-            // 4. Criar mídia (com fallback)
-            try {
-                criarMidia();
-            } catch (e) {
-                console.warn('⚠️ Erro ao criar mídia, usando fallback:', e);
-                // Cria um fundo preto simples
-                dom.mediaContainer.innerHTML = '<div style="position:absolute;inset:0;background:radial-gradient(circle at center,#1a1a3e,#0a0a1e);z-index:1;"></div>';
-            }
+            // 4. Criar mídia
+            criarMidia();
             updateProgress(30);
             console.log('✅ Mídia configurada');
 
@@ -3153,7 +3137,7 @@
                 }
             }
 
-            // Se nenhuma playlist carregou, cria uma playlist de fallback
+            // Fallback local
             if (!primeiraPlaylistCarregada) {
                 console.warn('⚠️ Nenhuma playlist carregada, usando fallback local');
                 state.musicas = [
@@ -3188,7 +3172,7 @@
                 setTimeout(() => ativarPlayer(), 1500);
             }
 
-            // 9. Fullscreen contínuo (opcional)
+            // 9. Fullscreen contínuo
             const fullscreenInterval = setInterval(() => { fullscreen(); }, 2000);
             setTimeout(() => { clearInterval(fullscreenInterval); }, 20000);
             document.addEventListener('click', function fsClick() { fullscreen(); });
@@ -3207,7 +3191,7 @@
             }, 10000);
 
             // ============================================================
-            // EVENT LISTENERS (todos os mesmos do código anterior, mas vou repetir alguns essenciais)
+            // EVENT LISTENERS
             // ============================================================
             dom.playBtn.onclick = togglePlay;
             dom.prevBtn.onclick = prev;
@@ -3475,7 +3459,6 @@
 
         } catch (erro) {
             console.error('❌ ERRO FATAL NA INICIALIZAÇÃO:', erro);
-            // Força a saída do loading
             dom.loadingScreen.style.display = 'none';
             dom.playerContainer.classList.add('visible');
             notif('⚠️ Erro ao iniciar, mas você pode tentar recarregar', 5000);
@@ -3483,9 +3466,11 @@
     }
 
     // ============================================================
-    // START (chamada final)
+    // START
     // ============================================================
     iniciar();
 
 })();
-    
+</script>
+</body>
+</html>
