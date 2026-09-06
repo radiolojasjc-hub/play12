@@ -9,11 +9,20 @@
     <meta http-equiv="Expires" content="0">
     <link rel="icon" href="favicon30.png" type="image/png">
     <link rel="apple-touch-icon" href="favicon30.png">
+    <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22VAI%20DE%20BOA%20MUSIC%22%2C%22short_name%22%3A%22VDB%20Music%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a0a1e%22%2C%22theme_color%22%3A%22%230a0a1e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22favicon30.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VDB Music">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0a1e">
+    <meta name="msapplication-TileColor" content="#0a0a1e">
+    <meta name="apple-touch-fullscreen" content="yes">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* ============================================================
-           ESTILOS MODERNOS - VAI DE BOA! MUSIC v2.0 (SEM PWA)
+           ESTILOS MODERNOS - VAI DE BOA! MUSIC v2.0 (COM PWA)
            ============================================================ */
         * {
             margin: 0;
@@ -1790,7 +1799,7 @@
 
 <script>
 // ============================================================
-// VAI DE BOA! MUSIC - v2.0 (JavaScript - SEM PWA)
+// VAI DE BOA! MUSIC - v2.0 (JavaScript)
 // ============================================================
 (function() {
     'use strict';
@@ -3436,7 +3445,7 @@
             // Banner Controller
             state.bannerController = new BannerController();
 
-            console.log('🐵 VAI DE BOA! MUSIC v2.0 - Somente Site (sem PWA)');
+            console.log('🐵 VAI DE BOA! MUSIC v2.0 - Com PWA');
             console.log('📱 Touch gestures ativos');
             console.log('🔄 Cache Busting com versão:', CacheBuster.version);
             console.log('🕵️ Admin: 8 cliques no letreiro');
@@ -3459,5 +3468,108 @@
 
 })();
 </script>
+
+<!-- ============================================================
+     🚀 BOTÃO DE INSTALAR APP (ADICIONADO)
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+
+    // Verifica se o navegador suporta Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('✅ Service Worker registrado com sucesso!'))
+            .catch(err => console.warn('⚠️ Falha ao registrar SW:', err));
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        mostrarBotaoInstalar();
+    });
+
+    function mostrarBotaoInstalar() {
+        // Se já estiver instalado como app, não mostra
+        if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'btnInstalarApp';
+        btn.innerHTML = '📲 Instalar App';
+        btn.style.cssText = `
+            position: fixed;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #6c5ce7, #00cec9);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 6px 30px rgba(108,92,231,0.4);
+            z-index: 99999;
+            cursor: pointer;
+            touch-action: manipulation;
+            animation: pulseBtn 2s infinite;
+        `;
+        // Animação do botão
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulseBtn {
+                0%, 100% { transform: translateX(-50%) scale(1); }
+                50% { transform: translateX(-50%) scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        btn.onclick = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+                if (result.outcome === 'accepted') {
+                    if (typeof notif === 'function') {
+                        notif('✅ App instalado com sucesso!', 3000);
+                    } else {
+                        alert('✅ App instalado com sucesso!');
+                    }
+                } else {
+                    if (typeof notif === 'function') {
+                        notif('❌ Instalação cancelada', 2000);
+                    } else {
+                        alert('❌ Instalação cancelada');
+                    }
+                }
+                deferredPrompt = null;
+                btn.remove();
+            }
+        };
+        document.body.appendChild(btn);
+
+        // Remove o botão após 15 segundos se não clicar
+        setTimeout(() => {
+            if (btn.parentNode) btn.remove();
+        }, 15000);
+    }
+
+    // Se já estiver rodando como app, não mostra o botão
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('📱 Rodando como aplicativo');
+    }
+
+    // Remove o botão quando instalar
+    window.addEventListener('appinstalled', () => {
+        const btn = document.getElementById('btnInstalarApp');
+        if (btn) btn.remove();
+        if (typeof notif === 'function') {
+            notif('🎉 App instalado! Aproveite!', 3000);
+        }
+    });
+
+})();
+</script>
+
 </body>
 </html>
